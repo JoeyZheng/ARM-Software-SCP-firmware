@@ -1,6 +1,6 @@
 /*
  * Arm SCP/MCP Software
- * Copyright (c) 2019-2023, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2019-2024, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -151,7 +151,8 @@ static mod_res_perms_t scmi_clock_perms[]
             [MOD_RES_PERMS_SCMI_CLOCK_RATE_SET_IDX][0] =
                 ((1 << 0) | (1 << 1) | (1 << 2) | (1 << 4)),
             [MOD_RES_PERMS_SCMI_CLOCK_RATE_GET_IDX][0] = 0x0,
-            [MOD_RES_PERMS_SCMI_CLOCK_CONFIG_SET_IDX][0] = 0x0,
+            [MOD_RES_PERMS_SCMI_CLOCK_CONFIG_SET_IDX][0] =
+                ((1 << 0) | (1 << 1) | (1 << 2) | (1 << 4)),
             [MOD_RES_PERMS_SCMI_CLOCK_DESCRIBE_RATE_IDX][0] = 0x0,
         },
         [AGENT_IDX(JUNO_SCMI_AGENT_IDX_PSCI)] = {
