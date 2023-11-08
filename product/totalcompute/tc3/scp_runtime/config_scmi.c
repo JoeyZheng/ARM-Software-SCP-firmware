@@ -47,9 +47,33 @@ static const struct fwk_element service_table[
                 FWK_MODULE_IDX_TRANSPORT,
                 MOD_TRANSPORT_NOTIFICATION_IDX_INITIALIZED),
             .scmi_agent_id = SCP_SCMI_AGENT_ID_OSPM,
+#ifdef BUILD_HAS_SCMI_NOTIFICATIONS
+            .scmi_p2a_id = FWK_ID_ELEMENT_INIT(
+                FWK_MODULE_IDX_SCMI,
+                SCP_TC3_SCMI_SERVICE_IDX_OSPM_P2A),
+#else
             .scmi_p2a_id = FWK_ID_NONE_INIT,
+#endif
         }),
     },
+#ifdef BUILD_HAS_SCMI_NOTIFICATIONS
+    [SCP_TC3_SCMI_SERVICE_IDX_OSPM_P2A] = {
+        .name = "OSPM_P2A",
+        .data = &(struct mod_scmi_service_config) {
+            .transport_id = FWK_ID_ELEMENT_INIT(
+                FWK_MODULE_IDX_TRANSPORT,
+                SCP_TC3_SCMI_SERVICE_IDX_OSPM_P2A),
+            .transport_api_id = FWK_ID_API_INIT(
+                FWK_MODULE_IDX_TRANSPORT,
+                MOD_TRANSPORT_API_IDX_SCMI_TO_TRANSPORT),
+            .transport_notification_init_id = FWK_ID_NOTIFICATION_INIT(
+                FWK_MODULE_IDX_TRANSPORT,
+                MOD_TRANSPORT_NOTIFICATION_IDX_INITIALIZED),
+            .scmi_agent_id = SCP_SCMI_AGENT_ID_OSPM,
+            .scmi_p2a_id = FWK_ID_NONE_INIT,
+        },
+    },
+#endif
     [SCP_TC3_SCMI_SERVICE_IDX_COUNT] = { 0 }
 };
 

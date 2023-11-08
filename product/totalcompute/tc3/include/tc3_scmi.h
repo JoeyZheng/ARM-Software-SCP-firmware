@@ -23,6 +23,9 @@ enum scp_tc3_scmi_agent_id {
 enum scp_tc3_scmi_service_idx {
     SCP_TC3_SCMI_SERVICE_IDX_PSCI,
     SCP_TC3_SCMI_SERVICE_IDX_OSPM_A2P,
+#ifdef BUILD_HAS_SCMI_NOTIFICATIONS
+    SCP_TC3_SCMI_SERVICE_IDX_OSPM_P2A,
+#endif
     SCP_TC3_SCMI_SERVICE_IDX_COUNT,
 };
 

@@ -72,6 +72,33 @@ static const struct fwk_element transport_element_table[] = {
                 0),
         }),
     },
+#ifdef BUILD_HAS_SCMI_NOTIFICATIONS
+#    ifdef BUILD_HAS_MOD_TRANSPORT_FC
+    [TC3_TRANSPORT_SCMI_SERVICE_OSPM_P2A] = {
+#    else
+    [SCP_TC3_SCMI_SERVICE_IDX_OSPM_P2A] = {
+#    endif
+        .name = "OSPM_P2A",
+        .data = &((
+            struct mod_transport_channel_config){
+           .channel_type =
+                MOD_TRANSPORT_CHANNEL_TYPE_REQUESTER,
+           .policies =
+                MOD_TRANSPORT_POLICY_INIT_MAILBOX,
+           .out_band_mailbox_address = (uintptr_t)
+                SCP_SCMI_PAYLOAD_NS_P2A_BASE,
+           .out_band_mailbox_size =
+                SCP_SCMI_PAYLOAD_SIZE,
+           .driver_id = FWK_ID_SUB_ELEMENT_INIT(
+                FWK_MODULE_IDX_MHU3,
+                SCP_TC_MHU3_DEVICE_IDX_SCP_AP_NS,
+                1),
+           .driver_api_id = FWK_ID_API_INIT(
+                FWK_MODULE_IDX_MHU3,
+                0),
+        }),
+    },
+#endif
 #ifdef BUILD_HAS_MOD_TRANSPORT_FC
     [TC3_TRANSPORT_SCMI_PERF_FCH_GROUP_LITTLE_LEVEL_SET] = {
         .name = "FCH_" TC_GROUP_LITTLE_NAME "_LEVEL_SET",

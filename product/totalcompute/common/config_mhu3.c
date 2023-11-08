@@ -30,6 +30,11 @@ struct mod_mhu3_channel_config ap_ns_channels[] = {
         /* FLAG */ 0,
         /* MBX CH */ 0,
         /* FLAG */ 0),
+    MOD_MHU3_INIT_DBCH(
+        /* PBX CH */ 0,
+        /* FLAG */ 1,
+        /* MBX CH */ 0,
+        /* FLAG */ 1),
 };
 
 static const struct fwk_element element_table[
@@ -48,7 +53,7 @@ static const struct fwk_element element_table[
     },
     [SCP_TC_MHU3_DEVICE_IDX_SCP_AP_NS] = {
         .name = "MHU_SCP_AP_NS",
-        .sub_element_count = 1,
+        .sub_element_count = 2,
         .data = &(struct mod_mhu3_device_config) {
             .irq = AP_SCP_MHU4_REC_IRQ,
             .in = SCP_MHU_SCP_AP_RCV_NS,
