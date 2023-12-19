@@ -1,6 +1,6 @@
 #
 # Arm SCP/MCP Software
-# Copyright (c) 2022-2023, Arm Limited and Contributors. All rights reserved.
+# Copyright (c) 2022-2024, Arm Limited and Contributors. All rights reserved.
 #
 # SPDX-License-Identifier: BSD-3-Clause
 #
@@ -14,16 +14,16 @@ add_executable(tc2-bl1)
 target_include_directories(
     tc2-bl1 PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/../include"
                    "${CMAKE_CURRENT_SOURCE_DIR}/../../common/include"
-                   "${CMAKE_CURRENT_SOURCE_DIR}/../../common/scp_romfw"
+                   "${CMAKE_CURRENT_SOURCE_DIR}/../../common"
                    "${CMAKE_CURRENT_SOURCE_DIR}")
 
 # cmake-lint: disable=E1122
 
 target_sources(
     tc2-bl1
-    PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../../common/scp_romfw/config_pl011.c"
-            "${CMAKE_CURRENT_SOURCE_DIR}/../../common/scp_romfw/config_timer.c"
-            "${CMAKE_CURRENT_SOURCE_DIR}/../../common/scp_romfw/config_bootloader.c"
+    PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../../common/config_timer.c"
+            "${CMAKE_CURRENT_SOURCE_DIR}/../../common/config_bootloader.c"
+            "${CMAKE_CURRENT_SOURCE_DIR}/config_pl011.c"
             "${CMAKE_CURRENT_SOURCE_DIR}/config_ppu_v1.c"
             "${CMAKE_CURRENT_SOURCE_DIR}/config_sds.c"
             "${CMAKE_CURRENT_SOURCE_DIR}/config_cmn_booker.c"
@@ -35,7 +35,6 @@ target_sources(
             "${CMAKE_CURRENT_SOURCE_DIR}/config_tc2_bl1.c"
             "${CMAKE_CURRENT_SOURCE_DIR}/config_transport.c"
             "${CMAKE_CURRENT_SOURCE_DIR}/config_mhu2.c")
-
 #
 # Some of our firmware includes require CMSIS.
 #

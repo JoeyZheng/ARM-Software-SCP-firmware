@@ -69,24 +69,24 @@ endif()
 target_include_directories(
     tc2-bl2 PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/../include"
                    "${CMAKE_CURRENT_SOURCE_DIR}/../../common/include"
-                   "${CMAKE_CURRENT_SOURCE_DIR}/../../common/scp_ramfw"
+                   "${CMAKE_CURRENT_SOURCE_DIR}/../../common"
                    "${CMAKE_CURRENT_SOURCE_DIR}")
 
 # cmake-lint: disable=E1122
 
 target_sources(
     tc2-bl2
-    PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../../common/scp_ramfw/config_armv7m_mpu.c"
-            "${CMAKE_CURRENT_SOURCE_DIR}/../../common/scp_ramfw/config_pl011.c"
-            "${CMAKE_CURRENT_SOURCE_DIR}/../../common/scp_ramfw/config_scmi_power_domain.c"
-            "${CMAKE_CURRENT_SOURCE_DIR}/../../common/scp_ramfw/config_scmi_system_power.c"
-            "${CMAKE_CURRENT_SOURCE_DIR}/../../common/scp_ramfw/config_mhu2.c"
-            "${CMAKE_CURRENT_SOURCE_DIR}/../../common/scp_ramfw/config_power_domain.c"
-            "${CMAKE_CURRENT_SOURCE_DIR}/../../common/scp_ramfw/config_ppu_v1.c"
-            "${CMAKE_CURRENT_SOURCE_DIR}/../../common/scp_ramfw/config_scmi.c"
-            "${CMAKE_CURRENT_SOURCE_DIR}/../../common/scp_ramfw/config_scmi_clock.c"
-            "${CMAKE_CURRENT_SOURCE_DIR}/../../common/scp_ramfw/config_system_power.c"
-            "${CMAKE_CURRENT_SOURCE_DIR}/../../common/scp_ramfw/config_transport.c"
+    PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../../common/config_armv7m_mpu.c"
+            "${CMAKE_CURRENT_SOURCE_DIR}/../../common/config_pl011.c"
+            "${CMAKE_CURRENT_SOURCE_DIR}/../../common/config_scmi_power_domain.c"
+            "${CMAKE_CURRENT_SOURCE_DIR}/../../common/config_scmi_system_power.c"
+            "${CMAKE_CURRENT_SOURCE_DIR}/../../common/config_mhu2.c"
+            "${CMAKE_CURRENT_SOURCE_DIR}/../../common/config_power_domain.c"
+            "${CMAKE_CURRENT_SOURCE_DIR}/../../common/config_ppu_v1.c"
+            "${CMAKE_CURRENT_SOURCE_DIR}/../../common/config_scmi.c"
+            "${CMAKE_CURRENT_SOURCE_DIR}/../../common/config_scmi_clock.c"
+            "${CMAKE_CURRENT_SOURCE_DIR}/../../common/config_system_power.c"
+            "${CMAKE_CURRENT_SOURCE_DIR}/../../common/config_transport.c"
             "${CMAKE_CURRENT_SOURCE_DIR}/config_sds.c"
             "${CMAKE_CURRENT_SOURCE_DIR}/config_scmi_perf.c"
             "${CMAKE_CURRENT_SOURCE_DIR}/config_gtimer.c"
