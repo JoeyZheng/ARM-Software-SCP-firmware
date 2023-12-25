@@ -12,6 +12,7 @@
 
 #include <mod_power_domain.h>
 #include <mod_ppu_v1.h>
+#include <mod_tc4_bl1.h>
 
 #include <fwk_element.h>
 #include <fwk_id.h>
@@ -37,8 +38,9 @@
 /* Module configuration data */
 static struct mod_ppu_v1_config ppu_v1_config_data = {
     .pd_notification_id = FWK_ID_NOTIFICATION_INIT(
-        FWK_MODULE_IDX_POWER_DOMAIN,
-        MOD_PD_NOTIFICATION_IDX_POWER_STATE_TRANSITION),
+        FWK_MODULE_IDX_TC4_BL1,
+        MOD_TC4_BL1_NOTIFICATION_IDX_POWER_SYSTOP),
+    .pd_source_id = FWK_ID_MODULE_INIT(FWK_MODULE_IDX_TC4_BL1),
 };
 
 static const struct fwk_element *ppu_v1_get_element_table(fwk_id_t module_id)
@@ -112,14 +114,6 @@ static const struct fwk_element *ppu_v1_get_element_table(fwk_id_t module_id)
     pd_config->ppu.reg_base = SCP_PPU_CLUSTER_BASE;
     pd_config->ppu.irq = FWK_INTERRUPT_NONE;
     pd_config->observer_id = FWK_ID_NONE;
-
-    /*
-     * Configure pd_source_id with the SYSTOP identifier from the power domain
-     * module which is dynamically defined based on the number of cores.
-     */
-    ppu_v1_config_data.pd_source_id = fwk_id_build_element_id(
-        fwk_module_id_power_domain,
-        core_count + cluster_count + PD_STATIC_DEV_IDX_SYSTOP);
 
     return element_table;
 }
