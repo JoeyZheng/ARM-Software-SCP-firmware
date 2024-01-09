@@ -40,7 +40,7 @@ set(SCP_PLATFORM_VARIANT ${SCP_PLATFORM_VARIANT_INIT} CACHE STRING
 
 list(PREPEND SCP_MODULE_PATHS "${CMAKE_SOURCE_DIR}/product/totalcompute/tc4/module/tc4_bl1")
 
-list(PREPEND SCP_MODULE_PATHS "${CMAKE_CURRENT_LIST_DIR}/../../common/module/tc_system")
+list(PREPEND SCP_MODULE_PATHS "${CMAKE_SOURCE_DIR}/product/totalcompute/tc4/module/tc_system")
 
 # The order of the modules in the following list is the order in which the
 # modules are initialized, bound, started during the pre-runtime phase.
