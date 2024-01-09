@@ -191,8 +191,8 @@ static int tc_system_start(fwk_id_t id)
             MOD_PD_LEVEL_2,
             0,
             MOD_PD_STATE_ON,
-            MOD_PD_STATE_ON,
-            MOD_PD_STATE_ON));
+            MOD_PD_STATE_OFF,
+            MOD_PD_STATE_OFF));
 }
 
 static int tc_system_process_notification(
