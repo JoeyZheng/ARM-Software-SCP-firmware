@@ -38,6 +38,7 @@ static struct mod_ppu_v1_config ppu_v1_config_data = {
     .pd_notification_id = FWK_ID_NOTIFICATION_INIT(
         FWK_MODULE_IDX_POWER_DOMAIN,
         MOD_PD_NOTIFICATION_IDX_POWER_STATE_TRANSITION),
+    .is_cluster_ppu_dynamic_mode_configured = true,
 };
 
 static const struct fwk_element ppu_v1_system_element_table[1] = {
