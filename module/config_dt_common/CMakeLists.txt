@@ -36,7 +36,16 @@ foreach(SCP_MODULE IN LISTS SCP_VALID_MODULES)
         message(VERBOSE "looking for DT Module ${SCP_MODULE}\n"
                          "module target: ${SCP_MODULE_TARGET}\n"
                          "module source dir: ${SCP_MODULE_SOURCE_DIR}\n")                         
-        
+
+        # check for bootloader module
+        if("${SCP_MODULE}" STREQUAL "bootloader")
+            target_sources(${SCP_MODULE_TARGET}
+                           PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/config_dt_bootloader.c")
+
+            # do not set SCP_DT_BIND_H_GEN_FROM_INCL - no req enums or defines in header
+        endif()
+        # end bootloader
+
         # add more modules here as required.
 
         # check if the dt module listed has actually had code set up
