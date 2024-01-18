@@ -46,6 +46,16 @@ foreach(SCP_MODULE IN LISTS SCP_VALID_MODULES)
         endif()
         # end bootloader
 
+        # check for clock module
+        if("${SCP_MODULE}" STREQUAL "clock")
+            target_sources(${SCP_MODULE_TARGET}
+                           PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/config_dt_clock.c")
+
+             # add header file to list used to generate defines for dt include 
+             list(APPEND SCP_DT_BIND_H_GEN_FROM_INCL "${CMAKE_CURRENT_SOURCE_DIR}/../clock/include/mod_clock.h")
+        endif()
+        # end clock 
+
         # add more modules here as required.
 
         # check if the dt module listed has actually had code set up
