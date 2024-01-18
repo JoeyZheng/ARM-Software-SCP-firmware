@@ -1,0 +1,45 @@
+# Arm SCP/MCP Software
+# Copyright (c) 2022-2023, Linaro Ltd and Contributors. All rights reserved.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+
+description: SCP Juno debug module configuration settings
+
+compatible: "arm,juno-debug-scp-mod"
+
+include: base.yaml
+
+properties:
+    scp-ids:
+      type: phandle-array
+      required: true
+      description: 
+          Ordered list of SCP IDs listing the element IDS for timer-id, 
+          pd-debug-sys-id, pd-big-sstop-id and pd-little-sstop-id
+    
+    label:
+      required: true
+      description: name of debug element
+
+    arm,atclk-div-mhz:
+      type: int
+      required: true
+      description: AT clock divider freq in MHz - Juno R0 platform
+
+    arm,atclk-div-mhz-r1r2:
+      type: int
+      required: true
+      description: AT clock divider freq in MHz - Juno R1/R2 platform
+
+    arm,pclk-div:
+      type: int
+      description: clock divider value for pclk
+      required: true
+
+    arm,trace-clk-div-mhz:
+      type: int
+      description: trace clock divider in MHz
+      required: true
+
+
+    
