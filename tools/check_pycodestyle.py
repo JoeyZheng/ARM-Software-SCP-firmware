@@ -21,7 +21,7 @@ def run():
     print(banner('Run PyCodeStyle tests'))
 
     result = subprocess.Popen(
-        'python -m pycodestyle {}'.format(INCLUDE_DIRECTORIES),
+        'python3 -m pycodestyle {}'.format(INCLUDE_DIRECTORIES),
         shell=True,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE)
