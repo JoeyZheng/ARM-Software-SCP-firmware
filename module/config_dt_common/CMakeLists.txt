@@ -39,6 +39,8 @@ foreach(SCP_MODULE IN LISTS SCP_VALID_MODULES)
 
         # check for bootloader module
         if("${SCP_MODULE}" STREQUAL "bootloader")
+            set(dt_module_found TRUE)
+            
             target_sources(${SCP_MODULE_TARGET}
                            PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/config_dt_bootloader.c")
 
@@ -48,6 +50,8 @@ foreach(SCP_MODULE IN LISTS SCP_VALID_MODULES)
 
         # check for clock module
         if("${SCP_MODULE}" STREQUAL "clock")
+            set(dt_module_found TRUE)
+            
             target_sources(${SCP_MODULE_TARGET}
                            PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/config_dt_clock.c")
 
@@ -55,6 +59,17 @@ foreach(SCP_MODULE IN LISTS SCP_VALID_MODULES)
              list(APPEND SCP_DT_BIND_H_GEN_FROM_INCL "${CMAKE_CURRENT_SOURCE_DIR}/../clock/include/mod_clock.h")
         endif()
         # end clock 
+
+        # check module gtimer
+        if("${SCP_MODULE}" STREQUAL "gtimer")
+            set(dt_module_found TRUE)
+            
+            target_sources(${SCP_MODULE_TARGET}
+                           PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/config_dt_gtimer.c")
+
+            # do not set SCP_DT_BIND_H_GEN_FROM_INCL - no req enums or defines in header
+        endif()
+        # end gtimer
 
         # add more modules here as required.
 
