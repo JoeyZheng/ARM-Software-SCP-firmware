@@ -1,0 +1,41 @@
+# Arm SCP/MCP Software
+# Copyright (c) 2022-2023, Linaro Ltd and Contributors. All rights reserved.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+
+description: SCP SCMI base configuration
+
+compatible: "scp,scmi"
+
+include: base.yaml
+
+properties:
+    protocol-count-max:
+        description: Maximum protocols for this SCMI server
+        required: true
+        type: int
+
+    vendor-identifier:
+        required: true
+        type: string
+
+    sub-vendor-identifier:
+        required: true
+        type: string
+
+    psci-dis-protocols:
+        description: PCSI disallowed protocols
+        required: false
+        type: array
+
+    agent-table: 
+        description: array of phandle references to agents in the system
+        type: phandles
+        required: true
+
+    clock-max-pending-trans:
+        description:
+            Maximum pending clock transactions permitted
+        type: int
+        required: true
+        

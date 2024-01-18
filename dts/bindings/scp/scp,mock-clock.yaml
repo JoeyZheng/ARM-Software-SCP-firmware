@@ -1,0 +1,24 @@
+# Arm SCP/MCP Software
+# Copyright (c) 2022-2023, Linaro Ltd and Contributors. All rights reserved.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+
+description: SCP Mock Clock
+
+compatible: "scp,mock-clock"
+
+include: base.yaml
+
+properties:
+    label:
+      required: true
+
+    rate-table:
+      description: Table of frequency values
+      type: array
+      required: true
+
+    default-rate:
+      description: Default rate used for clock
+      type: int
+      required: true

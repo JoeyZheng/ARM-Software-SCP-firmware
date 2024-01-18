@@ -1,0 +1,20 @@
+# Arm SCP/MCP Software
+# Copyright (c) 2022-2023, Linaro Ltd and Contributors. All rights reserved.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+
+description: SCP Reset Domain Configuration
+
+compatible: "scp,reset-domain-config"
+
+include: base.yaml
+
+properties:
+  
+  scp-ids:
+    required: true
+    description: SCP framework ID used for notifications
+          Modules that are interested in the status of an auto reset of a
+          reset domain will use ID to subscribe to the notification. 
+          Present if build is using notifications
+    type: phandle-array

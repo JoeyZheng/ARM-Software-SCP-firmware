@@ -1,0 +1,27 @@
+# Arm SCP/MCP Software
+# Copyright (c) 2023, Linaro Ltd and Contributors. All rights reserved.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+
+description: defines configuration of a device 
+            in the table of reset domain elements
+
+compatible: "scp,mod-juno-reset"
+
+include: base.yaml
+
+properties:
+  scp,hardware:
+    required: true
+    description: base address of hardware device providing reset register
+    type: phandle
+
+  label:
+    required: true
+    description: name of reset domain device
+
+  elem-idx: 
+    required: true
+    type: int
+    description: table element index
+

@@ -1,0 +1,34 @@
+# Arm SCP/MCP Software
+# Copyright (c) 2022-2023, Linaro Ltd and Contributors. All rights reserved.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+
+description: SCP SCMI clock table configuration
+
+compatible: "scp,scmi-clock-table"
+
+include: base.yaml
+
+properties:
+  label:
+    description:
+      Name of clock table. Used in C code as object name and reference.
+    required: true
+
+child-binding:
+    description: 
+      Table of clocks controlled by a SCMI agent. 
+      Order of declaration forms order in table, and ID required to access.
+
+
+
+    properties:
+        scp-ids:
+          type: phandle-array
+          description: SCP ID referring to the clock being controlled
+          required: true
+
+        starts-enabled:
+          type: boolean
+          description: Flag to indicate if this clock is enabled at start of SCMI service.
+          required: false
