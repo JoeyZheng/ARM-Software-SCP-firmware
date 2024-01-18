@@ -95,6 +95,18 @@ foreach(SCP_MODULE IN LISTS SCP_VALID_MODULES)
        
         endif()
         # end
+
+        # check module pl011
+        if("${SCP_MODULE}" STREQUAL "pl011")
+             set(dt_module_found TRUE)
+             target_sources(${SCP_MODULE_TARGET}
+                    PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/config_dt_pl011.c")
+
+              # do not set SCP_DT_BIND_H_GEN_FROM_INCL - no req emums or defines in header             
+       
+        endif()
+        # end pl011
+        
         # add more modules here as required.
 
         # check if the dt module listed has actually had code set up
