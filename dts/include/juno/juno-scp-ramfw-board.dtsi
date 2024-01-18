@@ -1,0 +1,112 @@
+/*
+ * Arm SCP/MCP Software
+ * Copyright (c) 2021, Arm Limited and Contributors. All rights reserved.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+/* 
+ * SCP firmware framework configuration for Juno scp_ramfw 
+ * BOARD platform variant. 
+ */
+
+/ {
+    
+    
+    scp-fwk {
+        /* I2S clock for board variant */
+        scp-clk-dev@0 {
+            compatible = "scp,clk-dev";
+            name = "I2SCLK";
+            scp-ids = <&elem_id FWK_MODULE_IDX_JUNO_CDCEL937 JUNO_CLOCK_CDCEL937_IDX_I2SCLK>,
+                      <&api_id FWK_MODULE_IDX_JUNO_CDCEL937 MOD_JUNO_CDCEL937_API_IDX_CLOCK_DRIVER>;
+            
+        };
+
+        /*sensor configuration tables */
+        scp-sensors {
+            /* baseline set of sensors controlled in Juno hardware */
+            juno-r0 {
+                compatible = "scp,sensor";
+                label = "juno_r0_sensor_table";
+                table-idx = <0>;
+                
+                /* MPIC sensor */
+                temp-pmic {
+                    elem-idx = <MOD_JUNO_SENSOR_XRP7724_PMIC_TEMP_IDX>;
+                    sensor-name = "TEMP_PMIC";
+                    scp-ids = <&elem_id FWK_MODULE_IDX_JUNO_XRP7724 0>, 
+                              <&api_id FWK_MODULE_IDX_JUNO_XRP7724 MOD_JUNO_XRP7724_API_IDX_SENSOR>;
+                    scp-id-names = "driver", "driver_api";
+                };
+
+                /* PVT sensors */
+                volt-big {
+                    elem-idx = <MOD_JUNO_PVT_SENSOR_VOLT_BIG>;
+                    sensor-name = "VOLT_BIG";
+                    scp-ids = <&sub_elem_id FWK_MODULE_IDX_JUNO_PVT JUNO_PVT_GROUP_BIG 0>, 
+                              <&api_id FWK_MODULE_IDX_JUNO_PVT 0>;
+                    scp-id-names = "driver", "driver_api";
+                };
+
+                volt-little {
+                    elem-idx = <MOD_JUNO_PVT_SENSOR_VOLT_LITTLE>;
+                    sensor-name = "VOLT_LITTLE";
+                    scp-ids = <&sub_elem_id FWK_MODULE_IDX_JUNO_PVT JUNO_PVT_GROUP_LITTLE 0>, 
+                              <&api_id FWK_MODULE_IDX_JUNO_PVT 0>;
+                    scp-id-names = "driver", "driver_api";
+                };
+
+                temp-soc {
+                    elem-idx = <MOD_JUNO_PVT_SENSOR_TEMP_SOC>;
+                    sensor-name = "TEMP_SOC";
+                    scp-ids = <&sub_elem_id FWK_MODULE_IDX_JUNO_PVT JUNO_PVT_GROUP_SOC 0>, 
+                              <&api_id FWK_MODULE_IDX_JUNO_PVT 0>;
+                    scp-id-names = "driver", "driver_api";
+                };
+
+                volt-sys {
+                    elem-idx = <MOD_JUNO_PVT_SENSOR_VOLT_SYS>;
+                    sensor-name = "VOLT_SYS";
+                    scp-ids = <&sub_elem_id FWK_MODULE_IDX_JUNO_PVT JUNO_PVT_GROUP_STDCELL 0>, 
+                              <&api_id FWK_MODULE_IDX_JUNO_PVT 0>;
+                    scp-id-names = "driver", "driver_api";
+                };
+
+                /* ADC sensors */
+
+                brd-volt-sys {
+                    elem-idx = <MOD_JUNO_SENSOR_VOLT_SYS_IDX>;
+                    sensor-name = "BRD_VOLT_SYS";
+                    scp-ids = <&sub_elem_id FWK_MODULE_IDX_JUNO_ADC ADC_TYPE_VOLT ADC_DEV_SYS>, 
+                              <&api_id FWK_MODULE_IDX_JUNO_ADC MOD_JUNO_ADC_API_IDX_DRIVER>;
+                    scp-id-names = "driver", "driver_api";                    
+                };
+
+                brd-volt-big {
+                    elem-idx = <MOD_JUNO_SENSOR_VOLT_BIG_IDX>;
+                    sensor-name = "BRD_VOLT_BIG";
+                    scp-ids = <&sub_elem_id FWK_MODULE_IDX_JUNO_ADC ADC_TYPE_VOLT ADC_DEV_BIG>, 
+                              <&api_id FWK_MODULE_IDX_JUNO_ADC MOD_JUNO_ADC_API_IDX_DRIVER>;
+                    scp-id-names = "driver", "driver_api";
+                };
+                
+                brd-volt-little {
+                    elem-idx = <MOD_JUNO_SENSOR_VOLT_LITTLE_IDX>;
+                    sensor-name = "BRD_VOLT_LITTLE";
+                    scp-ids = <&sub_elem_id FWK_MODULE_IDX_JUNO_ADC ADC_TYPE_VOLT ADC_DEV_LITTLE>, 
+                              <&api_id FWK_MODULE_IDX_JUNO_ADC MOD_JUNO_ADC_API_IDX_DRIVER>;
+                    scp-id-names = "driver", "driver_api";
+                };
+
+                brd-volt-gpu {
+                    elem-idx = <MOD_JUNO_SENSOR_VOLT_GPU_IDX>;
+                    sensor-name = "BRD_VOLT_GPU";
+                    scp-ids = <&sub_elem_id FWK_MODULE_IDX_JUNO_ADC ADC_TYPE_VOLT ADC_DEV_GPU>, 
+                              <&api_id FWK_MODULE_IDX_JUNO_ADC MOD_JUNO_ADC_API_IDX_DRIVER>;
+                    scp-id-names = "driver", "driver_api";
+                };
+            };
+        };
+    };
+};

@@ -1,0 +1,181 @@
+/*
+ * Arm SCP/MCP Software
+ * Copyright (c) 2022,2023 Arm Limited and Contributors. All rights reserved.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+/* SCP scmi configuration */
+
+/ {
+    scp-fwk {
+        scmi {
+            #address-cells = <1>;
+            #size-cells = <0>;
+
+            scmi-service@0 {
+                compatible = "scp,scmi-service";
+                label = "PSCI";
+                service-idx = <JUNO_SCMI_SERVICE_IDX_PSCI_A2P>;
+                scp-ids = <&elem_id FWK_MODULE_IDX_TRANSPORT JUNO_SCMI_SERVICE_IDX_PSCI_A2P>,
+                        <&api_id FWK_MODULE_IDX_TRANSPORT MOD_TRANSPORT_API_IDX_SCMI_TO_TRANSPORT>,
+                        <&notify_id FWK_MODULE_IDX_TRANSPORT MOD_TRANSPORT_NOTIFICATION_IDX_INITIALIZED>;
+                scmi-agent-id = <JUNO_SCMI_AGENT_IDX_PSCI>;
+            };
+
+            scmi_service_ospm_a2p_0: scmi-service@1 {
+                compatible = "scp,scmi-service";
+                label = "OSPM-A2P-0";
+                service-idx = <JUNO_SCMI_SERVICE_IDX_OSPM_A2P_0>;
+                scp-ids = <&elem_id FWK_MODULE_IDX_TRANSPORT JUNO_SCMI_SERVICE_IDX_OSPM_A2P_0>,
+                        <&api_id FWK_MODULE_IDX_TRANSPORT MOD_TRANSPORT_API_IDX_SCMI_TO_TRANSPORT>,
+                        <&notify_id FWK_MODULE_IDX_TRANSPORT MOD_TRANSPORT_NOTIFICATION_IDX_INITIALIZED>;
+                scmi-agent-id = <JUNO_SCMI_AGENT_IDX_OSPM>;
+            };                     
+
+            scmi_service_ospm_a2p_1: scmi-service@2 {
+                compatible = "scp,scmi-service";
+                label = "OSPM-A2P-1";
+                service-idx = <JUNO_SCMI_SERVICE_IDX_OSPM_A2P_1>;
+                scp-ids = <&elem_id FWK_MODULE_IDX_TRANSPORT JUNO_SCMI_SERVICE_IDX_OSPM_A2P_1>,
+                        <&api_id FWK_MODULE_IDX_TRANSPORT MOD_TRANSPORT_API_IDX_SCMI_TO_TRANSPORT>,
+                        <&notify_id FWK_MODULE_IDX_TRANSPORT MOD_TRANSPORT_NOTIFICATION_IDX_INITIALIZED>;
+                scmi-agent-id = <JUNO_SCMI_AGENT_IDX_OSPM>;
+            };
+            
+            /* SCMI clocks controlled by OSPM */
+            ospm_clock_table: scmi-clock-table {
+                compatible = "scp,scmi-clock-table";
+                label = "ospm_clock_table";
+
+                big_clk {
+                    scp-ids = <&elem_id FWK_MODULE_IDX_CLOCK JUNO_CLOCK_IDX_BIGCLK>;
+                    starts-enabled;
+                };
+
+                little_clk {
+                    scp-ids = <&elem_id FWK_MODULE_IDX_CLOCK JUNO_CLOCK_IDX_LITTLECLK>;
+                    starts-enabled;
+                };
+
+                gpu_clk {
+                    scp-ids = <&elem_id FWK_MODULE_IDX_CLOCK JUNO_CLOCK_IDX_GPUCLK>;
+                    starts-enabled;
+                };
+
+                hdlcd0 {
+                    scp-ids = <&elem_id FWK_MODULE_IDX_CLOCK JUNO_CLOCK_IDX_HDLCD0>;
+                    starts-enabled;
+                };
+
+                hdlcd1 {
+                    scp-ids = <&elem_id FWK_MODULE_IDX_CLOCK JUNO_CLOCK_IDX_HDLCD1>;
+                    starts-enabled;
+                };
+
+                i2s_clk {
+                    scp-ids = <&elem_id FWK_MODULE_IDX_CLOCK JUNO_CLOCK_IDX_I2SCLK>;
+                    starts-enabled;
+                };
+            };
+
+            agent_psci: scmi-agent@0 {
+                compatible = "scp,scmi-agent";
+                label = "PSCI";
+                agent-type = <SCMI_AGENT_TYPE_PSCI>;
+                agent-idx = <JUNO_SCMI_AGENT_IDX_PSCI>;
+            };
+
+            agent_ospm: scmi-agent@1 {
+                compatible = "scp,scmi-agent";
+                label = "OSPM";
+                agent-type = <SCMI_AGENT_TYPE_OSPM>;
+                agent-idx = <JUNO_SCMI_AGENT_IDX_OSPM>;
+                scmi-clock-table = <&ospm_clock_table>;                     
+            };
+
+            scmi-base {
+                compatible = "scp,scmi";
+                protocol-count-max = <6>;
+                vendor-identifier = "arm";
+                sub-vendor-identifier = "arm";
+                psci-dis-protocols = <MOD_SCMI_PROTOCOL_ID_SENSOR MOD_SCMI_PROTOCOL_ID_CLOCK MOD_SCMI_PROTOCOL_ID_PERF>;
+                agent-table = <&agent_psci &agent_ospm>;
+                clock-max-pending-trans = <0>;
+            };
+
+            /* set up DVFS controls */
+            scmi-perf {
+                compatible = "scp,scmi-perf";
+                reg = <SCMI_FAST_CHANNEL_BASE>;
+                perf-domain-indexes = <DVFS_ELEMENT_IDX_LITTLE DVFS_ELEMENT_IDX_BIG DVFS_ELEMENT_IDX_GPU>;
+                scp-ids = <&sub_elem_id FWK_MODULE_IDX_TIMER 0 JUNO_SCMI_FAST_CHANNEL_IDX>;
+                fast-chan-rate-limit = <SCMI_PERF_FC_MIN_RATE_LIMIT>;
+            };
+
+            scmi-power {
+                compatible = "scp,scmi-system-power";
+                system-view = <MOD_SCMI_SYSTEM_VIEW_FULL>;
+                system-suspend = <MOD_SYSTEM_POWER_POWER_STATE_SLEEP0>;
+                timeout-us = <1000>;
+                scp-ids = <&sub_elem_id FWK_MODULE_IDX_TIMER JUNO_ALARM_ELEMENT_IDX JUNO_SYSTEM_POWER_ALARM_IDX>, 
+                          <&elem_id FWK_MODULE_IDX_SYSTEM_POWER MOD_SYSTEM_POWER_API_IDX_PD_DRIVER>;
+                scp-id-names = "alarm", "wakeup";
+
+            }; 
+
+            transport {
+                    #address-cells = <1>;
+                    #size-cells = <1>;
+
+                psci_a2p {
+                    compatible = "scp,transport";
+
+                    /* out of band mailbox addresses */                                        
+                    reg = <SCMI_PAYLOAD_S_A2P_BASE SCMI_PAYLOAD_SIZE>;
+
+                    channel-type = <MOD_TRANSPORT_CHANNEL_TYPE_COMPLETER>;
+                    channel-policies = <(MOD_TRANSPORT_POLICY_INIT_MAILBOX | MOD_TRANSPORT_POLICY_SECURE)>;
+
+                    scp-ids =   <&sub_elem_id FWK_MODULE_IDX_MHU JUNO_MHU_DEVICE_IDX_S 0>,
+                                <&api_id FWK_MODULE_IDX_MHU  0>,
+                                <&elem_id FWK_MODULE_IDX_POWER_DOMAIN POWER_DOMAIN_IDX_SYSTOP>;
+                    scp-id-names = "driver", "driver_api", "pd_source";
+                };
+
+                ospm_a2p_0 {
+                    compatible = "scp,transport";
+
+                    /* out of band mailbox addresses */                                        
+                    reg = <SCMI_PAYLOAD_LOW_A2P_BASE SCMI_PAYLOAD_SIZE>;
+
+                    channel-type = <MOD_TRANSPORT_CHANNEL_TYPE_COMPLETER>;
+                    channel-policies = <(MOD_TRANSPORT_POLICY_INIT_MAILBOX)>;
+
+                    scp-ids =   <&sub_elem_id FWK_MODULE_IDX_MHU JUNO_MHU_DEVICE_IDX_NS_L 0>,
+                                <&api_id FWK_MODULE_IDX_MHU  0>,
+                                <&elem_id FWK_MODULE_IDX_POWER_DOMAIN POWER_DOMAIN_IDX_SYSTOP>;
+                    scp-id-names = "driver", "driver_api", "pd_source";
+                };
+
+                ospm_a2p_1 {
+                    compatible = "scp,transport";
+
+                    /* out of band mailbox addresses */                                        
+                    reg = <SCMI_PAYLOAD_HIGH_A2P_BASE SCMI_PAYLOAD_SIZE>;
+
+                    channel-type = <MOD_TRANSPORT_CHANNEL_TYPE_COMPLETER>;
+                    channel-policies = <MOD_TRANSPORT_POLICY_INIT_MAILBOX>;
+
+                    scp-ids =   <&sub_elem_id FWK_MODULE_IDX_MHU JUNO_MHU_DEVICE_IDX_NS_H 0>,
+                                <&api_id FWK_MODULE_IDX_MHU  0>,
+                                <&elem_id FWK_MODULE_IDX_POWER_DOMAIN POWER_DOMAIN_IDX_SYSTOP>;
+                    scp-id-names = "driver", "driver_api", "pd_source";
+                };
+
+
+
+            };
+        };            
+    };
+};     

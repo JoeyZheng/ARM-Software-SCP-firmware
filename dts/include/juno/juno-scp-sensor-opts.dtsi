@@ -1,0 +1,162 @@
+/* 
+ * Arm SCP/MCP Software
+ * Copyright (c) 2023, Arm Limited and Contributors. All rights reserved.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+/* SCP firmware framework configuration for Juno scp_ramfw 
+   Optional sensors when using full set of juno sensors
+ */
+
+
+/ {
+    
+    scp-fwk {
+        
+        scp-sensors {
+
+            juno-r0-full {
+                compatible = "scp,sensor";
+                label = "juno_r0_full_sensor_table";
+                table-idx = <1>;
+                
+                brd-curr-sys {
+                    /* subtract last non-optional index to get 0 ref for this table */
+                    elem-idx = <(MOD_JUNO_SENSOR_AMPS_SYS_IDX - MOD_JUNO_SENSOR_VOLT_GPU_IDX)>;
+                    sensor-name = "BRD_CURR_SYS";
+                    scp-ids = <&sub_elem_id FWK_MODULE_IDX_JUNO_ADC ADC_TYPE_CURRENT ADC_DEV_SYS>, 
+                              <&api_id FWK_MODULE_IDX_JUNO_ADC MOD_JUNO_ADC_API_IDX_DRIVER>;
+                    scp-id-names = "driver", "driver_api";
+                };
+                
+                brd-curr-big {
+                    elem-idx = <(MOD_JUNO_SENSOR_AMPS_BIG_IDX - MOD_JUNO_SENSOR_VOLT_GPU_IDX)>;
+                    sensor-name = "BRD_CURR_BIG";
+                    scp-ids = <&sub_elem_id FWK_MODULE_IDX_JUNO_ADC ADC_TYPE_CURRENT ADC_DEV_BIG>, 
+                              <&api_id FWK_MODULE_IDX_JUNO_ADC MOD_JUNO_ADC_API_IDX_DRIVER>;
+                    scp-id-names = "driver", "driver_api";
+                };
+                
+                brd-curr-little {
+                    elem-idx = <(MOD_JUNO_SENSOR_AMPS_LITTLE_IDX - MOD_JUNO_SENSOR_VOLT_GPU_IDX)>;
+                    sensor-name = "BRD_CURR_LITTLE";
+                    scp-ids = <&sub_elem_id FWK_MODULE_IDX_JUNO_ADC ADC_TYPE_CURRENT ADC_DEV_LITTLE>, 
+                              <&api_id FWK_MODULE_IDX_JUNO_ADC MOD_JUNO_ADC_API_IDX_DRIVER>;
+                    scp-id-names = "driver", "driver_api";
+                };
+                
+                brd-curr-gpu {
+                    elem-idx = <( MOD_JUNO_SENSOR_AMPS_GPU_IDX - MOD_JUNO_SENSOR_VOLT_GPU_IDX)>;
+                    sensor-name = "BRD_CURR_CPU";
+                    scp-ids = <&sub_elem_id FWK_MODULE_IDX_JUNO_ADC ADC_TYPE_CURRENT ADC_DEV_GPU>, 
+                              <&api_id FWK_MODULE_IDX_JUNO_ADC MOD_JUNO_ADC_API_IDX_DRIVER>;
+                    scp-id-names = "driver", "driver_api";
+                };
+                
+                brd-pwr-sys {
+                    elem-idx = <(MOD_JUNO_SENSOR_WATT_SYS_IDX - MOD_JUNO_SENSOR_VOLT_GPU_IDX)>;
+                    sensor-name = "BRD_PWR_SYS";
+                    scp-ids = <&sub_elem_id FWK_MODULE_IDX_JUNO_ADC ADC_TYPE_POWER ADC_DEV_SYS>, 
+                              <&api_id FWK_MODULE_IDX_JUNO_ADC MOD_JUNO_ADC_API_IDX_DRIVER>;
+                    scp-id-names = "driver", "driver_api";
+                };
+                
+                brd-pwr-big {
+                    elem-idx = <(MOD_JUNO_SENSOR_WATT_BIG_IDX - MOD_JUNO_SENSOR_VOLT_GPU_IDX)>;
+                    sensor-name = "BRD_PWR_BIG";
+                    scp-ids = <&sub_elem_id FWK_MODULE_IDX_JUNO_ADC ADC_TYPE_POWER ADC_DEV_BIG>, 
+                              <&api_id FWK_MODULE_IDX_JUNO_ADC MOD_JUNO_ADC_API_IDX_DRIVER>;
+                    scp-id-names = "driver", "driver_api";
+                };
+                
+                brd-pwr-little {
+                    elem-idx = <( MOD_JUNO_SENSOR_WATT_LITTLE_IDX - MOD_JUNO_SENSOR_VOLT_GPU_IDX)>;
+                    sensor-name = "BRD_PWR_LITTLE";
+                    scp-ids = <&sub_elem_id FWK_MODULE_IDX_JUNO_ADC ADC_TYPE_POWER ADC_DEV_LITTLE>, 
+                              <&api_id FWK_MODULE_IDX_JUNO_ADC MOD_JUNO_ADC_API_IDX_DRIVER>;
+                    scp-id-names = "driver", "driver_api";
+                };
+                
+                brd-pwr-gpu {
+                    elem-idx = <(MOD_JUNO_SENSOR_WATT_GPU_IDX - MOD_JUNO_SENSOR_VOLT_GPU_IDX)>;
+                    sensor-name = "BRD_PWR_GPU";
+                    scp-ids = <&sub_elem_id FWK_MODULE_IDX_JUNO_ADC ADC_TYPE_POWER ADC_DEV_GPU>, 
+                              <&api_id FWK_MODULE_IDX_JUNO_ADC MOD_JUNO_ADC_API_IDX_DRIVER>;
+                    scp-id-names = "driver", "driver_api";
+                };
+                
+                brd-energy-sys {
+                    elem-idx = <(MOD_JUNO_SENSOR_JOULE_SYS_IDX - MOD_JUNO_SENSOR_VOLT_GPU_IDX)>;
+                    sensor-name = "BRD_ENRG_SYS";
+                    scp-ids = <&sub_elem_id FWK_MODULE_IDX_JUNO_ADC ADC_TYPE_ENERGY ADC_DEV_SYS>, 
+                              <&api_id FWK_MODULE_IDX_JUNO_ADC MOD_JUNO_ADC_API_IDX_DRIVER>;
+                    scp-id-names = "driver", "driver_api";
+                };
+                
+                brd-energy-big {
+                    elem-idx = <(MOD_JUNO_SENSOR_JOULE_BIG_IDX - MOD_JUNO_SENSOR_VOLT_GPU_IDX)>;
+                    sensor-name = "BRD_ENRG_BIG";
+                    scp-ids = <&sub_elem_id FWK_MODULE_IDX_JUNO_ADC ADC_TYPE_ENERGY ADC_DEV_BIG>, 
+                              <&api_id FWK_MODULE_IDX_JUNO_ADC MOD_JUNO_ADC_API_IDX_DRIVER>;
+                    scp-id-names = "driver", "driver_api";
+                };
+                
+                brg-energy-little {
+                    elem-idx = <(MOD_JUNO_SENSOR_JOULE_LITTLE_IDX - MOD_JUNO_SENSOR_VOLT_GPU_IDX)>;
+                    sensor-name = "BRD_ENRG_LITTLE";
+                    scp-ids = <&sub_elem_id FWK_MODULE_IDX_JUNO_ADC ADC_TYPE_ENERGY ADC_DEV_LITTLE>, 
+                              <&api_id FWK_MODULE_IDX_JUNO_ADC MOD_JUNO_ADC_API_IDX_DRIVER>;
+                    scp-id-names = "driver", "driver_api";
+                };
+                
+                brd-energy-gpu {
+                    elem-idx = <(MOD_JUNO_SENSOR_JOULE_GPU_IDX - MOD_JUNO_SENSOR_VOLT_GPU_IDX)>;
+                    sensor-name = "BRD_ENRG_GPU";
+                    scp-ids = <&sub_elem_id FWK_MODULE_IDX_JUNO_ADC ADC_TYPE_energy ADC_DEV_gpu>, 
+                              <&api_id FWK_MODULE_IDX_JUNO_ADC MOD_JUNO_ADC_API_IDX_DRIVER>;
+                    scp-id-names = "driver", "driver_api";
+                };
+            };
+
+            juno-r1-r2-full {
+                compatible = "scp,sensor";
+                label = "juno_r1_r2_full_sensor_table";
+                table-idx = <2>;
+                
+                temp-big {
+                    elem-idx = <0>;
+                    sensor-name = "TEMP_BIG";
+                    scp-ids = <&sub_elem_id FWK_MODULE_IDX_JUNO_PVT JUNO_PVT_GROUP_BIG 1>, 
+                              <&api_id FWK_MODULE_IDX_JUNO_PVT, 0>;
+                    scp-id-names = "driver", "driver_api";
+                };
+                
+                temp-little {
+                    elem-idx = <1>;
+                    sensor-name = "TEMP_LITTLE";
+                    scp-ids = <&sub_elem_id FWK_MODULE_IDX_JUNO_PVT JUNO_PVT_GROUP_LITTLE 1>, 
+                              <&api_id FWK_MODULE_IDX_JUNO_PVT, 0>;
+                    scp-id-names = "driver", "driver_api";
+                };
+                
+                temp-gpu-0 {
+                    elem-idx = <2>;
+                    sensor-name = "TEMP_GPU_0";
+                    scp-ids = <&sub_elem_id FWK_MODULE_IDX_JUNO_PVT JUNO_PVT_GROUP_GPU 0>, 
+                              <&api_id FWK_MODULE_IDX_JUNO_PVT, 0>;
+                    scp-id-names = "driver", "driver_api";
+                };
+                
+                temp-gpu-1 {
+                    elem-idx = <3>;
+                    sensor-name = "TEMP_GPU_1";
+                    scp-ids = <&sub_elem_id FWK_MODULE_IDX_JUNO_PVT JUNO_PVT_GROUP_GPU 1>, 
+                              <&api_id FWK_MODULE_IDX_JUNO_PVT, 0>;
+                    scp-id-names = "driver", "driver_api";
+                };
+
+            };
+        };
+    };
+};

@@ -1,0 +1,44 @@
+/*
+ * Arm SCP/MCP Software
+ * Copyright (c) 2021, Arm Limited and Contributors. All rights reserved.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+/* DTS overlay if SCP_ENABLE_DEBUG_UNIT defined */
+
+/ {
+    scp-fwk {
+   
+   
+        /* generic SCP debug module */
+        scp-debug@0 {
+            compatible = "scp,debug";
+            label = "JUNO DEBUG";
+            scp-ids = <&elem_id FWK_MODULE_IDX_JUNO_DEBUG 0>,
+                      <&api_id FWK_MODULE_IDX_JUNO_DEBUG MOD_JUNO_DEBUG_API_IDX_DRIVER>;
+        };
+
+        /* SCP juno debug module - configures clocks and API ids */
+        juno-debug@0 {
+            compatible = "arm,juno-debug-scp-mod";
+            label = "JUNO DEBUG";
+            arm,atclk-div-mhz = <533>;
+            arm,atclk-div-mhz-r1r2 = <400>;
+            arm,pclk-div = <1>;
+            arm,trace-clk-div-mhz = <150>;
+            scp-ids = <&elem_id FWK_MODULE_IDX_TIMER 0>, /* timer ID */
+                      <&elem_id FWK_MODULE_IDX_POWER_DOMAIN POWER_DOMAIN_IDX_DBGSYS>, /* pd-debug-sys-id */
+                      <&elem_id FWK_MODULE_IDX_POWER_DOMAIN POWER_DOMAIN_IDX_BIG_SSTOP>, /* pd-big-sstop-id */
+                      <&elem_id FWK_MODULE_IDX_POWER_DOMAIN POWER_DOMAIN_IDX_LITTLE_SSTOP>; /* pd-little-sstop-id */
+        };
+
+        /* SCP power domain - IDs for scmi module if debug module selected */
+        scmi-power-domain {
+            compatible = "scp,scmi-pwr-domain";
+            /* scp module IDs - power domain ID, then debug ID */
+            scp-ids = <&elem_id FWK_MODULE_IDX_POWER_DOMAIN POWER_DOMAIN_IDX_DBGSYS>,
+                      <&elem_id FWK_MODULE_IDX_JUNO_DEBUG 0>;
+        }; 
+    };
+};
