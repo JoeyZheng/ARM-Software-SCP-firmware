@@ -1,0 +1,32 @@
+# Arm SCP/MCP Software
+# Copyright (c) 2022-2023, Linaro Ltd and Contributors. All rights reserved.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+
+description: SCP SCMI performance module configuration
+
+compatible: "scp,scmi-perf"
+
+include: base.yaml
+
+properties:
+      reg:
+        description: base address of the performance shared memory area
+        required: true
+
+      scp-ids:
+        description: SCP sub element ID for the perf fast channel timer
+        required: true
+        type: phandle-array
+      
+      fast-chan-rate-limit:
+        description: rate limit for fast channel messages
+        required: true
+        type: int
+
+      perf-domain-indexes: 
+        description: Domain indexes for controlled DVFS elements
+        required: true
+        type: array
+
+       

@@ -1,0 +1,51 @@
+# Arm SCP/MCP Software
+# Copyright (c) 2022-2023, Linaro Ltd and Contributors. All rights reserved.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+
+description: Configure SCP HAL Module used to provide transport for inter-processor messages.
+             Each instance represents a single transport channel.
+
+compatible: "scp,transport"
+
+include: base.yaml
+
+properties:
+    reg:
+      required: false
+      description: Out of band mailbox address and size.
+
+    in-band-size:
+      required: false
+      type: int
+      description: in band mailbox size.
+
+    transport-type: 
+      required: false
+      type: int
+      description: Channel transport type (In-band, Out-band, etc.)
+
+    channel-type: 
+      required: true
+      type: int
+      description: Channel role (requester or completer)
+
+    channel-policies:
+      required: true
+      type: int
+      description: Channel policies 
+
+    scp-ids: 
+      required: true
+      type: phandle-array
+      description: Define SCP framework IDs for transport. Define IDs by names.
+                   Reqiured names are "driver" and "driver_api". 
+                   Optional names are "pd_source" for out-band transport; "signal_api" for non-SCMI channels.
+
+    scp-id-names:
+      required: true
+      type: string-array
+      description: Names of framework IDs. 
+                   Permitted values are "driver", "driver_api", "pd_source", "signal_api".
+                   
+      

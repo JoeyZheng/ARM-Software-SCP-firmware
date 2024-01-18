@@ -1,0 +1,36 @@
+# Arm SCP/MCP Software
+# Copyright (c) 2022-2023, Linaro Ltd and Contributors. All rights reserved.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+
+description: SCP SCMI reset table configuration
+
+compatible: "scp,scmi-reset-devices"
+
+include: base.yaml
+
+properties: 
+    label: 
+      required: true
+      description: name of this table instance. Used to generete c-code.
+
+child-binding:
+    description: 
+      Table of reset devices by a SCMI agent. 
+      Order of declaration forms order in table, and ID required to access.
+
+    properties:
+        scp-ids:
+          type: phandle-array
+          description: SCP ID referring to the reset device being controlled
+          required: true
+
+        reset-perms:
+          type: int
+          required: true
+          description: SCMI reset permissions flags
+
+        elem-idx: 
+           type: int
+           description: device array element index. 
+           required: true

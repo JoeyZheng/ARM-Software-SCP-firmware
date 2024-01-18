@@ -1,0 +1,21 @@
+# Arm SCP/MCP Software
+# Copyright (c) 2022-2023, Linaro Ltd and Contributors. All rights reserved.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+
+description: SCP software debug module 
+
+compatible: "scp,debug"
+
+include: base.yaml
+
+properties:
+    scp-ids:
+        type: phandle-array
+        required: true
+        description: ordered list defining the Driver ID and API ID for the platform debug module.
+
+    label:
+        type: string
+        required: true
+        description: name of the debug element

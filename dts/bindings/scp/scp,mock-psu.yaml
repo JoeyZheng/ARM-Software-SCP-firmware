@@ -1,0 +1,34 @@
+# Arm SCP/MCP Software
+# Copyright (c) 2022-2023, Linaro Ltd and Contributors. All rights reserved.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+
+description: SCP Mock PSU Configuration
+
+compatible: "scp,mock-psu"
+
+include: base.yaml
+
+properties:
+  label: 
+    required: true
+
+  elem-idx:
+    description: SCP PSU software module index for this element
+    type: int
+    required: true
+
+  scp-ids:
+    description: optional SCP Framework ID for Async alarm
+    required: false
+    type: phandle-array
+
+  default-voltage:
+    description: Default voltage for PSU element
+    required: true
+    type: int
+
+  default-enabled:
+    description: Set if PSU element is enabled by default
+    required: false
+    type: boolean

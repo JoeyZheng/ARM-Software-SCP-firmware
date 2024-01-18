@@ -1,0 +1,19 @@
+# Arm SCP/MCP Software
+# Copyright (c) 2022-2023, Linaro Ltd and Contributors. All rights reserved.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+
+description: SCP software framework module element ID 
+
+compatible: "scp,elem-id"
+
+include: base.yaml
+
+properties:
+    "#scp-id-cells":
+        type: int
+        const: 2
+
+scp-id-cells:
+    - mod-idx       # module index
+    - elem-idx      # element index
