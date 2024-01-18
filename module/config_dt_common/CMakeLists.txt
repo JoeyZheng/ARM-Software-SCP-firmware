@@ -83,6 +83,18 @@ foreach(SCP_MODULE IN LISTS SCP_VALID_MODULES)
         endif()
         # end mock_clock
         
+        # check module mock-psu 
+        if("${SCP_MODULE}" STREQUAL "mock-psu")
+            set(dt_module_found TRUE)
+
+            target_sources(${SCP_MODULE_TARGET}
+                           PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/config_dt_mock_psu.c")
+
+            # add header file to list used to generate defines for dt include 
+            list(APPEND SCP_DT_BIND_H_GEN_FROM_INCL "${CMAKE_CURRENT_SOURCE_DIR}/../mock_psu/include/mod_mock_psu.h")           
+       
+        endif()
+        # end
         # add more modules here as required.
 
         # check if the dt module listed has actually had code set up
