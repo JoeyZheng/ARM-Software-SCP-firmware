@@ -1,0 +1,61 @@
+/*
+ * Arm SCP/MCP Software
+ * Copyright (c) 2022, Arm Limited and Contributors. All rights reserved.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+/* Juno SCP scmi reset configuration - optional items when SCP_ENABLE_SCMI_RESET */
+
+/ {
+    scp-fwk {
+        juno {
+             juno-reset-domain@0 {
+                 compatible = "scp,mod-juno-reset";
+                 label = "JUNO_UART_HW";
+                 elem-idx = <JUNO_RESET_DOMAIN_IDX_UART>; 
+                 scp,hardware = <&scc>;                            
+             };
+        
+        };
+
+        scp-reset {
+        
+            /* reset domain elements */
+            juno_uart_reset: domain-elem@0 {
+                compatible = "scp,reset-domain-elem";
+                elem-idx = <JUNO_RESET_DOMAIN_IDX_UART>;
+                label = "JUNO_UART";
+                scp-ids = <&elem_id FWK_MODULE_IDX_JUNO_RESET_DOMAIN JUNO_RESET_DOMAIN_IDX_UART>, 
+                          <&api_id FWK_MODULE_IDX_JUNO_RESET_DOMAIN MOD_JUNO_RESET_DOMAIN_API_IDX_DRIVER>;
+                modes = <MOD_RESET_DOMAIN_AUTO_RESET>;
+                latency = <0xffffffff>;
+            };
+
+            /* reset domain configured with a framework ID for modules to register for notifications */
+            reset-config {
+                compatible = "scp,reset-domain-config";
+                scp-ids = <&notify_id FWK_MODULE_IDX_RESET_DOMAIN MOD_RESET_DOMAIN_NOTIFICATION_AUTORESET>;
+            };
+        };
+
+        scmi {
+            ospm_reset_table: scmi-reset-devices {
+                compatible = "scp,scmi-reset-devices";
+                label = "ospm_agent_reset_table";
+
+                uart {
+                        elem-idx = <JUNO_RESET_DOMAIN_IDX_UART>;
+                        scp-ids = <&elem_id FWK_MODULE_IDX_RESET_DOMAIN JUNO_RESET_DOMAIN_IDX_UART>;
+                        reset-perms = <(MOD_SCMI_RESET_DOMAIN_PERM_ATTRIBUTES | MOD_SCMI_RESET_DOMAIN_PERM_RESET)>;
+                };
+
+            };
+        };          
+    };
+};
+
+&agent_ospm {
+    scmi-reset-table = <&ospm_reset_table>;
+};
+

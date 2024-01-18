@@ -1,0 +1,56 @@
+/*
+ * Arm SCP/MCP Software
+ * Copyright (c) 2022, Arm Limited and Contributors. All rights reserved.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+/* SCP scmi configuration - optional items when BUILD_HAS_SCMI_NOTIFICATIONS */
+
+/ {
+    scp-fwk {
+        scmi {
+            scmi-service@3 {
+                compatible = "scp,scmi-service";
+                label = "OSPM-P2A";
+                service-idx = <JUNO_SCMI_SERVICE_IDX_OSPM_P2A>;
+                scp-ids = <&elem_id FWK_MODULE_IDX_TRANSPORT JUNO_SCMI_SERVICE_IDX_OSPM_P2A>,
+                        <&api_id FWK_MODULE_IDX_TRANSPORT MOD_TRANSPORT_API_IDX_SCMI_TO_TRANSPORT>,
+                        <&notify_id FWK_MODULE_IDX_TRANSPORT MOD_TRANSPORT_NOTIFICATION_IDX_INITIALIZED>;
+                scmi-agent-id = <JUNO_SCMI_AGENT_IDX_OSPM>;
+            };
+
+            transport {
+                ospm_p2a {
+                    compatible = "scp,transport";
+                    label = "OSPM-P2A";
+
+                    /* out of band mailbox addresses */                                        
+                    reg = <SCMI_PAYLOAD_HIGH_P2A_BASE SCMI_PAYLOAD_SIZE>;
+
+                    channel-type = <MOD_TRANSPORT_CHANNEL_TYPE_REQUESTER>;
+                    channel-policies = <MOD_TRANSPORT_POLICY_INIT_MAILBOX>;
+
+                    scp-ids =   <&sub_elem_id FWK_MODULE_IDX_MHU JUNO_MHU_DEVICE_IDX_NS_H 0>,
+                                <&api_id FWK_MODULE_IDX_MHU  0>,
+                                <&elem_id FWK_MODULE_IDX_POWER_DOMAIN POWER_DOMAIN_IDX_SYSTOP>;
+                    scp-id-names = "driver", "driver_api", "pd_source";
+                };
+            };
+
+        };
+    };
+};
+
+&scmi_service_ospm_a2p_0 {
+      scmi-p2a-id = <FWK_MODULE_IDX_SCMI  JUNO_SCMI_SERVICE_IDX_OSPM_P2A>;
+};
+
+&scmi_service_ospm_a2p_1 {
+      scmi-p2a-id = <FWK_MODULE_IDX_SCMI  JUNO_SCMI_SERVICE_IDX_OSPM_P2A>;
+};
+
+/* we have scmi notifications so add in notification capabilities values to reset domain */
+&juno_uart_reset {
+    capabilities = <MOD_RESET_DOMAIN_CAP_NOTIFICATION>;
+};
