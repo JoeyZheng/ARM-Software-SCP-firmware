@@ -154,6 +154,22 @@ foreach(SCP_MODULE IN LISTS SCP_VALID_MODULES)
        
         endif()
         # end
+
+        # check module scmi
+        if("${SCP_MODULE}" STREQUAL "scmi")
+            set(dt_module_found TRUE)
+            target_sources(${SCP_MODULE_TARGET}
+                           PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/config_dt_scmi.c")
+
+            # add header file to list used to generate defines for dt include
+            list(APPEND SCP_DT_BIND_H_GEN_FROM_INCL "${CMAKE_CURRENT_SOURCE_DIR}/../scmi/include/mod_scmi.h")
+            list(APPEND SCP_DT_BIND_H_GEN_FROM_INCL "${CMAKE_CURRENT_SOURCE_DIR}/../scmi/include/mod_scmi_std.h")
+            list(APPEND SCP_DT_BIND_H_GEN_FROM_INCL "${CMAKE_CURRENT_SOURCE_DIR}/../scmi/include/internal/scmi.h")
+            list(APPEND SCP_DT_BIND_H_GEN_FROM_INCL "${CMAKE_CURRENT_SOURCE_DIR}/../transport/include/mod_transport.h")
+       
+        endif()
+        # end scmi
+        
         # add more modules here as required.
 
         # check if the dt module listed has actually had code set up
