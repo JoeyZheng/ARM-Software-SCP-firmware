@@ -143,6 +143,17 @@ foreach(SCP_MODULE IN LISTS SCP_VALID_MODULES)
         endif()
         # end system-power
         
+        # check module timer 
+        if("${SCP_MODULE}" STREQUAL "timer")
+             set(dt_module_found TRUE)
+             target_sources(${SCP_MODULE_TARGET}
+                            PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/config_dt_timer.c")
+
+             # add header file to list used to generate defines for dt include 
+             list(APPEND SCP_DT_BIND_H_GEN_FROM_INCL "${CMAKE_CURRENT_SOURCE_DIR}/../timer/include/mod_timer.h")
+       
+        endif()
+        # end
         # add more modules here as required.
 
         # check if the dt module listed has actually had code set up
