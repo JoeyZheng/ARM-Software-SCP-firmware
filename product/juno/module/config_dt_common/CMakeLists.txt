@@ -48,7 +48,18 @@ foreach(SCP_MODULE IN LISTS SCP_VALID_MODULES)
        
         endif()
         # end
-        
+
+        # check module juno-rom 
+        if("${SCP_MODULE}" STREQUAL "juno-rom")
+            set(dt_module_found TRUE)
+            target_sources(${SCP_MODULE_TARGET}
+                   PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/config_dt_juno_rom.c")
+
+            # no need to add header files to DT defines for this module
+       
+        endif()
+        # end juno-rom
+
         # add more modules here as required.
 
         # check if the dt module listed has actually had code set up
