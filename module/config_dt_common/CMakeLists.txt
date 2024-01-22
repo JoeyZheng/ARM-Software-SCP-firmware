@@ -114,10 +114,22 @@ foreach(SCP_MODULE IN LISTS SCP_VALID_MODULES)
                             PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/config_dt_power_domain.c")
 
               # add header file to list used to generate defines for dt include 
-              list(APPEND SCP_DT_BIND_H_GEN_FROM_INCL "${CMAKE_CURRENT_SOURCE_DIR}/include/mod_power_domain.h")
+              list(APPEND SCP_DT_BIND_H_GEN_FROM_INCL "${CMAKE_CURRENT_SOURCE_DIR}/../power_domain/include/mod_power_domain.h")
        
         endif()
         # end power-domain
+        
+        # check module sds
+        if("${SCP_MODULE}" STREQUAL "sds")
+             set(dt_module_found TRUE)
+             target_sources(${SCP_MODULE_TARGET}
+                            PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/config_dt_sds.c")
+
+             # add header file to list used to generate defines for dt include 
+             list(APPEND SCP_DT_BIND_H_GEN_FROM_INCL "${CMAKE_CURRENT_SOURCE_DIR}/../sds/include/mod_sds.h")
+       
+        endif()
+        # end sds
         
         # add more modules here as required.
 
