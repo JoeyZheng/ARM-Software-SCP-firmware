@@ -130,6 +130,18 @@ foreach(SCP_MODULE IN LISTS SCP_VALID_MODULES)
        
         endif()
         # end sds
+
+        # check module system-power
+        if("${SCP_MODULE}" STREQUAL "system-power")
+             set(dt_module_found TRUE)
+             target_sources(${SCP_MODULE_TARGET}
+                            PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/config_dt_system_power.c")
+    
+             # add header file to list used to generate defines for dt include 
+             list(APPEND SCP_DT_BIND_H_GEN_FROM_INCL "${CMAKE_CURRENT_SOURCE_DIR}/../system_power/include/mod_system_power.h")
+       
+        endif()
+        # end system-power
         
         # add more modules here as required.
 
