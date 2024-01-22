@@ -37,7 +37,18 @@ foreach(SCP_MODULE IN LISTS SCP_VALID_MODULES)
                          "module target: ${SCP_MODULE_TARGET}\n"
                          "module source dir: ${SCP_MODULE_SOURCE_DIR}\n")
                          
+        # check module juno-ppu 
+        if("${SCP_MODULE}" STREQUAL "juno-ppu")
+             set(dt_module_found TRUE)
+             target_sources(${SCP_MODULE_TARGET}
+                            PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/config_dt_juno_ppu.c")
 
+             # add header file to list used to generate defines for dt include 
+             list(APPEND SCP_DT_BIND_H_GEN_FROM_INCL "${CMAKE_CURRENT_SOURCE_DIR}/../juno_ppu/include/mod_juno_ppu.h")
+       
+        endif()
+        # end
+        
         # add more modules here as required.
 
         # check if the dt module listed has actually had code set up
