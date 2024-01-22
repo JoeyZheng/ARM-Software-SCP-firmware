@@ -60,6 +60,18 @@ foreach(SCP_MODULE IN LISTS SCP_VALID_MODULES)
         endif()
         # end juno-rom
 
+        # check module juno-debug
+        if("${SCP_MODULE}" STREQUAL "juno-debug")
+            set(dt_module_found TRUE)
+            target_sources(${SCP_MODULE_TARGET}
+                           PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/config_dt_juno_debug.c")
+
+            # add header file to list used to generate defines for dt include 
+            list(APPEND SCP_DT_BIND_H_GEN_FROM_INCL "${CMAKE_CURRENT_SOURCE_DIR}/../juno_debug/include/mod_juno_debug.h")
+       
+        endif()
+        # end juno-debug
+        
         # add more modules here as required.
 
         # check if the dt module listed has actually had code set up
