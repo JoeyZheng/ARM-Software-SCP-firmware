@@ -14,3 +14,8 @@ target_include_directories(
 
 target_sources(${SCP_MODULE_TARGET}
                PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src/mod_debug.c")
+
+if(SCP_MODULE IN_LIST SCP_DT_CONFIG_MODULES_ALL)
+    target_sources(${SCP_MODULE_TARGET}
+      PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src/config_dt_debug.c")
+endif()
