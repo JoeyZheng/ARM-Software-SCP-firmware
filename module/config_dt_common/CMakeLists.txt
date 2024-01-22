@@ -170,6 +170,15 @@ foreach(SCP_MODULE IN LISTS SCP_VALID_MODULES)
         endif()
         # end scmi
         
+        # check module debug
+        if("${SCP_MODULE}" STREQUAL "debug")
+            set(dt_module_found TRUE)
+            target_sources(${SCP_MODULE_TARGET}
+                           PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/config_dt_debug.c")
+       
+        endif()
+        # end debug
+        
         # add more modules here as required.
 
         # check if the dt module listed has actually had code set up
