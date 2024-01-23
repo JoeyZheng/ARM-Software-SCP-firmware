@@ -12,7 +12,12 @@
  * Enable full set of sensors available on the platform. Using just the sub-set
  * would not affect functionality but free-up space available.
  */
+#ifndef JUNO_BUILD_FULL_SET_SENSORS
 #define USE_FULL_SET_SENSORS    0
+#else
+/* use a build option if specified - selects DT options for full set of sensors. */
+#define USE_FULL_SET_SENSORS JUNO_BUILD_FULL_SET_SENSORS
+#endif  
 
 /* Sensor indices for Juno */
 enum mod_juno_sensor_element_idx {
