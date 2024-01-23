@@ -320,6 +320,23 @@ foreach(SCP_MODULE IN LISTS SCP_VALID_MODULES)
     endif()
 endforeach()
 
+# add any source for modules using device tree configuration
+if(SCP_FIRMWARE_DTS_SOURCE)
+
+    # the common framework modules
+    add_subdirectory(
+        "config_dt_common"
+        "${CMAKE_CURRENT_BINARY_DIR}/modules/config_dt_common" EXCLUDE_FROM_ALL)
+
+    # product specific modules
+    if(SCP_DT_PRODUCT_MODULE_DIR)
+       add_subdirectory(
+           "${SCP_DT_PRODUCT_MODULE_DIR}"
+           "${CMAKE_CURRENT_BINARY_DIR}/modules/product/config_dt_common" EXCLUDE_FROM_ALL)
+
+    endif()
+endif()
+
 #
 # Export the updated module list and their targets so they can be used from the
 # root variable scope downwards.
@@ -330,4 +347,14 @@ set(SCP_MODULES
     PARENT_SCOPE)
 set(SCP_MODULE_TARGETS
     "${SCP_MODULE_TARGETS}"
+    PARENT_SCOPE)
+
+#
+# export the DT include variables set by the modules to the parent scope
+#
+set(SCP_DT_BIND_H_GEN_FROM_INCL
+    "${SCP_DT_BIND_H_GEN_FROM_INCL}"
+    PARENT_SCOPE)  
+set(SCP_DT_BIND_H_GEN_DEFS
+    "${SCP_DT_BIND_H_GEN_DEFS}"
     PARENT_SCOPE)
