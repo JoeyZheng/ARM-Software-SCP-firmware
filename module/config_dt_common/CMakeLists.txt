@@ -225,6 +225,15 @@ foreach(SCP_MODULE IN LISTS SCP_VALID_MODULES)
         endif()
         # end scmi-perf
         
+        # check module scmi-power-domain 
+        if("${SCP_MODULE}" STREQUAL "scmi-power-domain")
+            set(dt_module_found TRUE)
+            target_sources(${SCP_MODULE_TARGET}
+                           PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/config_dt_scmi_power_domain.c")
+       
+        endif()
+        # end scmi-power-domain
+        
         # add more modules here as required.
 
         # check if the dt module listed has actually had code set up
