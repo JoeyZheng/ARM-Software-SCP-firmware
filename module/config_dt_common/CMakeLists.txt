@@ -258,6 +258,15 @@ foreach(SCP_MODULE IN LISTS SCP_VALID_MODULES)
         endif()
         # end scmi-system-power
         
+        # check module sensor 
+        if("${SCP_MODULE}" STREQUAL "sensor")
+            set(dt_module_found TRUE)
+            target_sources(${SCP_MODULE_TARGET}
+                           PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/config_dt_sensor.c")
+       
+        endif()
+        # end sensor
+        
         # add more modules here as required.
 
         # check if the dt module listed has actually had code set up
