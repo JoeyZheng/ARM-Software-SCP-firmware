@@ -266,6 +266,15 @@ foreach(SCP_MODULE IN LISTS SCP_VALID_MODULES)
        
         endif()
         # end sensor
+
+        # check module statistics
+        if("${SCP_MODULE}" STREQUAL "statistics")
+            set(dt_module_found TRUE)
+            target_sources(${SCP_MODULE_TARGET}
+                           PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/config_dt_stats.c")
+       
+        endif()
+        # end statistics
         
         # add more modules here as required.
 
