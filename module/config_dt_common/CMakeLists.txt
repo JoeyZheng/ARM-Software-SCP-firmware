@@ -178,6 +178,15 @@ foreach(SCP_MODULE IN LISTS SCP_VALID_MODULES)
        
         endif()
         # end debug
+
+        # check module mhu
+        if("${SCP_MODULE}" STREQUAL "mhu")
+            set(dt_module_found TRUE)
+            target_sources(${SCP_MODULE_TARGET}
+                   PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/config_dt_mhu.c")
+       
+        endif()
+        # end mhu
         
         # add more modules here as required.
 
