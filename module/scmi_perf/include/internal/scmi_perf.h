@@ -11,6 +11,7 @@
 #ifndef INTERNAL_SCMI_PERF_H
 #define INTERNAL_SCMI_PERF_H
 
+
 #ifdef BUILD_HAS_MOD_TRANSPORT
 #    include <mod_transport.h>
 #endif
@@ -415,6 +416,9 @@ struct mod_scmi_perf_private_api_perf_stub {
         uint32_t range_max);
 };
 
+/* interface below breaks enum gen code */
+#ifndef DTS_GEN_BINDINGS
+
 void perf_fch_set_fch_get_level(uint32_t domain_idx, uint32_t level);
 
 bool perf_fch_prot_msg_attributes_has_fastchannels(
@@ -474,5 +478,7 @@ void perf_prot_ops_notify_level(
     unsigned int domain_idx,
     uint32_t level,
     uint32_t cookie);
+
+#endif /* ifndef DTS_GEN_BINDINGS */
 
 #endif /* INTERNAL_SCMI_PERF_H */

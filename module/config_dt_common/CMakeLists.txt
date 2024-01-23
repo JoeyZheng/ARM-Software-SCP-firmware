@@ -212,6 +212,19 @@ foreach(SCP_MODULE IN LISTS SCP_VALID_MODULES)
         endif()
         # end scmi-clock
         
+        # check module scmi-perf 
+        if("${SCP_MODULE}" STREQUAL "scmi-perf")
+            set(dt_module_found TRUE)
+            target_sources(${SCP_MODULE_TARGET}
+                    PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/config_dt_scmi_perf.c")
+
+            # add header file to list used to generate defines for dt include 
+            list(APPEND SCP_DT_BIND_H_GEN_FROM_INCL "${CMAKE_CURRENT_SOURCE_DIR}/../scmi_perf/include/mod_scmi_perf.h")
+            list(APPEND SCP_DT_BIND_H_GEN_FROM_INCL "${CMAKE_CURRENT_SOURCE_DIR}/../scmi_perf/include/internal/scmi_perf.h")
+        
+        endif()
+        # end scmi-perf
+        
         # add more modules here as required.
 
         # check if the dt module listed has actually had code set up
