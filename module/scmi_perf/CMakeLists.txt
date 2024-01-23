@@ -28,6 +28,16 @@ if(SCP_ENABLE_SCMI_PERF_FAST_CHANNELS)
         PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src/scmi_perf_fastchannels.c")
 endif()
 
+if(SCP_MODULE IN_LIST SCP_DT_CONFIG_MODULES_ALL)
+    target_sources(${SCP_MODULE_TARGET}
+                    PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src/config_dt_scmi_perf.c")
+
+    # add header file to list used to generate defines for dt include 
+    list(APPEND SCP_DT_BIND_H_GEN_FROM_INCL "${CMAKE_CURRENT_SOURCE_DIR}/include/mod_scmi_perf.h")
+    list(APPEND SCP_DT_BIND_H_GEN_FROM_INCL "${CMAKE_CURRENT_SOURCE_DIR}/include/internal/scmi_perf.h")
+    set(SCP_DT_BIND_H_GEN_FROM_INCL "${SCP_DT_BIND_H_GEN_FROM_INCL}" PARENT_SCOPE)
+endif()
+
 if(SCP_ENABLE_PLUGIN_HANDLER)
     if(NOT SCP_ENABLE_SCMI_PERF_FAST_CHANNELS)
         MESSAGE(FATAL_ERROR
