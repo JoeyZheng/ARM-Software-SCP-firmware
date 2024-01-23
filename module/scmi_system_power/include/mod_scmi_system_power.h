@@ -75,6 +75,11 @@ struct mod_scmi_system_power_config {
     uint32_t graceful_timeout;
 };
 
+/* DT names for framework IDs */
+#define DT_NAME_SCMI_SYS_PWR_ALARM_ID "alarm"
+#define DT_NAME_SCMI_SYS_PWR_WAKEUP_PD_ID "wakeup"
+
+
 /*!
  * \defgroup GroupScmiSystemPowerPolicyHandlers Policy Handlers
  *
