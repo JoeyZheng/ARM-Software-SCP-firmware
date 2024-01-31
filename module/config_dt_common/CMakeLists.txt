@@ -287,7 +287,28 @@ foreach(SCP_MODULE IN LISTS SCP_VALID_MODULES)
        
         endif()
         # end transport
+
+        # check module i2c 
+        if("${SCP_MODULE}" STREQUAL "i2c")
+            set(dt_module_found TRUE)
+            target_sources(${SCP_MODULE_TARGET}
+                           PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/config_dt_i2c.c")
+       
+        endif()
+        # end i2c
         
+        # check module dw_apb_i2c
+        if("${SCP_MODULE}" STREQUAL "dw-apb-i2c")
+            set(dt_module_found TRUE)
+            target_sources(${SCP_MODULE_TARGET}
+                           PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/config_dt_apb_i2c.c")
+
+            # add header file to list used to generate defines for dt include 
+            list(APPEND SCP_DT_BIND_H_GEN_FROM_INCL "${CMAKE_CURRENT_SOURCE_DIR}/../dw_apb_i2c/include/mod_dw_apb_i2c.h")
+       
+        endif()
+        # end dw_apb_i2c
+
         # add more modules here as required.
 
         # check if the dt module listed has actually had code set up
