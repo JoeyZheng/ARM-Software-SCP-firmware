@@ -44,7 +44,10 @@
 
 /*
  * Offsets within SCP's Address Translation Window0
- *          __________________________  0x78500000
+ *          __________________________  0x78600000
+ *         |                          |
+ *         |     ATU MMIO (1M)        |
+ *         |__________________________| 0x78500000
  *         |                          |
  *         |     RSM_SRAM (4MB)       |
  *         |__________________________| 0x78100000
@@ -63,6 +66,7 @@
 #define SCP_ATW0_AP_PERIPHERAL_SRAM_SIZE      (128 * FWK_MIB)
 #define SCP_ATW0_AP_PERIPHERAL_GPC_SMMU_SIZE  (1 * FWK_MIB)
 #define SCP_ATW0_SYSTEM_CONTROL_SRAM_SIZE     (4 * FWK_MIB)
+#define SCP_ATW0_ATU_MMIO_SIZE                (1 * FWK_MIB)
 
 #define SCP_ATW0_LCP_AND_CLUSTER_UTILITY_BASE \
     SCP_ADDRESS_TRANSLATION_WINDOW0_BASE
@@ -74,6 +78,8 @@
 #define SCP_ATW0_SYSTEM_CONTROL_SRAM_BASE \
     (SCP_ATW0_AP_PERIPHERAL_GPC_SMMU_BASE + \
      SCP_ATW0_AP_PERIPHERAL_GPC_SMMU_SIZE)
+#define SCP_ATW0_ATU_MMIO_BASE \
+    (SCP_ATW0_SYSTEM_CONTROL_SRAM_BASE + SCP_ATW0_SYSTEM_CONTROL_SRAM_SIZE)
 
 /*
  * Offsets within SCP's Address Translation Window1
