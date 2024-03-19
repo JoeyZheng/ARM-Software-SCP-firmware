@@ -32,8 +32,8 @@ enum cpu_idx {
 static struct mod_mpmm_pct_table group_little_pct[] = {
     {
         .cores_online = 2,
-        .default_perf_limit = 2152 * 1000000UL,
-        .num_perf_limits = 1,
+        .default_perf_limit = 1844 * 1000000UL,
+        .num_perf_limits = 2,
         .threshold_perf = {
             {
                 .threshold_bitmap = 0x22,
@@ -62,7 +62,7 @@ static struct mod_mpmm_pct_table group_mid_pct[] = {
     {
         .cores_online = 4,
         .default_perf_limit = 1419 * 1000000UL,
-        .num_perf_limits = 3,
+        .num_perf_limits = 4,
         .threshold_perf = {
             {
                 .threshold_bitmap = 0x2222,
@@ -132,8 +132,8 @@ static struct mod_mpmm_pct_table group_mid_pct[] = {
 static struct mod_mpmm_pct_table group_big_pct[] = {
     {
         .cores_online = 2,
-        .default_perf_limit = 2612 * 1000000UL,
-        .num_perf_limits = 2,
+        .default_perf_limit = 2176 * 1000000UL,
+        .num_perf_limits = 3,
         .threshold_perf = {
             {
                 .threshold_bitmap = 0x22,
@@ -166,7 +166,7 @@ static const struct mod_mpmm_core_config group_little_core_config[] = {
     {
         .pd_id = FWK_ID_ELEMENT_INIT(FWK_MODULE_IDX_POWER_DOMAIN, CORE0_IDX),
         .mpmm_reg_base = SCP_MPMM_CORE_BASE(CORE0_IDX),
-        .core_starts_online = true,
+        .core_starts_online = false,
         .base_aux_counter_id = FWK_ID_SUB_ELEMENT_INIT(
             FWK_MODULE_IDX_AMU_MMAP,
             CORE0_IDX,
