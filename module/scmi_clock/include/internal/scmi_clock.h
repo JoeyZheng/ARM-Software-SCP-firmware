@@ -13,7 +13,7 @@
 
 #include <mod_clock.h>
 
-#define SCMI_PROTOCOL_VERSION_CLOCK UINT32_C(0x10000)
+#define SCMI_PROTOCOL_VERSION_CLOCK UINT32_C(0x20000)
 
 /*
  * Identifiers for the type of request being processed
