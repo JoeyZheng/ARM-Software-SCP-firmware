@@ -11,6 +11,9 @@
 
 add_library(${SCP_FIRMWARE_TARGET})
 
+add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/../../common/"
+	"${CMAKE_CURRENT_BINARY_DIR}/optee/module/")
+
 # cmake-lint: disable=E1122
 
 target_include_directories(
@@ -34,3 +37,5 @@ target_sources(
             "${CMAKE_CURRENT_SOURCE_DIR}/config_dvfs.c"
             "${CMAKE_CURRENT_SOURCE_DIR}/config_scmi_perf.c"
             "${CMAKE_CURRENT_SOURCE_DIR}/config_sensor.c")
+
+set(SCP_MODULE_PATHS ${SCP_MODULE_PATHS} PARENT_SCOPE)
