@@ -484,6 +484,15 @@ static inline bool clock_ops_is_available(unsigned int clock_dev_idx)
                            FWK_ID_NONE);
 }
 
+static inline bool clock_has_extended_name(
+    unsigned int agent_id,
+    unsigned int clock_dev_idx)
+{
+    return scmi_clock_ctx.agent_table[agent_id]
+        .device_table[clock_dev_idx]
+        .supports_extended_name;
+}
+
 /*
  * Helper for the 'clock_attributes' response
  */
@@ -494,12 +503,26 @@ static void clock_attributes_respond(
     int status)
 {
     int respond_status;
+    bool has_extended_name = false;
+    unsigned int agent_id, clock_dev_idx;
     size_t response_size;
+    const struct mod_scmi_clock_agent *agent;
     struct scmi_clock_attributes_p2a return_values = { 0 };
 
     if (status == FWK_SUCCESS) {
+        clock_dev_idx = fwk_id_get_element_idx(clock_dev_id);
+        status = scmi_clock_ctx.scmi_api->get_agent_id(service_id, &agent_id);
+        if (status != FWK_SUCCESS) {
+            FWK_LOG_DEBUG("[SCMI-CLK] %s @%d", __func__, __LINE__);
+        } else {
+            agent = &scmi_clock_ctx.agent_table[agent_id];
+            has_extended_name =
+                agent->device_table[clock_dev_idx].supports_extended_name;
+        }
+
         return_values.attributes = SCMI_CLOCK_ATTRIBUTES(
-            (uint32_t)(*clock_state == MOD_CLOCK_STATE_RUNNING));
+            ((uint32_t)(*clock_state == MOD_CLOCK_STATE_RUNNING)),
+            ((uint32_t)has_extended_name));
 
         fwk_str_strncpy(
             return_values.clock_name,

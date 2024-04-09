@@ -1,6 +1,6 @@
 /*
  * Arm SCP/MCP Software
- * Copyright (c) 2015-2021, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2015-2024, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -78,6 +78,11 @@ struct mod_scmi_clock_device {
      *       internal state map.
      */
     bool starts_enabled;
+
+    /*!
+     * \brief Flag indicating whether extended clock name is supported
+     */
+    bool supports_extended_name;
 };
 
 /*!
