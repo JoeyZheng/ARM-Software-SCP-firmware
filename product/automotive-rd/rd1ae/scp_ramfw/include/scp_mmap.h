@@ -25,6 +25,7 @@
 #define SCP_REFCLK_CNTCONTROL_BASE    (0x2A430000UL)
 #define SCP_REFCLK_CNTCTL_BASE        (0x44000000UL)
 #define SCP_REFCLK_CNTBASE0_BASE      (0x44001000UL)
+#define SCP_SID_BASE                  (0x2A4A0000UL)
 #define SCP_SYSTEM_PIK_BASE           (0x50040000UL)
 #define SCP_UART_BASE                 (0x44002000UL)
 
