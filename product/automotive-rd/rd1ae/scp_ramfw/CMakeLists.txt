@@ -24,6 +24,7 @@ target_sources(
             "${CMAKE_CURRENT_SOURCE_DIR}/config_pl011.c"
             "${CMAKE_CURRENT_SOURCE_DIR}/config_ppu_v1.c"
             "${CMAKE_CURRENT_SOURCE_DIR}/config_sid.c"
+            "${CMAKE_CURRENT_SOURCE_DIR}/config_system_info.c"
             "${CMAKE_CURRENT_SOURCE_DIR}/config_system_pik.c"
             "${CMAKE_CURRENT_SOURCE_DIR}/config_system_pll.c"
             "${CMAKE_CURRENT_SOURCE_DIR}/config_timer.c")
