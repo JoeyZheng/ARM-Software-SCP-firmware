@@ -1,6 +1,6 @@
 /*
  * Arm SCP/MCP Software
- * Copyright (c) 2023, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2023-2024, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -236,7 +236,6 @@ struct mod_atu_api {
      *
      * \retval ::FWK_SUCCESS The operation succeeded.
      * \retval ::FWK_E_PARAM An invalid parameter was encountered.
-     *      - The requested ATU region is not aligned with the ATU page size.
      *      - Invalid attributes configuration data was provided in the `region`
      *      parameter.
      *      - The `region_idx` parameter was null pointer value.
@@ -251,6 +250,8 @@ struct mod_atu_api {
      *      region.
      * \retval ::FWK_E_BUSY The previous message has not been read.
      * \retval ::FWK_E_DATA Error in the response message received.
+     * \retval ::FWK_E_ALIGN An invalid alignment was detected.
+     *      - The requested ATU region is not aligned with the ATU page size.
      */
     int (*add_region)(
         const struct atu_region_map *region,

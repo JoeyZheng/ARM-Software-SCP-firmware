@@ -1,6 +1,6 @@
 /*
  * Arm SCP/MCP Software
- * Copyright (c) 2023, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2023-2024, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -18,6 +18,8 @@
 #include <fwk_string.h>
 
 #include <inttypes.h>
+
+#define GET_PAGE_SIZE(ps) (1ULL << ps)
 
 #if FWK_LOG_LEVEL <= FWK_LOG_LEVEL_INFO
 static int atu_print_region(uint8_t region_idx, void *device_ctx_ptr)
@@ -219,6 +221,45 @@ int atu_get_available_region_idx(void *device_ctx_ptr, uint8_t *region_idx)
     return FWK_E_SUPPORT;
 }
 
+/*
+ * Validate alignment of phy addr base, logical addr base, and region size
+ * with ATU page size. In the ATU spec, the term "ps" is used for page size.
+ * In the ATUBC register, it appears as 0xC, 0xD, or 0xE, corresponding to
+ * 4KB/8KB/16KB (1 << ps).
+ */
+int is_region_mapping_aligned(const struct atu_region_map *region, uint8_t ps)
+{
+    uint64_t page_size = GET_PAGE_SIZE(ps);
+
+    if (FWK_IS_ALIGNED(region->phy_addr_base, page_size) != true) {
+        FWK_LOG_ERR(
+            "[ATU] Error! PhyAddr 0x%" PRIX64 " not aligned to (PS:0x%" PRIX64
+            ")",
+            region->phy_addr_base,
+            page_size);
+        return FWK_E_ALIGN;
+    }
+
+    if (FWK_IS_ALIGNED(region->log_addr_base, page_size) != true) {
+        FWK_LOG_ERR(
+            "[ATU] Error! LogAddr 0x%" PRIX32 " not aligned to (PS:0x%" PRIX64
+            ")",
+            region->log_addr_base,
+            page_size);
+        return FWK_E_ALIGN;
+    }
+
+    if (FWK_IS_ALIGNED(region->region_size, page_size) != true) {
+        FWK_LOG_ERR(
+            "[ATU] Error! Region size 0x%zX not aligned to (PS:0x%" PRIX64 ")",
+            region->region_size,
+            page_size);
+        return FWK_E_ALIGN;
+    }
+
+    return FWK_SUCCESS;
+}
+
 /* Validates if a translation region can be mapped in the ATU */
 int atu_validate_region(
     const struct atu_region_map *region,
@@ -235,10 +276,10 @@ int atu_validate_region(
     ps = device_ctx->page_size;
 
     /* Check if the requested region is aligned with the ATU page size */
-    if ((region->phy_addr_base & ((1 << ps) - 1)) != 0 ||
-        (region->log_addr_base & ((1 << ps) - 1)) != 0 ||
-        (region->region_size & ((1 << ps) - 1)) != 0) {
-        return FWK_E_PARAM;
+    status = is_region_mapping_aligned(region, ps);
+
+    if (status != FWK_SUCCESS) {
+        return status;
     }
 
     /*

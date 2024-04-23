@@ -1,6 +1,6 @@
 /*
  * Arm SCP/MCP Software
- * Copyright (c) 2023, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2023-2024, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -266,6 +266,135 @@ void test_atu_add_region_invalid_attributes_config(void)
 }
 
 /*!
+ * \brief ATU unit test: atu_add_region(), invalid physical address alignment.
+ *
+ * \details Handle the case in atu_add_region() where the physical address base
+ *      is not aligned with the ATU page size. This test ensures that
+ *      misaligned physical addresses are correctly detected and handled.
+ */
+void test_atu_add_region_invalid_phy_addr_alignment(void)
+{
+    int status;
+    uint8_t region_idx;
+    fwk_id_t atu_device_id = FWK_ID_ELEMENT_INIT(FWK_MODULE_IDX_ATU, 0);
+
+    /* Define test vectors with their expected results */
+    struct {
+        uint64_t phy_addr_base;
+        int expected_status;
+    } test_vec[] = {
+        { 0x00000001, FWK_E_ALIGN },   { 0xC0000100, FWK_E_ALIGN },
+        { 0xC0003001, FWK_E_ALIGN },   { 0xC0006002, FWK_E_ALIGN },
+        { (uint64_t)-1, FWK_E_ALIGN },
+    };
+
+    /* Iterate over the test vectors and validate phy_addr alignment */
+    for (unsigned int i = 0; i < FWK_ARRAY_SIZE(test_vec); ++i) {
+        struct atu_region_map region = {
+            .region_owner_id = FWK_ID_MODULE_INIT(FWK_MODULE_IDX_ATU),
+            .log_addr_base = 0x70000000,
+            .phy_addr_base = test_vec[i].phy_addr_base,
+            .region_size = 0x400000,
+            .attributes = ATU_ENCODE_ATTRIBUTES_SECURE_PAS,
+        };
+
+        fwk_id_get_element_idx_ExpectAnyArgsAndReturn(0);
+
+        /* Map the address translation region */
+        status = atu_add_region(&region, atu_device_id, &region_idx);
+
+        /* Ensure the function returns the expected status */
+        TEST_ASSERT_EQUAL(status, test_vec[i].expected_status);
+    }
+}
+
+/*!
+ * \brief ATU unit test: atu_add_region(), invalid logical address alignment.
+ *
+ * \details Handle the case in atu_add_region() where the logical address base
+ *      is not aligned with the ATU page size. This test ensures that
+ *      misaligned logical addresses are correctly detected and handled.
+ */
+void test_atu_add_region_invalid_log_addr_alignment(void)
+{
+    int status;
+    uint8_t region_idx;
+    fwk_id_t atu_device_id = FWK_ID_ELEMENT_INIT(FWK_MODULE_IDX_ATU, 0);
+
+    /* Define test vectors with their expected results */
+    struct {
+        uint32_t log_addr_base;
+        int expected_status;
+    } test_vec[] = {
+        { 0x00000001, FWK_E_ALIGN },   { 0xF0003001, FWK_E_ALIGN },
+        { 0xF0004501, FWK_E_ALIGN },   { 0xF0006002, FWK_E_ALIGN },
+        { (uint32_t)-1, FWK_E_ALIGN },
+    };
+
+    /* Iterate over the test vectors and validate log_addr alignment */
+    for (unsigned int i = 0; i < FWK_ARRAY_SIZE(test_vec); ++i) {
+        struct atu_region_map region = {
+            .region_owner_id = FWK_ID_MODULE_INIT(FWK_MODULE_IDX_ATU),
+            .log_addr_base = test_vec[i].log_addr_base,
+            .phy_addr_base = 0xC0000000,
+            .region_size = 0x400000,
+            .attributes = ATU_ENCODE_ATTRIBUTES_SECURE_PAS,
+        };
+
+        fwk_id_get_element_idx_ExpectAnyArgsAndReturn(0);
+
+        /* Map the address translation region */
+        status = atu_add_region(&region, atu_device_id, &region_idx);
+
+        /* Ensure the function returns the expected status */
+        TEST_ASSERT_EQUAL(status, test_vec[i].expected_status);
+    }
+}
+
+/*!
+ * \brief ATU unit test: atu_add_region(), invalid region size alignment.
+ *
+ * \details Handle the case in atu_add_region() where the region size
+ *      is not aligned with the ATU page size. This test ensures that
+ *      misaligned region sizes are correctly detected and handled.
+ */
+void test_atu_add_region_invalid_region_size_alignment(void)
+{
+    int status;
+    uint8_t region_idx;
+    fwk_id_t atu_device_id = FWK_ID_ELEMENT_INIT(FWK_MODULE_IDX_ATU, 0);
+
+    /* Define test vectors with their expected results */
+    struct {
+        size_t region_size;
+        int expected_status;
+    } test_vec[] = {
+        { 0x00000001, FWK_E_ALIGN }, { 0x00002001, FWK_E_ALIGN },
+        { 0x00003FFF, FWK_E_ALIGN }, { 0x00008001, FWK_E_ALIGN },
+        { (size_t)-1, FWK_E_ALIGN },
+    };
+
+    /* Iterate over the test vectors and validate region size alignment */
+    for (unsigned int i = 0; i < FWK_ARRAY_SIZE(test_vec); ++i) {
+        struct atu_region_map region = {
+            .region_owner_id = FWK_ID_MODULE_INIT(FWK_MODULE_IDX_ATU),
+            .log_addr_base = 0xF0000000,
+            .phy_addr_base = 0xC0000000,
+            .region_size = test_vec[i].region_size,
+            .attributes = ATU_ENCODE_ATTRIBUTES_SECURE_PAS,
+        };
+
+        fwk_id_get_element_idx_ExpectAnyArgsAndReturn(0);
+
+        /* Map the address translation region */
+        status = atu_add_region(&region, atu_device_id, &region_idx);
+
+        /* Ensure the function returns the expected status */
+        TEST_ASSERT_EQUAL(status, test_vec[i].expected_status);
+    }
+}
+
+/*!
  * \brief atu unit test: atu_remove_region(), invalid region.
  *
  *  \details Handle case in atu_remove_region() where an invalid translation
@@ -367,6 +496,9 @@ int atu_test_main(void)
     RUN_TEST(test_atu_add_region_success);
     RUN_TEST(test_atu_add_region_overlap);
     RUN_TEST(test_atu_add_region_invalid_attributes_config);
+    RUN_TEST(test_atu_add_region_invalid_phy_addr_alignment);
+    RUN_TEST(test_atu_add_region_invalid_log_addr_alignment);
+    RUN_TEST(test_atu_add_region_invalid_region_size_alignment);
     RUN_TEST(test_atu_remove_region_fail);
     RUN_TEST(test_atu_remove_region_permission_fail);
     RUN_TEST(test_atu_remove_region_success);
