@@ -20,9 +20,41 @@
 #define SCP_DTC_RAM_SIZE (256 * 1024)
 
 /* SCP sub-system peripherals */
+#define SCP_POWER_CONTROL_BASE        (0x50000000UL)
+#define SCP_SYSTEM_PIK_BASE           (0x50040000UL)
 #define SCP_UART_BASE                 (0x44002000UL)
 
 /* Base address of SCP expansion memory regions */
 #define SCP_SOC_EXPANSION3_BASE (0x40000000UL) /* 64MB size */
+
+/* SCP addresses mapped via ATU into address translation windows */
+#define SCP_ADDRESS_TRANSLATION_WINDOW0_BASE (0x60000000UL)
+
+/*
+ * Offsets within SCP's Address Translation Window0
+ *          __________________________
+ *         |                          |
+ *         |     CLUSTER UTIL 256M    |
+ *         |__________________________| 0x60000000
+ */
+
+#define SCP_ATW0_CLUSTER_UTILITY_BASE SCP_ADDRESS_TRANSLATION_WINDOW0_BASE
+
+/*
+ * Size of SCP's view of per-cluster utility memory region.
+ */
+#define SCP_CLUSTER_UTILITY_SIZE (0x200000UL)
+
+/*
+ * Offsets of various blocks within cluster utility that is
+ * mapped into SCP's address translation window 0. These offsets are applicable
+ * to each cluster in the system.
+ */
+#define SCP_CLUSTER_UTILITY_CORE_MANAGER_OFFSET (0x80000UL)
+
+/* Core Manager base address for a cluster 'n' */
+#define SCP_CLUSTER_UTILITY_CORE_MANAGER_BASE(n) \
+    (SCP_ATW0_CLUSTER_UTILITY_BASE + (n * SCP_CLUSTER_UTILITY_SIZE) + \
+     SCP_CLUSTER_UTILITY_CORE_MANAGER_OFFSET)
 
 #endif /* SCP_MMAP_H */
