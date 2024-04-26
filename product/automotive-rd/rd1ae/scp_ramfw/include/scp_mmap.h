@@ -21,6 +21,9 @@
 
 /* SCP sub-system peripherals */
 #define SCP_POWER_CONTROL_BASE        (0x50000000UL)
+#define SCP_REFCLK_CNTCONTROL_BASE    (0x2A430000UL)
+#define SCP_REFCLK_CNTCTL_BASE        (0x44000000UL)
+#define SCP_REFCLK_CNTBASE0_BASE      (0x44001000UL)
 #define SCP_SYSTEM_PIK_BASE           (0x50040000UL)
 #define SCP_UART_BASE                 (0x44002000UL)
 

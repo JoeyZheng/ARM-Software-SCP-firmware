@@ -19,6 +19,7 @@ target_include_directories(
 target_sources(
     rd1ae-bl2
     PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/config_armv7m_mpu.c"
+            "${CMAKE_CURRENT_SOURCE_DIR}/config_gtimer.c"
             "${CMAKE_CURRENT_SOURCE_DIR}/config_pik_clock.c"
             "${CMAKE_CURRENT_SOURCE_DIR}/config_pl011.c"
             "${CMAKE_CURRENT_SOURCE_DIR}/config_system_pll.c")
