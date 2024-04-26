@@ -26,6 +26,7 @@ static const struct fwk_element pl011_table[MOD_PL011_ELEMENT_COUNT] = {
                 .reg_base = SCP_UART_BASE,
                 .baud_rate_bps = 115200,
                 .clock_rate_hz = 24 * FWK_MHZ,
+                .clock_id = FWK_ID_NONE_INIT,
                 .pd_id = FWK_ID_NONE_INIT,
             },
     },
