@@ -17,6 +17,8 @@ set(SCP_TOOLCHAIN_INIT "GNU")
 
 set(SCP_GENERATE_FLAT_BINARY_INIT TRUE)
 
+set(SCP_ENABLE_NOTIFICATIONS_INIT TRUE)
+
 # Disable Interprocedural optimization
 set(SCP_ENABLE_IPO_INIT FALSE)
 
@@ -29,6 +31,7 @@ set(SCP_ENABLE_NEWLIB_NANO FALSE)
 # Any change in the order will cause firmware initialization errors.
 list(APPEND SCP_MODULES "armv7m-mpu")
 list(APPEND SCP_MODULES "pl011")
+list(APPEND SCP_MODULES "ppu-v1")
 list(APPEND SCP_MODULES "system-pll")
 list(APPEND SCP_MODULES "pik-clock")
 list(APPEND SCP_MODULES "gtimer")
