@@ -38,6 +38,7 @@
 
 /* SCP addresses mapped via ATU into address translation windows */
 #define SCP_ADDRESS_TRANSLATION_WINDOW0_BASE (0x60000000UL)
+#define SCP_ADDRESS_TRANSLATION_WINDOW1_BASE (0xA0000000UL)
 
 /*
  * Offsets within SCP's Address Translation Window0
@@ -55,6 +56,15 @@
 #define SCP_ATW0_CLUSTER_UTILITY_BASE SCP_ADDRESS_TRANSLATION_WINDOW0_BASE
 #define SCP_ATW0_AP_PERIPHERAL_SRAM_BASE \
     (SCP_ATW0_CLUSTER_UTILITY_BASE + SCP_ATW0_CLUSTER_UTILITY_SIZE)
+
+/*
+ * Offsets within SCP's Address Translation Window1
+ *          __________________________
+ *         |                          |
+ *         |         CMN 1G           |
+ *         |__________________________| 0xA0000000
+ */
+#define SCP_ATW1_CMN_BASE (SCP_ADDRESS_TRANSLATION_WINDOW1_BASE)
 
 /*
  * Size of SCP's view of per-cluster utility memory region.
@@ -84,5 +94,8 @@
 #define SCP_CLUSTER_UTILITY_CORE_PPU_BASE(n) \
     (SCP_ATW0_CLUSTER_UTILITY_BASE + (n * SCP_CLUSTER_UTILITY_SIZE) + \
      SCP_CLUSTER_UTILITY_CORE_PPU_OFFSET)
+
+/* CMN config space is mapped in the SCP address translation window 1 */
+#define SCP_CMN_BASE SCP_ATW1_CMN_BASE
 
 #endif /* SCP_MMAP_H */

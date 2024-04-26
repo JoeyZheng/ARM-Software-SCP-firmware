@@ -20,6 +20,7 @@ target_sources(
     rd1ae-bl2
     PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/config_armv7m_mpu.c"
             "${CMAKE_CURRENT_SOURCE_DIR}/config_clock.c"
+            "${CMAKE_CURRENT_SOURCE_DIR}/config_cmn_cyprus.c"
             "${CMAKE_CURRENT_SOURCE_DIR}/config_gtimer.c"
             "${CMAKE_CURRENT_SOURCE_DIR}/config_mhu3.c"
             "${CMAKE_CURRENT_SOURCE_DIR}/config_pik_clock.c"
