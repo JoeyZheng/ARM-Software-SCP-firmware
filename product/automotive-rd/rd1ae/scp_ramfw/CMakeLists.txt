@@ -23,12 +23,14 @@ target_sources(
             "${CMAKE_CURRENT_SOURCE_DIR}/config_mhu3.c"
             "${CMAKE_CURRENT_SOURCE_DIR}/config_pik_clock.c"
             "${CMAKE_CURRENT_SOURCE_DIR}/config_pl011.c"
+            "${CMAKE_CURRENT_SOURCE_DIR}/config_power_domain.c"
             "${CMAKE_CURRENT_SOURCE_DIR}/config_ppu_v1.c"
             "${CMAKE_CURRENT_SOURCE_DIR}/config_scp_platform.c"
             "${CMAKE_CURRENT_SOURCE_DIR}/config_sid.c"
             "${CMAKE_CURRENT_SOURCE_DIR}/config_system_info.c"
             "${CMAKE_CURRENT_SOURCE_DIR}/config_system_pik.c"
             "${CMAKE_CURRENT_SOURCE_DIR}/config_system_pll.c"
+            "${CMAKE_CURRENT_SOURCE_DIR}/config_system_power.c"
             "${CMAKE_CURRENT_SOURCE_DIR}/config_timer.c"
             "${CMAKE_CURRENT_SOURCE_DIR}/config_transport.c")
 

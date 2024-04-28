@@ -9,6 +9,7 @@
  */
 
 #include "platform_core.h"
+#include "scp_cfgd_power_domain.h"
 #include "scp_mmap.h"
 
 #include <mod_power_domain.h>
@@ -28,6 +29,13 @@
 #define PPU_STATIC_ELEMENT_COUNT 1
 #define PPU_CORE_NAME_SIZE       12
 #define PPU_CLUS_NAME_SIZE       7
+
+/* Module configuration data */
+static struct mod_ppu_v1_config ppu_v1_config_data = {
+    .pd_notification_id = FWK_ID_NOTIFICATION_INIT(
+        FWK_MODULE_IDX_POWER_DOMAIN,
+        MOD_PD_NOTIFICATION_IDX_POWER_STATE_TRANSITION),
+};
 
 /* List of static PPU elements */
 static struct fwk_element ppu_element_table[PPU_STATIC_ELEMENT_COUNT] = {
@@ -132,9 +140,18 @@ static const struct fwk_element *ppu_v1_get_element_table(fwk_id_t module_id)
         ppu_element_table,
         sizeof(ppu_element_table));
 
+    /*
+     * Configure pd_source_id with the SYSTOP identifier from the power domain
+     * module which is dynamically defined based on the number of cores.
+     */
+    ppu_v1_config_data.pd_source_id = fwk_id_build_element_id(
+        fwk_module_id_power_domain,
+        core_count + cluster_count + PD_STATIC_DEV_IDX_SYSTOP);
+
     return element_table;
 }
 
 const struct fwk_module_config config_ppu_v1 = {
+    .data = &ppu_v1_config_data,
     .elements = FWK_MODULE_DYNAMIC_ELEMENTS(ppu_v1_get_element_table),
 };
