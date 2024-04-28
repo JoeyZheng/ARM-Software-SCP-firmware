@@ -20,6 +20,16 @@
 /* Secure Shared memory between AP and SCP */
 #define SCP_AP_PERIPHERAL_SRAM_SHARED_SECURE_BASE \
     (SCP_AP_PERIPHERAL_SRAM_TRUSTED_BASE)
+#define SCP_AP_PERIPHERAL_SRAM_SHARED_SECURE_SIZE (4 * FWK_KIB)
+
+/*
+ * AP Context Memory Region inside Secure AP Peripheral SRAM that is shared
+ * between AP and SCP.
+ */
+#define SCP_AP_CONTEXT_SIZE (64)
+#define SCP_AP_CONTEXT_BASE \
+    (SCP_AP_PERIPHERAL_SRAM_SHARED_SECURE_BASE + \
+     SCP_AP_PERIPHERAL_SRAM_SHARED_SECURE_SIZE - SCP_AP_CONTEXT_SIZE)
 
 /*
  * SDS Memory Region inside Secure AP Peripheral SRAM that is shared between
