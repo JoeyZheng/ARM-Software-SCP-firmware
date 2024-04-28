@@ -26,6 +26,7 @@ target_sources(
             "${CMAKE_CURRENT_SOURCE_DIR}/config_power_domain.c"
             "${CMAKE_CURRENT_SOURCE_DIR}/config_ppu_v1.c"
             "${CMAKE_CURRENT_SOURCE_DIR}/config_scp_platform.c"
+            "${CMAKE_CURRENT_SOURCE_DIR}/config_sds.c"
             "${CMAKE_CURRENT_SOURCE_DIR}/config_sid.c"
             "${CMAKE_CURRENT_SOURCE_DIR}/config_system_info.c"
             "${CMAKE_CURRENT_SOURCE_DIR}/config_system_pik.c"
