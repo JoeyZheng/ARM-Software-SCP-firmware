@@ -26,6 +26,8 @@ set(SCP_ARCHITECTURE "arm-m")
 
 set(SCP_ENABLE_NEWLIB_NANO FALSE)
 
+set(SCP_ENABLE_OUTBAND_MSG_SUPPORT TRUE)
+
 list(PREPEND SCP_MODULE_PATHS
      "${CMAKE_CURRENT_LIST_DIR}/../module/system_pik")
 
@@ -41,6 +43,8 @@ list(APPEND SCP_MODULES "system-pll")
 list(APPEND SCP_MODULES "pik-clock")
 list(APPEND SCP_MODULES "gtimer")
 list(APPEND SCP_MODULES "timer")
+list(APPEND SCP_MODULES "mhu3")
+list(APPEND SCP_MODULES "transport")
 list(APPEND SCP_MODULES "pcid")
 list(APPEND SCP_MODULES "sid")
 list(APPEND SCP_MODULES "system-info")

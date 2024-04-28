@@ -8,6 +8,7 @@
  *     Configuration data for module 'armv7m_mpu'.
  */
 
+#include "scp_fw_mmap.h"
 #include "scp_mmap.h"
 
 #include <mod_armv7m_mpu.h>
@@ -15,7 +16,7 @@
 #include <fwk_macros.h>
 #include <fwk_module.h>
 
-#define SCP_MPU_REGION_COUNT 3
+#define SCP_MPU_REGION_COUNT 4
 
 static const ARM_MPU_Region_t regions[SCP_MPU_REGION_COUNT] = {
     {
@@ -56,6 +57,22 @@ static const ARM_MPU_Region_t regions[SCP_MPU_REGION_COUNT] = {
             1,
             0,
             ARM_MPU_REGION_SIZE_256KB),
+    },
+    {
+        /*
+         * 0x7000_0000 - 0x7000_1FFF
+         * This is mapped to 0x0000_0000 - 0x0000_1FFF in AP memory map.
+         */
+        .RBAR = ARM_MPU_RBAR(0x3UL, SCP_AP_PERIPHERAL_SRAM_TRUSTED_BASE),
+        .RASR = ARM_MPU_RASR(
+            1,
+            ARM_MPU_AP_PRIV,
+            0,
+            1,
+            1,
+            1,
+            0,
+            ARM_MPU_REGION_SIZE_8KB),
     },
 };
 

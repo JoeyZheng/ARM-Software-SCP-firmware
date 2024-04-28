@@ -20,11 +20,15 @@
 #define SCP_DTC_RAM_SIZE (256 * 1024)
 
 /* SCP sub-system peripherals */
+#define SCP_AP2SCP_MHUV3_RCV_S_BASE   (0x45030000UL)
 #define SCP_POWER_CONTROL_BASE        (0x50000000UL)
 #define SCP_PPU_SYS0_BASE             (0x50041000UL)
 #define SCP_REFCLK_CNTCONTROL_BASE    (0x2A430000UL)
 #define SCP_REFCLK_CNTCTL_BASE        (0x44000000UL)
 #define SCP_REFCLK_CNTBASE0_BASE      (0x44001000UL)
+#define SCP_RSE2SCP_MHUV3_RCV_S_BASE  (0x46010000UL)
+#define SCP_SCP2AP_MHUV3_SEND_S_BASE  (0x45020000UL)
+#define SCP_SCP2RSE_MHUV3_SEND_S_BASE (0x46000000UL)
 #define SCP_SID_BASE                  (0x2A4A0000UL)
 #define SCP_SYSTEM_PIK_BASE           (0x50040000UL)
 #define SCP_UART_BASE                 (0x44002000UL)
@@ -39,11 +43,18 @@
  * Offsets within SCP's Address Translation Window0
  *          __________________________
  *         |                          |
+ *         |     SHARED SRAM 128M     |
+ *         |__________________________| 0x70000000
+ *         |                          |
  *         |     CLUSTER UTIL 256M    |
  *         |__________________________| 0x60000000
  */
 
+#define SCP_ATW0_CLUSTER_UTILITY_SIZE        (256 * FWK_MIB)
+
 #define SCP_ATW0_CLUSTER_UTILITY_BASE SCP_ADDRESS_TRANSLATION_WINDOW0_BASE
+#define SCP_ATW0_AP_PERIPHERAL_SRAM_BASE \
+    (SCP_ATW0_CLUSTER_UTILITY_BASE + SCP_ATW0_CLUSTER_UTILITY_SIZE)
 
 /*
  * Size of SCP's view of per-cluster utility memory region.
