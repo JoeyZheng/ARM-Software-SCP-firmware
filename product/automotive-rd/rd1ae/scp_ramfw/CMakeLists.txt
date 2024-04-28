@@ -22,7 +22,8 @@ target_sources(
             "${CMAKE_CURRENT_SOURCE_DIR}/config_gtimer.c"
             "${CMAKE_CURRENT_SOURCE_DIR}/config_pik_clock.c"
             "${CMAKE_CURRENT_SOURCE_DIR}/config_pl011.c"
-            "${CMAKE_CURRENT_SOURCE_DIR}/config_system_pll.c")
+            "${CMAKE_CURRENT_SOURCE_DIR}/config_system_pll.c"
+            "${CMAKE_CURRENT_SOURCE_DIR}/config_timer.c")
 
 #
 # Some of our firmware includes require CMSIS.
