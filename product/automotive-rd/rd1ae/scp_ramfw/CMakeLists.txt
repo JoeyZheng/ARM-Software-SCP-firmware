@@ -14,7 +14,8 @@ add_executable(rd1ae-bl2)
 
 target_include_directories(
     rd1ae-bl2
-    PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include")
+    PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include"
+           "${CMAKE_CURRENT_SOURCE_DIR}/../include")
 
 target_sources(
     rd1ae-bl2

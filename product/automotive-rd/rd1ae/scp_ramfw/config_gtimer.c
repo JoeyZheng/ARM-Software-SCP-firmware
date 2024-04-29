@@ -9,11 +9,13 @@
  */
 
 #include "scp_mmap.h"
+#include "syscnt_impdef.h"
 
 #include <mod_gtimer.h>
 
 #include <fwk_element.h>
 #include <fwk_id.h>
+#include <fwk_macros.h>
 #include <fwk_module.h>
 #include <fwk_time.h>
 
@@ -28,6 +30,20 @@
  */
 #define SYSCNT_INCR 1
 
+/*
+ * System counter implementation defined register config data.
+ */
+static struct mod_gtimer_syscounter_impdef_config syscnt_impdef_cfg[2] = {
+    [0] = {
+            .offset = RD1AE_SYSCNT_IMPDEF0_CNTENCR,
+            .value = 0,
+          },
+    [1] = {
+            .offset = RD1AE_SYSCNT_IMPDEF0_CNTINCR,
+            .value = SYSCNT_INCR,
+          },
+};
+
 /* Generic timer driver config */
 static const struct fwk_element gtimer_dev_table[MOD_GTIMER_ELEMENT_COUNT] = {
     [0] = { .name = "REFCLK",
@@ -37,6 +53,8 @@ static const struct fwk_element gtimer_dev_table[MOD_GTIMER_ELEMENT_COUNT] = {
                 .control = SCP_REFCLK_CNTCONTROL_BASE,
                 .frequency = (CLOCK_RATE_REFCLK * SYSCNT_INCR),
                 .clock_id = FWK_ID_NONE_INIT,
+                .syscnt_impdef_cfg = syscnt_impdef_cfg,
+                .syscnt_impdef_cfg_cnt = FWK_ARRAY_SIZE(syscnt_impdef_cfg),
             }) },
     [1] = { 0 },
 };
