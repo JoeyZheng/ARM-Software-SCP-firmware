@@ -15,12 +15,17 @@
 enum scp_scmi_agent_idx {
     /* 0 is reserved for the platform */
     SCP_SCMI_AGENT_IDX_PSCI = 1,
+    SCP_SCMI_AGENT_IDX_RSE,
     SCP_SCMI_AGENT_IDX_COUNT,
 };
 
 /* Module 'scmi' element indexes (SCMI services supported) */
 enum scp_cfgd_mod_scmi_element_idx {
     SCP_CFGD_MOD_SCMI_EIDX_PSCI,
+    SCP_CFGD_MOD_SCMI_RSE_POWER_DOWN_SEND,
+#ifdef BUILD_HAS_SCMI_NOTIFICATIONS
+    SCP_CFGD_MOD_SCMI_RSE_POWER_DOWN_RECV,
+#endif
     SCP_CFGD_MOD_SCMI_EIDX_COUNT,
 };
 

@@ -39,6 +39,42 @@ static const struct fwk_element service_table[MOD_SCMI_ELEMENT_COUNT] = {
             .scmi_p2a_id = FWK_ID_NONE_INIT,
         }),
     },
+    [SCP_CFGD_MOD_SCMI_RSE_POWER_DOWN_SEND] = {
+        .name = "SERVICE_RSE_POWER_DOWN_SEND",
+        .data = &((struct mod_scmi_service_config) {
+            .transport_id = FWK_ID_ELEMENT_INIT(
+                FWK_MODULE_IDX_TRANSPORT,
+                SCP_CFGD_MOD_TRANSPORT_EIDX_POWER_STATE_RSE_SEND),
+            .transport_api_id = FWK_ID_API_INIT(
+                FWK_MODULE_IDX_TRANSPORT,
+                MOD_TRANSPORT_API_IDX_SCMI_TO_TRANSPORT),
+            .transport_notification_init_id = FWK_ID_NOTIFICATION_INIT(
+                FWK_MODULE_IDX_TRANSPORT,
+                MOD_TRANSPORT_NOTIFICATION_IDX_INITIALIZED),
+            .scmi_agent_id = SCP_SCMI_AGENT_IDX_RSE,
+            .scmi_p2a_id = FWK_ID_NONE_INIT,
+        }),
+    },
+#ifdef BUILD_HAS_SCMI_NOTIFICATIONS
+    [SCP_CFGD_MOD_SCMI_RSE_POWER_DOWN_RECV] = {
+        .name = "SERVICE_RSE_POWER_DOWN_RECV",
+        .data = &((struct mod_scmi_service_config) {
+            .transport_id = FWK_ID_ELEMENT_INIT(
+                FWK_MODULE_IDX_TRANSPORT,
+                SCP_CFGD_MOD_TRANSPORT_EIDX_POWER_STATE_RSE_RECV),
+            .transport_api_id = FWK_ID_API_INIT(
+                FWK_MODULE_IDX_TRANSPORT,
+                MOD_TRANSPORT_API_IDX_SCMI_TO_TRANSPORT),
+            .transport_notification_init_id = FWK_ID_NOTIFICATION_INIT(
+                FWK_MODULE_IDX_TRANSPORT,
+                MOD_TRANSPORT_NOTIFICATION_IDX_INITIALIZED),
+            .scmi_agent_id = SCP_SCMI_AGENT_IDX_RSE,
+            .scmi_p2a_id = FWK_ID_ELEMENT_INIT(
+                FWK_MODULE_IDX_SCMI,
+                SCP_CFGD_MOD_SCMI_RSE_POWER_DOWN_SEND),
+        }),
+    },
+#endif
     [SCP_CFGD_MOD_SCMI_EIDX_COUNT] = { 0 }
 };
 
@@ -52,12 +88,17 @@ static struct mod_scmi_agent agent_table[SCP_SCMI_AGENT_IDX_COUNT] = {
         .type = SCMI_AGENT_TYPE_PSCI,
         .name = "PSCI",
     },
+    [SCP_SCMI_AGENT_IDX_RSE] = {
+        .type = SCMI_AGENT_TYPE_MANAGEMENT,
+        .name = "RSE",
+    },
 };
 
 const struct fwk_module_config config_scmi = {
     .data =
         &(struct mod_scmi_config){
             .protocol_count_max = 4,
+            .protocol_requester_count_max = 1,
             .agent_count = FWK_ARRAY_SIZE(agent_table) - 1,
             .agent_table = agent_table,
             .vendor_identifier = "arm",
