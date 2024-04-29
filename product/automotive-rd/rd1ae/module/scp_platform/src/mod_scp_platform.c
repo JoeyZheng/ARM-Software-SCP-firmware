@@ -130,6 +130,11 @@ static int scp_platform_process_bind_request(
     api_id_type = (enum mod_scp_platform_api_idx)fwk_id_get_api_idx(api_id);
 
     switch (api_id_type) {
+    case MOD_SCP_PLATFORM_API_IDX_SCMI_POWER_DOWN:
+        *api = get_platform_scmi_power_down_api();
+        status = FWK_SUCCESS;
+        break;
+
     case MOD_SCP_PLATFORM_API_IDX_SYSTEM_POWER_DRIVER:
         *api = get_platform_system_power_driver_api();
         status = FWK_SUCCESS;

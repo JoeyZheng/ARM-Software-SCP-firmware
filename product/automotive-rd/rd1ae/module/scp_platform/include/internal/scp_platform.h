@@ -67,6 +67,19 @@ int platform_rse_bind(const struct mod_scp_platform_config *config);
  */
 const void *get_platform_system_power_driver_api(void);
 
+/*
+ * SCMI interface helper functions.
+ */
+
+/*!
+ * \brief Helper function to return platform system SCMI API.
+ *
+ * \param None.
+ *
+ * \return Pointer to the SCP platform system SCMI API.
+ */
+const void *get_platform_scmi_power_down_api(void);
+
 /*!
  * \brief Helper function to bind to power domain restricted API.
  *
