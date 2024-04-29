@@ -36,6 +36,7 @@ list(PREPEND SCP_MODULE_PATHS
      "${CMAKE_CURRENT_LIST_DIR}/../module/io_block"
      "${CMAKE_CURRENT_LIST_DIR}/../module/pcie_discovery"
      "${CMAKE_CURRENT_LIST_DIR}/../module/pcie_setup"
+     "${CMAKE_CURRENT_LIST_DIR}/../module/safety_island_platform"
      "${CMAKE_CURRENT_LIST_DIR}/../module/scp_platform"
      "${CMAKE_CURRENT_LIST_DIR}/../module/system_pik")
 
@@ -72,3 +73,4 @@ list(APPEND SCP_MODULES "io-block")
 list(APPEND SCP_MODULES "pcie_discovery")
 list(APPEND SCP_MODULES "pcie-setup")
 list(APPEND SCP_MODULES "scp-platform")
+list(APPEND SCP_MODULES "safety-island-platform")

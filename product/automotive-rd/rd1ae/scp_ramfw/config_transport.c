@@ -15,6 +15,7 @@
 #include "scp_fw_mmap.h"
 
 #include <mod_mhu3.h>
+#include <mod_safety_island_platform.h>
 #include <mod_scmi.h>
 #include <mod_scp_platform.h>
 #include <mod_transport.h>
@@ -131,6 +132,72 @@ static const struct fwk_element element_table[MOD_TRANSPORT_ELEMENT_COUNT]  = {
                         FWK_MODULE_IDX_MHU3,
                         SCP_CFGD_MOD_MHU3_EIDX_SCP_RSE_S,
                         1),
+                .driver_api_id =
+                    FWK_ID_API_INIT(
+                        FWK_MODULE_IDX_MHU3,
+                        MOD_MHU3_API_IDX_TRANSPORT_DRIVER),
+        }),
+    },
+    [SCP_CFGD_MOD_TRANSPORT_EIDX_BOOT_SI_CLUS0] = {
+        .name = "SCP_PLATFORM_BOOT_SI_CLUS0",
+        .data = &((
+            struct mod_transport_channel_config) {
+                .transport_type = MOD_TRANSPORT_CHANNEL_TRANSPORT_TYPE_NONE,
+                .policies = MOD_TRANSPORT_POLICY_NONE,
+                .channel_type = MOD_TRANSPORT_CHANNEL_TYPE_COMPLETER,
+                .signal_api_id =
+                    FWK_ID_API_INIT(
+                        FWK_MODULE_IDX_SAFETY_ISLAND_PLATFORM,
+                        MOD_SAFETY_ISLAND_PLATFORM_API_IDX_BOOT_CLUSTER),
+                .driver_id =
+                    FWK_ID_SUB_ELEMENT_INIT(
+                        FWK_MODULE_IDX_MHU3,
+                        SCP_CFGD_MOD_MHU3_EIDX_SCP_RSE_S,
+                        2),
+                .driver_api_id =
+                    FWK_ID_API_INIT(
+                        FWK_MODULE_IDX_MHU3,
+                        MOD_MHU3_API_IDX_TRANSPORT_DRIVER),
+        }),
+    },
+    [SCP_CFGD_MOD_TRANSPORT_EIDX_BOOT_SI_CLUS1] = {
+        .name = "SCP_PLATFORM_BOOT_SI_CLUS1",
+        .data = &((
+            struct mod_transport_channel_config) {
+                .transport_type = MOD_TRANSPORT_CHANNEL_TRANSPORT_TYPE_NONE,
+                .policies = MOD_TRANSPORT_POLICY_NONE,
+                .channel_type = MOD_TRANSPORT_CHANNEL_TYPE_COMPLETER,
+                .signal_api_id =
+                    FWK_ID_API_INIT(
+                        FWK_MODULE_IDX_SAFETY_ISLAND_PLATFORM,
+                        MOD_SAFETY_ISLAND_PLATFORM_API_IDX_BOOT_CLUSTER),
+                .driver_id =
+                    FWK_ID_SUB_ELEMENT_INIT(
+                        FWK_MODULE_IDX_MHU3,
+                        SCP_CFGD_MOD_MHU3_EIDX_SCP_RSE_S,
+                        3),
+                .driver_api_id =
+                    FWK_ID_API_INIT(
+                        FWK_MODULE_IDX_MHU3,
+                        MOD_MHU3_API_IDX_TRANSPORT_DRIVER),
+        }),
+    },
+    [SCP_CFGD_MOD_TRANSPORT_EIDX_BOOT_SI_CLUS2] = {
+        .name = "SCP_PLATFORM_BOOT_SI_CLUS2",
+        .data = &((
+            struct mod_transport_channel_config) {
+                .transport_type = MOD_TRANSPORT_CHANNEL_TRANSPORT_TYPE_NONE,
+                .policies = MOD_TRANSPORT_POLICY_NONE,
+                .channel_type = MOD_TRANSPORT_CHANNEL_TYPE_COMPLETER,
+                .signal_api_id =
+                    FWK_ID_API_INIT(
+                        FWK_MODULE_IDX_SAFETY_ISLAND_PLATFORM,
+                        MOD_SAFETY_ISLAND_PLATFORM_API_IDX_BOOT_CLUSTER),
+                .driver_id =
+                    FWK_ID_SUB_ELEMENT_INIT(
+                        FWK_MODULE_IDX_MHU3,
+                        SCP_CFGD_MOD_MHU3_EIDX_SCP_RSE_S,
+                        4),
                 .driver_api_id =
                     FWK_ID_API_INIT(
                         FWK_MODULE_IDX_MHU3,
