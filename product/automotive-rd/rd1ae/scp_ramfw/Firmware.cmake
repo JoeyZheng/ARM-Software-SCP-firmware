@@ -33,6 +33,7 @@ set(SCP_ENABLE_SCMI_NOTIFICATIONS TRUE)
 set(SCP_ENABLE_ATU_MANAGE TRUE)
 
 list(PREPEND SCP_MODULE_PATHS
+     "${CMAKE_CURRENT_LIST_DIR}/../module/io_block"
      "${CMAKE_CURRENT_LIST_DIR}/../module/scp_platform"
      "${CMAKE_CURRENT_LIST_DIR}/../module/system_pik")
 
@@ -43,6 +44,7 @@ list(PREPEND SCP_MODULE_PATHS
 list(APPEND SCP_MODULES "armv7m-mpu")
 list(APPEND SCP_MODULES "pl011")
 list(APPEND SCP_MODULES "atu")
+list(APPEND SCP_MODULES "noc-s3")
 list(APPEND SCP_MODULES "atu-mmio")
 list(APPEND SCP_MODULES "system-pik")
 list(APPEND SCP_MODULES "ppu-v1")
@@ -64,4 +66,5 @@ list(APPEND SCP_MODULES "scmi")
 list(APPEND SCP_MODULES "sds")
 list(APPEND SCP_MODULES "scmi-power-domain")
 list(APPEND SCP_MODULES "scmi-system-power")
+list(APPEND SCP_MODULES "io-block")
 list(APPEND SCP_MODULES "scp-platform")

@@ -45,6 +45,9 @@
  * Offsets within SCP's Address Translation Window0
  *          __________________________
  *         |                          |
+ *         |     IO Block NCI 16M     |
+ *         |__________________________| 0x78600000
+ *         |                          |
  *         |     ATU MMIO (1M)        |
  *         |__________________________| 0x78500000
  *         |                          |
@@ -66,6 +69,7 @@
 #define SCP_ATW0_AP_PERIPHERAL_GPC_SMMU_SIZE (1 * FWK_MIB)
 #define SCP_ATW0_SHARED_SRAM_RSM_SIZE        (4 * FWK_MIB)
 #define SCP_ATW0_ATU_MMIO_SIZE               (1 * FWK_MIB)
+#define SCP_ATW0_AP_IO_BLOCK_NCI_SIZE        (16 * FWK_MIB)
 
 #define SCP_ATW0_CLUSTER_UTILITY_BASE SCP_ADDRESS_TRANSLATION_WINDOW0_BASE
 #define SCP_ATW0_AP_PERIPHERAL_SRAM_BASE \
@@ -77,6 +81,8 @@
      SCP_ATW0_AP_PERIPHERAL_GPC_SMMU_SIZE)
 #define SCP_ATW0_ATU_MMIO_BASE \
     (SCP_ATW0_SHARED_SRAM_RSM_BASE + SCP_ATW0_SHARED_SRAM_RSM_SIZE)
+#define SCP_ATW0_AP_IO_BLOCK_NCI_BASE \
+    SCP_ATW0_ATU_MMIO_BASE + SCP_ATW0_ATU_MMIO_SIZE
 
 /*
  * Offsets within SCP's Address Translation Window1
@@ -125,5 +131,14 @@
  * the SCP address translation window 0 at the address 0x7810_0000.
  */
 #define SCP_SHARED_SRAM_RSM_BASE (SCP_ATW0_SHARED_SRAM_RSM_BASE)
+
+/* Base address of the IO block register bank. */
+#define SCP_IO_BLOCK_BASE (0x280000000UL)
+/* Base address of the NCI in the IO block. */
+#define SCP_IO_BLOCK_NCI_GVP_BASE (SCP_IO_BLOCK_BASE + 0x4000000UL)
+/* Size of the register bank of IO block. */
+#define SCP_IO_BLOCK_REGISTER_SIZE (0x8000000UL)
+/* Base address of th Control register set. */
+#define SCP_IO_BLOCK_CONTROL_REG (SCP_IO_BLOCK_BASE + 0x5B00000UL)
 
 #endif /* SCP_MMAP_H */
