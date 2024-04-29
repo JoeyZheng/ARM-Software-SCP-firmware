@@ -11,6 +11,8 @@
 #ifndef SCP_CFGD_SCMI_H
 #define SCP_CFGD_SCMI_H
 
+#include <stdint.h>
+
 /* SCMI agent identifier indexes in the SCMI agent table */
 enum scp_scmi_agent_idx {
     /* 0 is reserved for the platform */
@@ -27,6 +29,11 @@ enum scp_cfgd_mod_scmi_element_idx {
     SCP_CFGD_MOD_SCMI_RSE_POWER_DOWN_RECV,
 #endif
     SCP_CFGD_MOD_SCMI_EIDX_COUNT,
+};
+
+struct scp_cfgd_scmi_sys_power_state_set_payload {
+    uint32_t flags;
+    uint32_t system_state;
 };
 
 #endif /* SCP_CFGD_SCMI_H */
