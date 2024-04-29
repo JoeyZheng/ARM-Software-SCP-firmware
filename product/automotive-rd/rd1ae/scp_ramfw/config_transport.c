@@ -15,6 +15,7 @@
 #include "scp_fw_mmap.h"
 
 #include <mod_mhu3.h>
+#include <mod_scmi.h>
 #include <mod_scp_platform.h>
 #include <mod_transport.h>
 
@@ -82,6 +83,54 @@ static const struct fwk_element element_table[MOD_TRANSPORT_ELEMENT_COUNT]  = {
                         FWK_MODULE_IDX_MHU3,
                         SCP_CFGD_MOD_MHU3_EIDX_SCP_RSE_S,
                         0),
+                .driver_api_id =
+                    FWK_ID_API_INIT(
+                        FWK_MODULE_IDX_MHU3,
+                        MOD_MHU3_API_IDX_TRANSPORT_DRIVER),
+        }),
+    },
+    [SCP_CFGD_MOD_TRANSPORT_EIDX_POWER_STATE_RSE_SEND] = {
+        .name = "SCP_PLATFORM_TRANSPORT_POWER_STATE_RSE_SEND",
+        .data = &((
+            struct mod_transport_channel_config) {
+                .transport_type = MOD_TRANSPORT_CHANNEL_TRANSPORT_TYPE_OUT_BAND,
+                .policies = MOD_TRANSPORT_POLICY_INIT_MAILBOX |
+                    MOD_TRANSPORT_POLICY_SECURE,
+                .channel_type = MOD_TRANSPORT_CHANNEL_TYPE_REQUESTER,
+                .out_band_mailbox_address =
+                    (uintptr_t) SCP_RSE_TRANSPORT_PAYLOAD_BASE,
+                .out_band_mailbox_size = SCP_RSE_TRANSPORT_PAYLOAD_SIZE,
+                .signal_api_id =
+                    FWK_ID_API_INIT(
+                        FWK_MODULE_IDX_SCMI,
+                        MOD_SCMI_API_IDX_TRANSPORT),
+                .driver_id =
+                    FWK_ID_SUB_ELEMENT_INIT(
+                        FWK_MODULE_IDX_MHU3,
+                        SCP_CFGD_MOD_MHU3_EIDX_SCP_RSE_S,
+                        1),
+                .driver_api_id =
+                    FWK_ID_API_INIT(
+                        FWK_MODULE_IDX_MHU3,
+                        MOD_MHU3_API_IDX_TRANSPORT_DRIVER),
+        }),
+    },
+    [SCP_CFGD_MOD_TRANSPORT_EIDX_POWER_STATE_RSE_RECV] = {
+        .name = "SCP_PLATFORM_TRANSPORT_POWER_STATE_RSE_RECV",
+        .data = &((
+            struct mod_transport_channel_config) {
+                .transport_type = MOD_TRANSPORT_CHANNEL_TRANSPORT_TYPE_OUT_BAND,
+                .policies = MOD_TRANSPORT_POLICY_INIT_MAILBOX |
+                    MOD_TRANSPORT_POLICY_SECURE,
+                .channel_type = MOD_TRANSPORT_CHANNEL_TYPE_COMPLETER,
+                .out_band_mailbox_address =
+                    (uintptr_t) SCP_RSE_TRANSPORT_PAYLOAD_BASE,
+                .out_band_mailbox_size = SCP_RSE_TRANSPORT_PAYLOAD_SIZE,
+                .driver_id =
+                    FWK_ID_SUB_ELEMENT_INIT(
+                        FWK_MODULE_IDX_MHU3,
+                        SCP_CFGD_MOD_MHU3_EIDX_SCP_RSE_S,
+                        1),
                 .driver_api_id =
                     FWK_ID_API_INIT(
                         FWK_MODULE_IDX_MHU3,

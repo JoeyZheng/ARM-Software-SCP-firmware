@@ -34,9 +34,11 @@ struct mod_mhu3_channel_config scp2ap_s_dbch_config[1] = {
 };
 
 /* SCP<-->RSE Secure MHUv3 Doorbell channel configuration */
-struct mod_mhu3_channel_config scp2rse_s_dbch_config[1] = {
+struct mod_mhu3_channel_config scp2rse_s_dbch_config[2] = {
     /* PBX CH 0, FLAG 0, MBX CH 0, FLAG 0 */
     [0] = MOD_MHU3_INIT_DBCH(0, 0, 0, 0),
+    /* PBX CH 1, FLAG 0, MBX CH 1, FLAG 0, used by scp platform for shutdown */
+    [1] = MOD_MHU3_INIT_DBCH(1, 0, 1, 0),
 };
 
 /* AP<-->SCP Secure MHUv3 doorbell channel count */

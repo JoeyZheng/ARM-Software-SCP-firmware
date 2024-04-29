@@ -114,4 +114,10 @@
 /* CMN config space is mapped in the SCP address translation window 1 */
 #define SCP_CMN_BASE SCP_ATW1_CMN_BASE
 
+/*
+ * Shared RSM SRAM (shared between RSE and SCP) is mapped by ATU in
+ * the SCP address translation window 0 at the address 0x7810_0000.
+ */
+#define SCP_SHARED_SRAM_RSM_BASE (SCP_ATW0_SHARED_SRAM_RSM_BASE)
+
 #endif /* SCP_MMAP_H */
