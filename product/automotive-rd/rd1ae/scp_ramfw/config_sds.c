@@ -114,12 +114,21 @@ static struct fwk_element sds_element_table[MOD_SDS_ELEMENT_COUNT] = {
                 .finalize = true,
                 }),
     },
+    [SCP_CFGD_MOD_SDS_EIDX_PCIE_MMAP] = {
+        .name = "PCIe Mmap",
+        .data = &((struct mod_sds_structure_desc){
+            .id = SDS_PCIE_MMAP,
+            .size = SCP_CFGD_MOD_SDS_PCIE_MMAP_SIZE,
+            .region_id = SCP_CFGD_MOD_SDS_REGION_IDX_SECURE,
+            .finalize = true,
+        }),
+    },
     [SCP_CFGD_MOD_SDS_EIDX_COUNT] = { 0 }, /* Termination description. */
 };
 
 static_assert(
-    SCP_SDS_SECURE_SIZE > SCP_CFGD_MOD_SDS_CPU_INFO_SIZE +
-            SCP_CFGD_MOD_SDS_ROM_VERSION_SIZE +
+    SCP_SDS_SECURE_SIZE > SCP_CFGD_MOD_SDS_PCIE_MMAP_SIZE +
+            SCP_CFGD_MOD_SDS_CPU_INFO_SIZE + SCP_CFGD_MOD_SDS_ROM_VERSION_SIZE +
             SCP_CFGD_MOD_SDS_RAM_VERSION_SIZE +
             SCP_CFGD_MOD_SDS_RESET_SYNDROME_SIZE +
             SCP_CFGD_MOD_SDS_FEATURE_AVAILABILITY_SIZE +

@@ -29,6 +29,7 @@ target_sources(
             "${CMAKE_CURRENT_SOURCE_DIR}/config_io_block.c"
             "${CMAKE_CURRENT_SOURCE_DIR}/config_mhu3.c"
             "${CMAKE_CURRENT_SOURCE_DIR}/config_noc_s3.c"
+            "${CMAKE_CURRENT_SOURCE_DIR}/config_pcie_setup.c"
             "${CMAKE_CURRENT_SOURCE_DIR}/config_pik_clock.c"
             "${CMAKE_CURRENT_SOURCE_DIR}/config_pl011.c"
             "${CMAKE_CURRENT_SOURCE_DIR}/config_power_domain.c"
