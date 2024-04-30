@@ -1,6 +1,6 @@
 /*
  * Arm SCP/MCP Software
- * Copyright (c) 2020-2023, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2020-2024, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -189,6 +189,8 @@ enum mod_res_clock_permissions_idx {
         MOD_SCMI_CLOCK_RATE_GET - MOD_RES_PERMS_CLOCK_PERMS_OFFSET,
     MOD_RES_PERMS_SCMI_CLOCK_CONFIG_SET_IDX =
         MOD_SCMI_CLOCK_CONFIG_SET - MOD_RES_PERMS_CLOCK_PERMS_OFFSET,
+    MOD_RES_PERMS_SCMI_CLOCK_NAME_GET_IDX =
+        MOD_SCMI_CLOCK_NAME_GET - MOD_RES_PERMS_CLOCK_PERMS_OFFSET,
 };
 
 /*!

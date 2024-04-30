@@ -23,6 +23,7 @@ enum scmi_clock_request_type {
     SCMI_CLOCK_REQUEST_GET_RATE,
     SCMI_CLOCK_REQUEST_SET_RATE,
     SCMI_CLOCK_REQUEST_SET_STATE,
+    SCMI_CLOCK_REQUEST_GET_NAME,
     SCMI_CLOCK_REQUEST_COUNT,
 };
 
@@ -34,6 +35,7 @@ enum scmi_clock_event_idx {
     SCMI_CLOCK_EVENT_IDX_GET_RATE,
     SCMI_CLOCK_EVENT_IDX_SET_RATE,
     SCMI_CLOCK_EVENT_IDX_SET_STATE,
+    SCMI_CLOCK_EVENT_IDX_GET_NAME,
     SCMI_CLOCK_EVENT_IDX_COUNT,
 };
 
@@ -120,7 +122,8 @@ struct scmi_clock_attributes_a2p {
     uint32_t clock_id;
 };
 
-#define SCMI_CLOCK_NAME_LENGTH 16
+#define SCMI_CLOCK_NAME_LENGTH          16
+#define SCMI_CLOCK_EXTENDED_NAME_LENGTH 64
 
 struct scmi_clock_attributes_p2a {
     int32_t status;
@@ -246,6 +249,16 @@ struct scmi_clock_describe_rates_p2a {
     int32_t status;
     uint32_t num_rates_flags;
     struct scmi_clock_rate rates[];
+};
+
+struct scmi_clock_name_get_a2p {
+    uint32_t clock_id;
+};
+
+struct scmi_clock_name_get_p2a {
+    int32_t status;
+    uint32_t flags;
+    char clock_extended_name[SCMI_CLOCK_EXTENDED_NAME_LENGTH];
 };
 
 #endif /* INTERNAL_SCMI_CLOCK_H */

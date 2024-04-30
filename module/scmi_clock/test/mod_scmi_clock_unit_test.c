@@ -789,16 +789,19 @@ void test_mod_scmi_clock_attributes_handler_get_state(void)
     mod_scmi_from_protocol_api_get_agent_id_ExpectAnyArgsAndReturn(FWK_SUCCESS);
     mod_scmi_from_protocol_api_get_agent_id_ReturnThruPtr_agent_id(&agent_id);
 
+    mod_scmi_from_protocol_api_get_agent_id_ExpectAnyArgsAndReturn(FWK_SUCCESS);
+    mod_scmi_from_protocol_api_get_agent_id_ReturnThruPtr_agent_id(&agent_id);
+
     fwk_module_get_element_name_ExpectAnyArgsAndReturn("");
 
     mod_scmi_from_protocol_api_respond_Stub(
         clock_attributes_get_state_callback);
 #else
-    fwk_id_get_element_idx_ExpectAnyArgsAndReturn(CLOCK_DEV_IDX_FAKE0);
     fwk_id_is_equal_ExpectAnyArgsAndReturn(true);
-
     __fwk_put_event_ExpectAnyArgsAndReturn(FWK_SUCCESS);
 #endif
+
+    fwk_id_get_element_idx_ExpectAnyArgsAndReturn(CLOCK_DEV_IDX_FAKE0);
 
     status = scmi_clock_message_handler(
         (fwk_id_t)MOD_SCMI_PROTOCOL_ID_CLOCK,

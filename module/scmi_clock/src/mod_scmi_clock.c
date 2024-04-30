@@ -110,6 +110,9 @@ static const fwk_id_t mod_scmi_clock_event_id_set_state =
     FWK_ID_EVENT_INIT(FWK_MODULE_IDX_SCMI_CLOCK,
                       SCMI_CLOCK_EVENT_IDX_SET_STATE);
 
+static const fwk_id_t mod_scmi_clock_event_id_get_name =
+    FWK_ID_EVENT_INIT(FWK_MODULE_IDX_SCMI_CLOCK, SCMI_CLOCK_EVENT_IDX_GET_NAME);
+
 /*
  * SCMI Clock Message Handlers
  */
@@ -129,6 +132,9 @@ static int scmi_clock_config_set_handler(fwk_id_t service_id,
     const uint32_t *payload);
 static int scmi_clock_describe_rates_handler(fwk_id_t service_id,
     const uint32_t *payload);
+static int scmi_clock_name_get_handler(
+    fwk_id_t service_id,
+    const uint32_t *payload);
 
 /*
  * Internal variables.
@@ -145,6 +151,7 @@ static handler_table_t handler_table[MOD_SCMI_CLOCK_COMMAND_COUNT] = {
     [MOD_SCMI_CLOCK_RATE_SET] = scmi_clock_rate_set_handler,
     [MOD_SCMI_CLOCK_CONFIG_SET] = scmi_clock_config_set_handler,
     [MOD_SCMI_CLOCK_DESCRIBE_RATES] = scmi_clock_describe_rates_handler,
+    [MOD_SCMI_CLOCK_NAME_GET] = scmi_clock_name_get_handler,
 };
 
 static const size_t payload_size_table[MOD_SCMI_CLOCK_COMMAND_COUNT] = {
@@ -162,6 +169,8 @@ static const size_t payload_size_table[MOD_SCMI_CLOCK_COMMAND_COUNT] = {
         (unsigned int)sizeof(struct scmi_clock_config_set_a2p),
     [MOD_SCMI_CLOCK_DESCRIBE_RATES] =
         (unsigned int)sizeof(struct scmi_clock_describe_rates_a2p),
+    [MOD_SCMI_CLOCK_NAME_GET] =
+        (unsigned int)sizeof(struct scmi_clock_name_get_a2p),
 };
 
 /*
@@ -574,6 +583,32 @@ static void get_rate_respond(fwk_id_t service_id,
     }
 }
 
+/*
+ * Helper for the 'get_name' response
+ */
+static void get_name_respond(fwk_id_t clock_dev_id, fwk_id_t service_id)
+{
+    int respond_status;
+    size_t response_size;
+    struct scmi_clock_name_get_p2a return_values = { 0 };
+
+    const char *clock_name = fwk_module_get_element_name(clock_dev_id);
+
+    fwk_str_strncpy(
+        return_values.clock_extended_name,
+        clock_name,
+        FWK_MIN(sizeof(return_values.clock_extended_name), strlen(clock_name)));
+
+    return_values.status = (int32_t)SCMI_SUCCESS;
+    response_size = sizeof(return_values);
+
+    respond_status = scmi_clock_ctx.scmi_api->respond(
+        service_id, &return_values, response_size);
+    if (respond_status != FWK_SUCCESS) {
+        FWK_LOG_DEBUG("[SCMI-CLK] %s @%d", __func__, __LINE__);
+    }
+}
+
 static void request_response(int response_status,
                              fwk_id_t service_id)
 {
@@ -773,8 +808,12 @@ static int create_event_request(
         event.id = mod_scmi_clock_event_id_set_state;
         break;
 
-    default:
-        return FWK_E_PARAM;
+        case SCMI_CLOCK_REQUEST_GET_NAME:
+            event.id = mod_scmi_clock_event_id_get_name;
+            break;
+
+        default:
+            return FWK_E_PARAM;
     }
 
     params->clock_dev_id = clock_id;
@@ -1403,6 +1442,85 @@ exit:
 }
 
 /*
+ * Clock Name Get
+ */
+static int scmi_clock_name_get_handler(
+    fwk_id_t service_id,
+    const uint32_t *payload)
+{
+    int status, respond_status;
+    unsigned int agent_id, clock_dev_idx;
+    const struct mod_scmi_clock_device *clock_device;
+    size_t response_size;
+    const struct scmi_clock_name_get_a2p *parameters;
+    struct scmi_clock_name_get_p2a return_values = {
+        .status = (int32_t)SCMI_GENERIC_ERROR
+    };
+
+    parameters = (const struct scmi_clock_name_get_a2p *)payload;
+
+    status = scmi_clock_get_clock_device_entry(
+        service_id, parameters->clock_id, &clock_device);
+    if (status != FWK_SUCCESS) {
+        return_values.status = (int32_t)SCMI_NOT_FOUND;
+        goto exit;
+    }
+
+#ifdef BUILD_HAS_MOD_RESOURCE_PERMS
+    status = scmi_clock_permissions_handler(
+        parameters->clock_id,
+        service_id,
+        (unsigned int)MOD_SCMI_CLOCK_NAME_GET);
+    if (status != FWK_SUCCESS) {
+        return_values.status = (int32_t)SCMI_DENIED;
+        goto exit;
+    }
+#endif
+
+    status = scmi_clock_ctx.scmi_api->get_agent_id(service_id, &agent_id);
+    if (status != FWK_SUCCESS) {
+        return status;
+    }
+
+    clock_dev_idx =
+        scmi_clock_get_clock_device_idx(agent_id, parameters->clock_id);
+    if (!clock_has_extended_name(agent_id, clock_dev_idx)) {
+        return_values.status = (int32_t)SCMI_NOT_SUPPORTED;
+        goto exit;
+    }
+
+    status = create_event_request(
+        clock_device->element_id,
+        service_id,
+        SCMI_CLOCK_REQUEST_GET_NAME,
+        NULL,
+        parameters->clock_id);
+    if (status == FWK_E_BUSY) {
+        return_values.status = (int32_t)SCMI_BUSY;
+        status = FWK_SUCCESS;
+        goto exit;
+    }
+
+    if (status != FWK_SUCCESS) {
+        goto exit;
+    }
+
+    return FWK_SUCCESS;
+
+exit:
+    response_size = (return_values.status == SCMI_SUCCESS) ?
+        sizeof(return_values) :
+        sizeof(return_values.status);
+    respond_status = scmi_clock_ctx.scmi_api->respond(
+        service_id, &return_values, response_size);
+    if (respond_status != FWK_SUCCESS) {
+        FWK_LOG_DEBUG("[SCMI-CLK] %s @%d", __func__, __LINE__);
+    }
+
+    return status;
+}
+
+/*
  * SCMI module -> SCMI clock module interface
  */
 static int scmi_clock_get_scmi_protocol_id(fwk_id_t protocol_id,
@@ -1548,13 +1666,13 @@ static int process_request_event(const struct fwk_event *event)
 
     event_id_type = (enum scmi_clock_event_idx)fwk_id_get_event_idx(event->id);
 
+    status = scmi_clock_ctx.scmi_api->get_agent_id(service_id, &agent_id);
+    if (status != FWK_SUCCESS) {
+        return status;
+    }
+
     switch (event_id_type) {
     case SCMI_CLOCK_EVENT_IDX_CLOCK_ATTRIBUTES:
-        status = scmi_clock_ctx.scmi_api->get_agent_id(service_id, &agent_id);
-        if (status != FWK_SUCCESS) {
-            return status;
-        }
-
         status = scmi_clock_ctx.clock_api->get_state(
             params->clock_dev_id, &clock_state);
         if (status != FWK_PENDING) {
@@ -1601,6 +1719,10 @@ static int process_request_event(const struct fwk_event *event)
             clock_ops_update_state(clock_dev_idx, status);
             status = FWK_SUCCESS;
         }
+        break;
+
+    case SCMI_CLOCK_EVENT_IDX_GET_NAME:
+        get_name_respond(params->clock_dev_id, service_id);
         break;
 
     default:
