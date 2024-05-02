@@ -104,7 +104,9 @@ struct scmi_clock_generic_p2a {
  */
 
 #define SCMI_CLOCK_ATTRIBUTES_ENABLED_POS    0
-#define SCMI_CLOCK_ATTRIBUTES_EXTENDED_CLOCK_NAME_POS 29
+#define SCMI_CLOCK_ATTRIBUTES_EXTENDED_CLOCK_NAME_POS  29
+#define SUPPORT_RATE_CHANGE_REQUESTED_NOTIFICATION_POS 30
+#define SUPPORT_RATE_CHANGED_NOTIFICATION_POS          31
 
 #define SCMI_CLOCK_ATTRIBUTES_ENABLED_MASK   \
     (UINT32_C(0x1) << SCMI_CLOCK_ATTRIBUTES_ENABLED_POS)
@@ -112,11 +114,27 @@ struct scmi_clock_generic_p2a {
 #define SCMI_CLOCK_ATTRIBUTES_EXTENDED_CLOCK_NAME_MASK \
     (UINT32_C(0x1) << SCMI_CLOCK_ATTRIBUTES_EXTENDED_CLOCK_NAME_POS)
 
-#define SCMI_CLOCK_ATTRIBUTES(ENABLED, EXTENDED_CLOCK) \
+#define SUPPORT_RATE_CHANGE_REQUESTED_NOTIFICATION_MASK \
+    (UINT32_C(0x1) << SUPPORT_RATE_CHANGE_REQUESTED_NOTIFICATION_POS)
+
+#define SUPPORT_RATE_CHANGED_NOTIFICATION_MASK \
+    (UINT32_C(0x1) << SUPPORT_RATE_CHANGED_NOTIFICATION_POS)
+
+#define SET_SCMI_CLOCK_ATTRIBUTES( \
+    ENABLED, \
+    EXTENDED_CLOCK, \
+    SUPPORT_RATE_CHANGE_REQUESTED_NOTIFICATION, \
+    SUPPORT_RATE_CHANGED_NOTIFICATION) \
     ((((ENABLED) << SCMI_CLOCK_ATTRIBUTES_ENABLED_POS) & \
       SCMI_CLOCK_ATTRIBUTES_ENABLED_MASK) | \
      (((EXTENDED_CLOCK) << SCMI_CLOCK_ATTRIBUTES_EXTENDED_CLOCK_NAME_POS) & \
-      SCMI_CLOCK_ATTRIBUTES_EXTENDED_CLOCK_NAME_MASK))
+      SCMI_CLOCK_ATTRIBUTES_EXTENDED_CLOCK_NAME_MASK) | \
+     (((SUPPORT_RATE_CHANGE_REQUESTED_NOTIFICATION) \
+       << SUPPORT_RATE_CHANGE_REQUESTED_NOTIFICATION_POS) & \
+      SUPPORT_RATE_CHANGE_REQUESTED_NOTIFICATION_MASK) | \
+     (((SUPPORT_RATE_CHANGED_NOTIFICATION) \
+       << SUPPORT_RATE_CHANGED_NOTIFICATION_POS) & \
+      SUPPORT_RATE_CHANGED_NOTIFICATION_MASK))
 
 struct scmi_clock_attributes_a2p {
     uint32_t clock_id;
@@ -129,6 +147,7 @@ struct scmi_clock_attributes_p2a {
     int32_t status;
     uint32_t attributes;
     char clock_name[SCMI_CLOCK_NAME_LENGTH];
+    uint32_t clock_enable_delay;
 };
 
 /*
@@ -259,6 +278,29 @@ struct scmi_clock_name_get_p2a {
     int32_t status;
     uint32_t flags;
     char clock_extended_name[SCMI_CLOCK_EXTENDED_NAME_LENGTH];
+};
+
+/*
+ * Generic Data Structur for
+ * CLOCK_RATE_NOTIFY
+ * CLOCK_RATE_CHANGE_REQUESTED_NOTIFY
+ */
+
+#define SCMI_CLOCK_RATE_NOTIFY_ENABLE_MASK UINT32_C(0x1)
+
+struct scmi_clock_rate_notify_a2p {
+    uint32_t clock_id;
+    uint32_t notify_enable;
+};
+
+struct scmi_clock_rate_notify_p2a {
+    int32_t status;
+};
+
+struct scmi_clock_rate_notification_message_p2a {
+    uint32_t agent_id;
+    uint32_t clock_id;
+    uint32_t rate[2];
 };
 
 #endif /* INTERNAL_SCMI_CLOCK_H */

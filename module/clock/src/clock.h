@@ -1,6 +1,6 @@
 /*
  * Arm SCP/MCP Software
- * Copyright (c) 2019-2023, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2019-2024, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -42,6 +42,11 @@ struct clock_dev_ctx {
 
         /* Cookie for the response event */
         uint32_t cookie;
+
+#ifdef BUILD_HAS_NOTIFICATION
+        /*! ID of the entity who requested the operation */
+        unsigned int requester_id;
+#endif /* BUILD_HAS_NOTIFICATION */
     } request;
 
 #ifdef BUILD_HAS_CLOCK_TREE_MGMT

@@ -83,6 +83,25 @@ struct mod_scmi_clock_device {
      * \brief Flag indicating whether extended clock name is supported
      */
     bool supports_extended_name;
+
+#ifdef BUILD_HAS_SCMI_NOTIFICATIONS
+    /*!
+     * \brief Flag indicating support for clock rate change notification
+     *
+     * \details Set means this clock supports clock rate change notification,
+     *          0 means otherwise.
+     */
+    bool notify_changed_rate;
+
+    /*!
+     * \brief Flag indicating support for clock rate change requested
+     *        notification
+     *
+     * \details Set means this clock supports clock rate change requested
+     *          notification, 0 means otherwise.
+     */
+    bool notify_requested_rate;
+#endif /* BUILD_HAS_SCMI_NOTIFICATIONS */
 };
 
 /*!
@@ -168,6 +187,14 @@ enum mod_scmi_clock_policy_commit {
 
     /*! The message handler has completed */
     MOD_SCMI_CLOCK_POST_MESSAGE_HANDLER,
+};
+
+/*!
+ * \brief SCMI Clock Protocol Notifications message ids.
+ */
+enum scmi_clock_notification_id {
+    SCMI_CLOCK_RATE_CHANGED = 0x000,
+    SCMI_CLOCK_RATE_CHANGE_REQUESTED = 0x001,
 };
 
 /*!

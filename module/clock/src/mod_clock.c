@@ -1,6 +1,6 @@
 /*
  * Arm SCP/MCP Software
- * Copyright (c) 2017-2023, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2017-2024, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -15,6 +15,7 @@
 #include <fwk_event.h>
 #include <fwk_id.h>
 #include <fwk_list.h>
+#include <fwk_log.h>
 #include <fwk_mm.h>
 #include <fwk_module.h>
 #include <fwk_module_idx.h>
@@ -31,11 +32,43 @@ static struct clock_ctx mod_clock_ctx;
  * Utility functions
  */
 
+#ifdef BUILD_HAS_NOTIFICATION
+static void notify_rate(
+    unsigned int requester_id,
+    fwk_id_t clock_dev_id,
+    uint64_t rate,
+    fwk_id_t notification_id)
+{
+    int status;
+    unsigned int notification_count;
+    struct fwk_event notification_event = {
+        .source_id = FWK_ID_MODULE(FWK_MODULE_IDX_CLOCK),
+        .id = notification_id,
+    };
+
+    struct mod_clock_notification_params *params =
+        (struct mod_clock_notification_params *)notification_event.params;
+
+    params->requester_id = requester_id;
+    params->clock_id = clock_dev_id;
+    params->rate = rate;
+
+    status = fwk_notification_notify(&notification_event, &notification_count);
+    if (status != FWK_SUCCESS) {
+        FWK_LOG_DEBUG("[CLOCK] %s @%d", __func__, __LINE__);
+    }
+}
+#endif
+
 static int process_response_event(const struct fwk_event *event)
 {
     int status;
     struct fwk_event resp_event;
     struct clock_dev_ctx *ctx;
+#ifdef BUILD_HAS_NOTIFICATION
+    unsigned int requester_id;
+#endif
+
     struct mod_clock_driver_resp_params *event_params =
         (struct mod_clock_driver_resp_params *)event->params;
     struct mod_clock_resp_params *resp_params =
@@ -53,6 +86,21 @@ static int process_response_event(const struct fwk_event *event)
     resp_params->status = event_params->status;
     resp_params->value = event_params->value;
     ctx->request.is_ongoing = false;
+
+#ifdef BUILD_HAS_NOTIFICATION
+    requester_id = ctx->request.requester_id;
+    ctx->request.requester_id = 0;
+
+    if (fwk_id_is_equal(resp_event.id, mod_clock_event_id_set_rate_request)) {
+        if (resp_params->status == FWK_SUCCESS) {
+            notify_rate(
+                requester_id,
+                resp_event.source_id,
+                resp_params->value.rate,
+                mod_clock_notification_id_rate_changed);
+        }
+    }
+#endif
 
     return fwk_put_event(&resp_event);
 }
@@ -84,6 +132,38 @@ static int create_async_request(
         .id = event_id,
         .response_requested = true,
     };
+
+    status = fwk_put_event(&request_event);
+    if (status != FWK_SUCCESS) {
+        return status;
+    }
+
+    ctx->request.is_ongoing = true;
+
+    /*
+     * Signal the result of the request is pending and will arrive later
+     * through an event.
+     */
+    return FWK_PENDING;
+}
+
+static int create_async_request_set_rate(
+    struct clock_dev_ctx *ctx,
+    fwk_id_t clock_id,
+    unsigned int requester_id)
+{
+    int status;
+    struct fwk_event request_event;
+
+    request_event = (struct fwk_event){
+        .target_id = clock_id,
+        .id = mod_clock_event_id_set_rate_request,
+        .response_requested = true,
+    };
+
+#ifdef BUILD_HAS_NOTIFICATION
+    ctx->request.requester_id = requester_id;
+#endif
 
     status = fwk_put_event(&request_event);
     if (status != FWK_SUCCESS) {
@@ -149,11 +229,17 @@ static struct mod_clock_driver_response_api clock_driver_response_api = {
  * Module API functions
  */
 
-static int clock_set_rate(fwk_id_t clock_id, uint64_t rate,
-                          enum mod_clock_round_mode round_mode)
+static int clock_set_rate(
+    fwk_id_t clock_id,
+    uint64_t rate,
+    enum mod_clock_round_mode round_mode,
+    unsigned int requester_id)
 {
-    int status;
+    int status = FWK_SUCCESS;
     struct clock_dev_ctx *ctx;
+#ifdef BUILD_HAS_NOTIFICATION
+    uint64_t actual_rate;
+#endif
 
 #ifdef BUILD_HAS_CLOCK_TREE_MGMT
     struct fwk_event event;
@@ -171,8 +257,7 @@ static int clock_set_rate(fwk_id_t clock_id, uint64_t rate,
 
     status = ctx->api->set_rate(ctx->config->driver_id, rate, round_mode);
     if (status == FWK_PENDING) {
-        return create_async_request(
-            ctx, clock_id, mod_clock_event_id_set_rate_request);
+        return create_async_request_set_rate(ctx, clock_id, requester_id);
     }
     if (clock_is_single_node(ctx)) {
         return status;
@@ -187,15 +272,46 @@ static int clock_set_rate(fwk_id_t clock_id, uint64_t rate,
 
     return fwk_put_event(&event);
 #else
+#    ifdef BUILD_HAS_NOTIFICATION
+    notify_rate(
+        requester_id,
+        clock_id,
+        rate,
+        mod_clock_notification_id_rate_change_requested);
+    if (status != FWK_SUCCESS) {
+        return status;
+    }
+#    endif
     status = ctx->api->set_rate(ctx->config->driver_id, rate, round_mode);
+#    ifdef BUILD_HAS_NOTIFICATION
+    if (status == FWK_SUCCESS) {
+        /* Now that we have set the rate, try to get the actual rate */
+        status = ctx->api->get_rate(ctx->config->driver_id, &actual_rate);
+        if (status == FWK_SUCCESS) {
+            notify_rate(
+                requester_id,
+                clock_id,
+                actual_rate,
+                mod_clock_notification_id_rate_changed);
+        }
+        /* Try to get the rate through an event.
+         * This event id is set as a set rate event because getting the clock
+         * rate here is actually part of a set rate event.
+         */
+        else if (status == FWK_PENDING) {
+            status = create_async_request_set_rate(ctx, clock_id, requester_id);
+            if (status != FWK_SUCCESS || status != FWK_PENDING) {
+                FWK_LOG_DEBUG("[CLOCK] %s @%d", __func__, __LINE__);
+            }
+        }
+        return FWK_SUCCESS;
+    }
+#    endif /* BUILD_HAS_NOTIFICATION */
     if (status == FWK_PENDING) {
-        return create_async_request(
-            ctx,
-            clock_id,
-            mod_clock_event_id_set_rate_request);
+        return create_async_request_set_rate(ctx, clock_id, requester_id);
     }
     return status;
-#endif
+#endif /* BUILD_HAS_CLOCK_TREE_MGMT */
 }
 
 static int clock_get_rate(fwk_id_t clock_id, uint64_t *rate)

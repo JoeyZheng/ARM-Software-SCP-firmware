@@ -757,7 +757,8 @@ static int dvfs_handle_set_opp(
         status = ctx->apis.clock->set_rate(
             ctx->config->clock_id,
             (uint64_t)ctx->request.new_opp.frequency * FWK_KHZ,
-            MOD_CLOCK_ROUND_MODE_NONE);
+            MOD_CLOCK_ROUND_MODE_NONE,
+            0);
 
         if (status == FWK_PENDING) {
             ctx->state = DVFS_DOMAIN_SET_OPP_DONE;
@@ -770,7 +771,8 @@ static int dvfs_handle_set_opp(
         status = ctx->apis.clock->set_rate(
             ctx->config->clock_id,
             (uint64_t)ctx->request.new_opp.frequency * FWK_KHZ,
-            MOD_CLOCK_ROUND_MODE_NONE);
+            MOD_CLOCK_ROUND_MODE_NONE,
+            0);
 
         if (status == FWK_PENDING) {
             ctx->state = DVFS_DOMAIN_SET_VOLTAGE;
@@ -800,7 +802,8 @@ static int dvfs_handle_set_opp(
         status = ctx->apis.clock->set_rate(
             ctx->config->clock_id,
             (uint64_t)ctx->request.new_opp.frequency * FWK_KHZ,
-            MOD_CLOCK_ROUND_MODE_NONE);
+            MOD_CLOCK_ROUND_MODE_NONE,
+            0);
 
         if (status == FWK_PENDING) {
             ctx->state = DVFS_DOMAIN_SET_OPP_DONE;
@@ -882,7 +885,8 @@ static int dvfs_handle_psu_set_voltage_resp(
         status = ctx->apis.clock->set_rate(
             ctx->config->clock_id,
             (uint64_t)ctx->request.new_opp.frequency * FWK_KHZ,
-            MOD_CLOCK_ROUND_MODE_NONE);
+            MOD_CLOCK_ROUND_MODE_NONE,
+            0);
         if (status == FWK_PENDING) {
             ctx->state = DVFS_DOMAIN_SET_OPP_DONE;
             return status;

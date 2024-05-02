@@ -45,11 +45,17 @@ enum mod_clock_state {
  * \brief Clock notification indices.
  */
 enum mod_clock_notification_idx {
-     /*! The running state of a clock changed */
+    /*! The running state of a clock changed */
     MOD_CLOCK_NOTIFICATION_IDX_STATE_CHANGED,
 
-     /*! The running state of a clock is about to change */
+    /*! The running state of a clock is about to change */
     MOD_CLOCK_NOTIFICATION_IDX_STATE_CHANGE_PENDING,
+
+    /*! The running rate of a clock changed */
+    MOD_CLOCK_NOTIFICATION_IDX_RATE_CHANGED,
+
+    /*! The rate of a clock has been requested to change */
+    MOD_CLOCK_NOTIFICATION_IDX_RATE_CHANGE_REQUESTED,
 
     /*! Number of defined notifications */
     MOD_CLOCK_NOTIFICATION_IDX_COUNT
@@ -73,6 +79,26 @@ static const fwk_id_t mod_clock_notification_id_state_change_pending =
     FWK_ID_NOTIFICATION_INIT(
         FWK_MODULE_IDX_CLOCK,
         MOD_CLOCK_NOTIFICATION_IDX_STATE_CHANGE_PENDING);
+#endif
+
+#ifdef BUILD_HAS_NOTIFICATION
+/*!
+ * \brief Identifier for the ::MOD_CLOCK_NOTIFICATION_IDX_RATE_CHANGED
+ *     notification.
+ */
+static const fwk_id_t mod_clock_notification_id_rate_changed =
+    FWK_ID_NOTIFICATION_INIT(
+        FWK_MODULE_IDX_CLOCK,
+        MOD_CLOCK_NOTIFICATION_IDX_RATE_CHANGED);
+
+/*!
+ * \brief Identifier for the ::MOD_CLOCK_NOTIFICATION_IDX_RATE_CHANGE_REQUESTED
+ *     notification.
+ */
+static const fwk_id_t mod_clock_notification_id_rate_change_requested =
+    FWK_ID_NOTIFICATION_INIT(
+        FWK_MODULE_IDX_CLOCK,
+        MOD_CLOCK_NOTIFICATION_IDX_RATE_CHANGE_REQUESTED);
 #endif
 
 /*!
@@ -445,6 +471,8 @@ struct mod_clock_api {
      * \param round_mode The type of rounding to perform, if required, to
      *      achieve the given rate.
      *
+     * \param requester_id The entity which requested the operation.
+     *
      * \retval ::FWK_SUCCESS The operation succeeded.
      * \retval ::FWK_PENDING The request is pending. The result for this
      *      operation will be provided via a response event.
@@ -453,8 +481,11 @@ struct mod_clock_api {
      *      supported.
      * \return One of the standard framework error codes.
      */
-    int (*set_rate)(fwk_id_t clock_id, uint64_t rate,
-                    enum mod_clock_round_mode round_mode);
+    int (*set_rate)(
+        fwk_id_t clock_id,
+        uint64_t rate,
+        enum mod_clock_round_mode round_mode,
+        unsigned int requester_id);
 
     /*!
      * \brief Get the current rate of a clock in Hertz (Hz).
@@ -593,6 +624,17 @@ struct mod_clock_resp_params {
 
     /*! Values returned */
     union mod_clock_resp_values value;
+};
+
+struct mod_clock_notification_params {
+    /*! ID of the entity who requested the operation */
+    unsigned int requester_id;
+
+    /*! Clock ID on which the operation is requested */
+    fwk_id_t clock_id;
+
+    /*! The clock rate in Hertz */
+    uint64_t rate;
 };
 
 /*!
