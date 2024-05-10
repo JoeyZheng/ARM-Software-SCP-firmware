@@ -1,0 +1,35 @@
+# Arm SCP/MCP Software
+# Copyright (c) 2022-2023, Linaro Ltd and Contributors. All rights reserved.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+
+description: SCP SCMI agent configuration
+
+compatible: "scp,scmi-agent"
+
+include: base.yaml
+
+properties:
+    label:
+        description: Agent Name
+        required: true
+
+    agent-type:
+        description: SCMI Agent Type
+        required: true
+        type: int
+
+    agent-idx:
+        description: Agent index reference
+        required: true
+        type: int
+
+    scmi-clock-table:
+        description: Table of clocks available for control by this agent
+        type: phandle
+        required: false
+
+    scmi-reset-table:
+        description: Table of reset devices available for control by this agent
+        type: phandle
+        required: false

@@ -1,0 +1,39 @@
+# Arm SCP/MCP Software
+# Copyright (c) 2022-2023, Linaro Ltd and Contributors. All rights reserved.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+
+description: SCP Reset Domain Element Configuration
+
+compatible: "scp,reset-domain-elem"
+
+include: base.yaml
+
+properties:
+  label:
+    required: true
+
+  elem-idx:
+    required: true
+    description: element index in table of reset domains
+    type: int
+
+  scp-ids:
+    required: true
+    description: Array of SCP framework IDs, [0] is driver element ID, [1] is driver API ID
+    type: phandle-array
+
+  capabilities: 
+    required: false
+    description: Supported capabilities, see mod_reset_domain_capabilities
+    type: int
+
+  modes:
+    required: true
+    description: Supported modes, see mod_reset_domain_mode
+    type: int
+
+  latency:
+    required: true
+    description: Maximum time (in microseconds) required for the reset to take effect
+    type: int

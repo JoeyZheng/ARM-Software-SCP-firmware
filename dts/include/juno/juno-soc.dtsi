@@ -1,0 +1,41 @@
+/*
+ * Arm SCP/MCP Software
+ * Copyright (c) 2023, Arm Limited and Contributors. All rights reserved.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+/* Juno hardware SoC description */
+
+
+
+/ {
+
+    soc {
+	    #address-cells = <1>;
+	    #size-cells = <1>;
+
+        /* main console uart */
+       	uart1: uart@BC0A0000 {
+        	compatible = "arm,pl011";
+			reg = <0xbc0a0000 0x1000>;
+            current-speed = <115200>;
+            clock-frequency = <24000000>;
+			label = "UART1";
+	    };
+
+        /* juno SCC control registers */
+        scc: scc@FFFFF000 {
+            compatible = "arm,juno-scc";
+            reg = <0xFFFFF000 0x1000>;
+        };
+
+        /* i2c device */
+        i2c: i2c@E0100000 {
+            compatible = "arm,apb-i2c";
+            reg = <0xE0100000 0x1000>;
+            irq = <I2C_IRQ>;
+        };
+
+    };
+};

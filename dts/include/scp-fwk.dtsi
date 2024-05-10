@@ -1,0 +1,52 @@
+/*
+ * Arm SCP/MCP Software
+ * Copyright (c) 2022, Arm Limited and Contributors. All rights reserved.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+/* must be first include */
+#include "base.dtsi"
+
+/* generated #define bindings file */
+#include "fwk_dt_bindings.h"
+
+/* base .dtsi file of SCP FWK software configuration */
+
+/ {
+
+    scp-fwk {
+
+        /*  
+         * Set of framework ID descriptions.
+         * modules can create ID instances by setting phandle array elements to one or
+         * more of these nodes.
+         */
+        module_id: fwk-id@0 {
+                compatible = "scp,mod-id";
+                #scp-id-cells = <1>;
+        };
+
+        elem_id: fwk-id@1 {
+                compatible = "scp,elem-id";
+                #scp-id-cells = <2>;        
+        };
+
+        sub_elem_id: fwk-id@2 {
+                compatible = "scp,sub-elem-id";
+                #scp-id-cells = <3>;
+        };
+
+        api_id: fwk-id@3 {
+                compatible = "scp,api-id";
+                #scp-id-cells = <2>;
+        };
+
+        notify_id: fwk-id@4 {
+                compatible = "scp,notify-id";
+                #scp-id-cells = <2>;
+        };
+        
+    };
+
+};

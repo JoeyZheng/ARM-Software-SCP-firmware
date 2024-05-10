@@ -1,0 +1,26 @@
+/*
+ * Arm SCP/MCP Software
+ * Copyright (c) 2021, Arm Limited and Contributors. All rights reserved.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+
+/* base SCP framework - must be first include */
+#include "scp-fwk.dtsi"
+
+/* device tree file for Juno RAM SCP firmware variant */
+#include "juno-scp-base.dtsi"
+#include "juno-scp-ramfw-base.dtsi"
+#include "juno-scp-ramfw-board.dtsi"
+#include "juno-scp-scmi.dtsi"
+
+/* include the generated options file */
+#include "fwk-dt-options.dtsi"
+
+/ {
+	model = "Juno Development Platform (r0-r2)";
+	compatible = "arm,juno";
+
+
+};

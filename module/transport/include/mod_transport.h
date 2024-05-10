@@ -89,6 +89,17 @@ struct mod_transport_buffer {
  * @}
  */
 
+#ifdef DTS_GEN_BINDINGS
+/* Device tree compatible defines (no cast or U suffix) */
+#undef MOD_TRANSPORT_POLICY_NONE
+#define MOD_TRANSPORT_POLICY_NONE 0
+#undef MOD_TRANSPORT_POLICY_SECURE
+#define MOD_TRANSPORT_POLICY_SECURE (1 << 0)
+#undef MOD_TRANSPORT_POLICY_INIT_MAILBOX
+#define MOD_TRANSPORT_POLICY_INIT_MAILBOX (1 << 1)
+#endif
+
+
 /*!
  * \brief Channel type
  *

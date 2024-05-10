@@ -1,0 +1,15 @@
+# Arm SCP/MCP Software
+# Copyright (c) 2023, Linaro Ltd and Contributors. All rights reserved.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+
+description: SCP Juno SCC device
+        defines the base address of the SCC registers.
+
+compatible: "arm,juno-scc"
+
+include: base.yaml
+
+properties:
+    reg:
+      required: true

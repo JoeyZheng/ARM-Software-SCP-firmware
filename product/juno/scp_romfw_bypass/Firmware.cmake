@@ -31,6 +31,18 @@ set(SCP_PLATFORM_VARIANT_INIT "BOARD")
 set(SCP_PLATFORM_VARIANT ${SCP_PLATFORM_VARIANT_INIT} CACHE STRING
     "Platform variant for the build")
 
+# setup Device Tree sources
+
+# the root devicetree source file for this firmware variant
+# setting this source file triggers further DT build processes
+set(SCP_FIRMWARE_DTS_SOURCE "${CMAKE_CURRENT_LIST_DIR}/juno-scp_romfw_bypass.dts")
+
+# the includes needed:
+# the current include dir where generated headers appear
+list(PREPEND SCP_FIRMWARE_DTS_INCLUDE "${CMAKE_CURRENT_LIST_DIR}/../include")
+# the dts/include/juno specific .dtsi files for this product
+list(PREPEND SCP_FIRMWARE_DTS_INCLUDE "${CMAKE_SOURCE_DIR}/dts/include/juno")
+
 list(PREPEND SCP_MODULE_PATHS "${CMAKE_CURRENT_LIST_DIR}/../module/juno_rom")
 list(PREPEND SCP_MODULE_PATHS "${CMAKE_CURRENT_LIST_DIR}/../module/juno_ppu")
 list(PREPEND SCP_MODULE_PATHS

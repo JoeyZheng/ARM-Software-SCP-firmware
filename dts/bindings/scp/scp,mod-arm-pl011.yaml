@@ -1,0 +1,20 @@
+# Arm SCP/MCP Software
+# Copyright (c) 2022-2023, Linaro Ltd and Contributors. All rights reserved.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+
+description: SCP module for ARM PL011 UART
+
+compatible: "scp,mod-arm-pl011"
+
+properties:
+    scp,hardware:
+      type: phandle
+      description: Phandle reference to the underlying PL011 hardware.
+      required: true
+
+    scp-ids:
+      type: phandle-array
+      required: true
+      description: SCP IDs for the power domain of the component.
+

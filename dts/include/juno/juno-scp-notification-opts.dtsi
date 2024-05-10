@@ -1,0 +1,18 @@
+/*
+ * Arm SCP/MCP Software
+ * Copyright (c) 2023, Arm Limited and Contributors. All rights reserved.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+/* reset config needs notification fwk id if notifications are in use - BUILD_HAS_NOTIFICATION */
+/ {
+    scp-reset {
+        /* reset domain configured with a framework ID for modules to register for notifications */
+        reset-config {
+            compatible = "scp,reset-domain-config";
+            scp-ids = <&notify_id FWK_MODULE_IDX_RESET_DOMAIN MOD_RESET_DOMAIN_NOTIFICATION_AUTORESET>;
+       };
+    };
+};
+

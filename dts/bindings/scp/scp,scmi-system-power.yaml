@@ -1,0 +1,43 @@
+# Arm SCP/MCP Software
+# Copyright (c) 2022-2023, Linaro Ltd and Contributors. All rights reserved.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+
+description: SCP SCMI system power control configuration
+
+compatible: "scp,scmi-system-power"
+
+include: base.yaml
+
+properties:
+    system-view: 
+        type: int
+        required: true
+        description: SCP index value indicating the SCP SCMI system view
+
+    system-suspend:
+        type: int
+        required: true
+        description: SCP value indicating the system suspend state.
+
+    wakeup-state:
+        type: int
+        required: false
+        description: If OSPM view can be set for the wakeup composite state value
+
+    timeout-us:
+        type: int
+        required: true
+        description: Graceful timeout period in uS to allow for command completion
+
+    scp-ids:
+        type: phandle-array
+        required: false
+        description:
+            List of SCP IDs, for the optional alarm ID and  wakeup power domain ID, selected by name.
+
+    scp-id-names:
+        type: string-array
+        required: false
+        description: 
+            Names of the SCP IDs in this component. May be "alarm" or "wakeup"

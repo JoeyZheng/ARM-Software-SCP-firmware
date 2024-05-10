@@ -1,0 +1,35 @@
+# Arm SCP/MCP Software
+# Copyright (c) 2022-2023, Linaro Ltd and Contributors. All rights reserved.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+
+description: SCP Message handling unit configuration. 
+             Configure a single message handling instance. Multiple instances used to create an MHU table.
+
+compatible: "scp,mhu"
+
+include: base.yaml
+
+properties:
+  reg:
+    required: true
+    description: ordered list of 2 addresses, without size parameters 
+                First SCP message Out base address. 
+                Second AP message In base address.
+
+  irq: 
+    required: true
+    type: int
+    description:  Interrupt muber for this message handler
+
+  elem-idx:
+    required: true
+    type: int
+    description: SCP firmware table entry index
+
+  sub-elem-count: 
+    required: true
+    type: int
+    description: Number of associated sub-elements 
+
+

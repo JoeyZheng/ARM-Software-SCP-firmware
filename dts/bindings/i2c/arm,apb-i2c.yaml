@@ -1,0 +1,21 @@
+# SCP firmware, i2c apb module configuration
+# Copyright (c) 2023, Linaro Ltd and Contributors. All rights reserved.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+
+description: I2C hardware device 
+
+compatible: "arm,apb-i2c"
+
+include: base.yaml
+
+properties:
+  reg:
+    description: Base address for the I2C device
+    required: true
+    type: array
+
+  irq:
+    description: IRQ number for I2C device
+    required: true
+    type: int

@@ -1,0 +1,49 @@
+# Arm SCP/MCP Software
+# Copyright (c) 2022-2023, Linaro Ltd and Contributors. All rights reserved.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+
+description: SCP sensor configuration. Create tables of SCP framework IDs to reference sensors.
+             Each table is named. Tables are formed into a table of tables for reference from 
+             the platform specific configuration code.
+
+compatible: "scp,sensor"
+
+include: base.yaml
+
+properties:
+    label:
+        required: true
+        description: name of this sensor table. used to generate C-code
+
+    table-idx: 
+        type: int
+        required: true
+        description: Index of this table in the table list.
+
+child-binding:
+    description: Individual sensor definitions
+
+    properties:
+
+        elem-idx:
+            type: int
+            required: true
+            description: table element index for the sensor to be referenced in the API.
+
+        sensor-name:
+            type: string
+            required: false
+            description: Name of the sensor 
+            
+        scp-ids:
+            type: phandle-array
+            description: list of SCP IDs for the sensor configuration.
+            required: true            
+
+        scp-id-names: 
+            type: string-array
+            required: true
+            description: names of the SCP IDs. Permitted are "driver", "driver_api", 
+                         "notification" and "trip_point_api"
+

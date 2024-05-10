@@ -1,0 +1,83 @@
+/*
+ * Arm SCP/MCP Software
+ * Copyright (c) 2021, Arm Limited and Contributors. All rights reserved.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+/* 
+ * SCP firmware framework configuration for Juno scp_ramfw 
+ * BOARD platform variant. 
+ */
+
+/ {
+    
+    
+    scp-fwk {
+        /* I2S clock for fvp variant */
+        scp-clk-dev@0 {
+            compatible = "scp,clk-dev";
+            name = "I2SCLK";
+            scp-ids = <&elem_id FWK_MODULE_IDX_MOCK_CLOCK MOD_MOCK_CLOCK_ELEMENT_IDX_I2S>,
+                      <&api_id FWK_MODULE_IDX_MOCK_CLOCK MOD_MOCK_CLOCK_API_TYPE_DRIVER>;
+            
+        };
+
+        /*sensor configuration tables */
+        scp-sensors {
+            /* mock sensors when running on Juno FVP */
+            juno-fvp {
+                compatible = "scp,sensor";
+                label = "juno_fvp_sensor_table";
+                table-idx = <0>;
+
+                fake-sensor {
+                    sensor-name = "Fake sensor";
+                    scp-ids =   <&elem_id FWK_MODULE_IDX_REG_SENSOR 0>, 
+                                <&api_id FWK_MODULE_IDX_REG_SENSOR 0>;
+                    scp-id-names = "driver", "driver_api";
+                    elem-idx = <0>;
+                };
+            };
+        };
+
+        mock-clock {
+            compatible = "scp,mock-clock";
+            label = "MOCK_I2SCLK";
+            rate-table = <1536000 2116800 2304000 4233600 4608000 8467200 9216000>;
+            default-rate = <1536000>;
+        };
+
+        mock-psu@0 {
+            compatible = "scp,mock-psu";
+            label = "VSYS";
+            default-voltage = <900>;
+            default-enabled;
+            elem-idx = <MOD_MOCK_PSU_ELEMENT_IDX_VSYS>;            
+        };
+
+       mock-psu@1 {
+            compatible = "scp,mock-psu";
+            label = "VBIG";
+            default-voltage = <900>;
+            default-enabled;
+            elem-idx = <MOD_MOCK_PSU_ELEMENT_IDX_VBIG>;            
+        };
+
+        mock-psu@2 {
+            compatible = "scp,mock-psu";
+            label = "VLITTLE";
+            default-voltage = <900>;
+            default-enabled;
+            elem-idx = <MOD_MOCK_PSU_ELEMENT_IDX_VLITTLE>;            
+        };
+
+        mock-psu@3 {
+            compatible = "scp,mock-psu";
+            label = "VGPU";
+            default-voltage = <850>;
+            default-enabled;
+            elem-idx = <MOD_MOCK_PSU_ELEMENT_IDX_VGPU>;            
+        };
+    };
+};

@@ -1,0 +1,21 @@
+# Arm SCP/MCP Software
+# Copyright (c) 2022-2023, Linaro Ltd and Contributors. All rights reserved.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+
+description: SCP statistics 
+
+compatible: "scp,statistics"
+
+include: base.yaml
+
+properties:
+  reg:
+    required: true
+    description: 2 address and size pairs, ordered by SCP stats address, AP stats address.
+
+  scp-ids:
+    type: phandle-array
+    required: true
+    description: contains single phandle ref to scp Framework sub element identifier for 
+                 the alarm for periodic updates.

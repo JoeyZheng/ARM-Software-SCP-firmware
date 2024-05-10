@@ -1,0 +1,30 @@
+# SCP firmware, i2c SCP module configuration
+# Copyright (c) 2023, Linaro Ltd and Contributors. All rights reserved.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+
+description: I2C SCP module 
+
+compatible: "scp,mod-arm-apb-i2c"
+
+include: base.yaml
+
+properties:
+    scp-ids:  
+      description: SCP IDs for i2c modules. Required clock ID, driver ID and API Ids
+      required: true
+      type: phandle-array
+
+    scp-id-names:
+      description: SCP ID names, required "timer", "driver", "api"
+      required: true
+      type: string-array
+
+    scp,hardware:
+      description: Reference to the underlying I2C hardware. 
+      required: true
+      type: phandle
+
+    label:
+      description: Name of i2c device
+      required: false
