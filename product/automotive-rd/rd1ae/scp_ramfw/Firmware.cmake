@@ -30,6 +30,8 @@ set(SCP_ENABLE_OUTBAND_MSG_SUPPORT TRUE)
 
 set(SCP_ENABLE_SCMI_NOTIFICATIONS TRUE)
 
+set(SCP_ENABLE_ATU_MANAGE TRUE)
+
 list(PREPEND SCP_MODULE_PATHS
      "${CMAKE_CURRENT_LIST_DIR}/../module/scp_platform"
      "${CMAKE_CURRENT_LIST_DIR}/../module/system_pik")
@@ -40,6 +42,7 @@ list(PREPEND SCP_MODULE_PATHS
 # Any change in the order will cause firmware initialization errors.
 list(APPEND SCP_MODULES "armv7m-mpu")
 list(APPEND SCP_MODULES "pl011")
+list(APPEND SCP_MODULES "atu")
 list(APPEND SCP_MODULES "system-pik")
 list(APPEND SCP_MODULES "ppu-v1")
 list(APPEND SCP_MODULES "system-power")

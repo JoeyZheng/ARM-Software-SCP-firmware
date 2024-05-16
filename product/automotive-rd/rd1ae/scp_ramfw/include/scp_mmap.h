@@ -21,6 +21,7 @@
 
 /* SCP sub-system peripherals */
 #define SCP_AP2SCP_MHUV3_RCV_S_BASE   (0x45030000UL)
+#define SCP_ATU_BASE                  (0x50010000UL)
 #define SCP_POWER_CONTROL_BASE        (0x50000000UL)
 #define SCP_PPU_SYS0_BASE             (0x50041000UL)
 #define SCP_REFCLK_CNTCONTROL_BASE    (0x2A430000UL)
@@ -44,6 +45,12 @@
  * Offsets within SCP's Address Translation Window0
  *          __________________________
  *         |                          |
+ *         |     RSM_SRAM 4M          |
+ *         |__________________________| 0x78100000
+ *         |                          |
+ *         |     GPC_MMU 1M           |
+ *         |__________________________| 0x78000000
+ *         |                          |
  *         |     SHARED SRAM 128M     |
  *         |__________________________| 0x70000000
  *         |                          |
@@ -52,10 +59,18 @@
  */
 
 #define SCP_ATW0_CLUSTER_UTILITY_SIZE        (256 * FWK_MIB)
+#define SCP_ATW0_AP_PERIPHERAL_SRAM_SIZE     (128 * FWK_MIB)
+#define SCP_ATW0_AP_PERIPHERAL_GPC_SMMU_SIZE (1 * FWK_MIB)
+#define SCP_ATW0_SHARED_SRAM_RSM_SIZE        (4 * FWK_MIB)
 
 #define SCP_ATW0_CLUSTER_UTILITY_BASE SCP_ADDRESS_TRANSLATION_WINDOW0_BASE
 #define SCP_ATW0_AP_PERIPHERAL_SRAM_BASE \
     (SCP_ATW0_CLUSTER_UTILITY_BASE + SCP_ATW0_CLUSTER_UTILITY_SIZE)
+#define SCP_ATW0_AP_PERIPHERAL_GPC_SMMU_BASE \
+    (SCP_ATW0_AP_PERIPHERAL_SRAM_BASE + SCP_ATW0_AP_PERIPHERAL_SRAM_SIZE)
+#define SCP_ATW0_SHARED_SRAM_RSM_BASE \
+    (SCP_ATW0_AP_PERIPHERAL_GPC_SMMU_BASE + \
+     SCP_ATW0_AP_PERIPHERAL_GPC_SMMU_SIZE)
 
 /*
  * Offsets within SCP's Address Translation Window1
@@ -65,6 +80,7 @@
  *         |__________________________| 0xA0000000
  */
 #define SCP_ATW1_CMN_BASE (SCP_ADDRESS_TRANSLATION_WINDOW1_BASE)
+#define SCP_ATW1_CMN_SIZE (1 * FWK_GIB)
 
 /*
  * Size of SCP's view of per-cluster utility memory region.
