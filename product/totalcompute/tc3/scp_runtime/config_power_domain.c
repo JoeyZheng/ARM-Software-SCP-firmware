@@ -7,9 +7,9 @@
 
 #include "config_power_domain.h"
 #include "tc3_mock_ppu.h"
-#include "tc3_ppu_v1.h"
 #include "tc_core.h"
 #include "tc_power_domain.h"
+#include "tc_ppu_v1.h"
 
 #include <power_domain_utils.h>
 

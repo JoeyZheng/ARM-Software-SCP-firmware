@@ -7,8 +7,8 @@
 
 #include "config_power_domain.h"
 #include "scp_mmap.h"
-#include "tc3_ppu_v1.h"
 #include "tc_core.h"
+#include "tc_ppu_v1.h"
 
 #include <mod_power_domain.h>
 #include <mod_ppu_v1.h>
@@ -25,100 +25,30 @@
 #include <stdio.h>
 #include <string.h>
 
-/* Maximum PPU core name size including the null terminator */
-#define PPU_CORE_NAME_SIZE 12
+#define PPU_CLUSTER_ELEMENT_IDX (PPU_V1_ELEMENT_IDX_CLUSTER0)
+#define CORE_PPU_ELEMENT_INIT_WITH_IDX_AND_CLUSTER(_core_num) \
+    CORE_PPU_ELEMENT_INIT_WITH_IDX(_core_num, PPU_CLUSTER_ELEMENT_IDX)
 
-/* Maximum PPU cluster name size including the null terminator */
-#define PPU_CLUS_NAME_SIZE 6
-
-/* Cluster ID for Theodul DSU */
-#define CLUSTER_ID 0
+static const struct fwk_element ppu_v1_element_table[] = {
+    TC_FOR_EACH_CORE(CORE_PPU_ELEMENT_INIT_WITH_IDX_AND_CLUSTER),
+    TC_FOR_EACH_CLUSTER(CLUSTER_PPU_ELEMENT_INIT_WITH_IDX),
+    { 0 }
+};
 
 /* Module configuration data */
 static struct mod_ppu_v1_config ppu_v1_config_data = {
     .pd_notification_id = FWK_ID_NOTIFICATION_INIT(
         FWK_MODULE_IDX_POWER_DOMAIN,
         MOD_PD_NOTIFICATION_IDX_POWER_STATE_TRANSITION),
+    .pd_source_id = FWK_ID_ELEMENT_INIT(
+        FWK_MODULE_IDX_POWER_DOMAIN,
+        TC_NUMBER_OF_CORES + TC_NUMBER_OF_CLUSTERS +
+        PD_STATIC_DEV_IDX_SYSTOP),
 };
 
 static const struct fwk_element *ppu_v1_get_element_table(fwk_id_t module_id)
 {
-    struct fwk_element *element_table, *element;
-    struct mod_ppu_v1_pd_config *pd_config_table, *pd_config;
-    unsigned int core_idx;
-    unsigned int core_count;
-    unsigned int cluster_count;
-    unsigned int core_element_count = 0;
-
-    core_count = TC_NUMBER_OF_CORES;
-    cluster_count = TC_NUMBER_OF_CLUSTERS;
-
-    /*
-     * Allocate element descriptors based on:
-     *   Number of cores
-     *   + Number of cluster descriptors
-     *   + Number of system power domain descriptors
-     *   + 1 terminator descriptor
-     */
-    element_table = fwk_mm_calloc(
-        core_count + cluster_count + 1, sizeof(struct fwk_element));
-    if (element_table == NULL) {
-        return NULL;
-    }
-
-    pd_config_table = fwk_mm_calloc(
-        core_count + cluster_count, sizeof(struct mod_ppu_v1_pd_config));
-    if (pd_config_table == NULL) {
-        return NULL;
-    }
-
-    for (core_idx = 0; core_idx < TC_NUMBER_OF_CORES; core_idx++) {
-        element = &element_table[core_element_count];
-        pd_config = &pd_config_table[core_element_count];
-
-        element->name = fwk_mm_alloc(PPU_CORE_NAME_SIZE, 1);
-        if (element->name == NULL) {
-            return NULL;
-        }
-
-        (void)snprintf(
-            (char *)element->name, PPU_CORE_NAME_SIZE, "CORE%u", core_idx);
-
-        element->data = pd_config;
-
-        pd_config->pd_type = MOD_PD_TYPE_CORE;
-        pd_config->ppu.reg_base = SCP_PPU_CORE_BASE(core_idx);
-        pd_config->ppu.irq = FWK_INTERRUPT_NONE;
-        pd_config->cluster_id =
-            FWK_ID_ELEMENT(FWK_MODULE_IDX_PPU_V1, core_count);
-        pd_config->observer_id = FWK_ID_NONE;
-        core_element_count++;
-    }
-
-    element = &element_table[core_count];
-    pd_config = &pd_config_table[core_count];
-
-    element->name = fwk_mm_alloc(PPU_CLUS_NAME_SIZE, 1);
-    if (element->name == NULL) {
-        return NULL;
-    }
-
-    element->data = pd_config;
-
-    pd_config->pd_type = MOD_PD_TYPE_CLUSTER;
-    pd_config->ppu.reg_base = SCP_PPU_CLUSTER_BASE;
-    pd_config->ppu.irq = FWK_INTERRUPT_NONE;
-    pd_config->observer_id = FWK_ID_NONE;
-
-    /*
-     * Configure pd_source_id with the SYSTOP identifier from the power domain
-     * module which is dynamically defined based on the number of cores.
-     */
-    ppu_v1_config_data.pd_source_id = fwk_id_build_element_id(
-        fwk_module_id_power_domain,
-        core_count + cluster_count + PD_STATIC_DEV_IDX_SYSTOP);
-
-    return element_table;
+    return ppu_v1_element_table;
 }
 
 /*
