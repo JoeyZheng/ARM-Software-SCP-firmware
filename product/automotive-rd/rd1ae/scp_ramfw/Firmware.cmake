@@ -28,3 +28,4 @@ set(SCP_ENABLE_NEWLIB_NANO FALSE)
 # modules are initialized, bound, started during the pre-runtime phase.
 # Any change in the order will cause firmware initialization errors.
 list(APPEND SCP_MODULES "armv7m-mpu")
+list(APPEND SCP_MODULES "pl011")

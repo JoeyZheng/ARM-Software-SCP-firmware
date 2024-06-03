@@ -19,4 +19,7 @@
 #define SCP_DTC_RAM_BASE (0x20000000)
 #define SCP_DTC_RAM_SIZE (256 * 1024)
 
+/* SCP sub-system peripherals */
+#define SCP_UART_BASE                 (0x44002000UL)
+
 #endif /* SCP_MMAP_H */
