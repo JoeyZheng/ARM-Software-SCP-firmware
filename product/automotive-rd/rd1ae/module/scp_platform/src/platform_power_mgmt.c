@@ -10,11 +10,19 @@
 
 #include <internal/scp_platform.h>
 
+#include <mod_power_domain.h>
 #include <mod_system_power.h>
 
+#include <fwk_module.h>
+#include <fwk_module_idx.h>
 #include <fwk_status.h>
 
 #include <fmw_cmsis.h>
+
+#include <stdint.h>
+
+/* Module 'power_domain' restricted API pointer */
+static struct mod_pd_restricted_api *pd_restricted_api;
 
 /* System shutdown function */
 static int platform_shutdown(enum mod_pd_system_shutdown system_shutdown)
@@ -38,12 +46,26 @@ const void *get_platform_system_power_driver_api(void)
 
 int platform_power_mgmt_bind(void)
 {
-    /* To be implemented */
-    return FWK_E_HANDLER;
+    return fwk_module_bind(
+        fwk_module_id_power_domain,
+        mod_pd_api_id_restricted,
+        &pd_restricted_api);
 }
 
 int init_ap_core(uint8_t core_idx)
 {
-    /* To be implemented */
-    return FWK_E_ACCESS;
+    bool resp_requested;
+    uint32_t pd_state;
+    fwk_id_t pd_id;
+
+    pd_id = FWK_ID_ELEMENT(FWK_MODULE_IDX_POWER_DOMAIN, core_idx);
+
+    /* Notification event at the end of request processing is not required */
+    resp_requested = false;
+
+    /* Composite Power Domain state to be set for the AP */
+    pd_state = MOD_PD_COMPOSITE_STATE(
+        MOD_PD_LEVEL_2, 0, MOD_PD_STATE_ON, MOD_PD_STATE_ON, MOD_PD_STATE_ON);
+
+    return pd_restricted_api->set_state(pd_id, resp_requested, pd_state);
 }
