@@ -49,9 +49,26 @@
         }), \
     }
 
+#define SYSTOP_PPU_ELEMENT_INIT(_systop_num) \
+    [PPU_V1_ELEMENT_IDX_SYSTOP##_systop_num] = { \
+        .name = "SYSTOP" #_systop_num, \
+        .data = &((struct mod_ppu_v1_pd_config){ \
+            .pd_type = MOD_PD_TYPE_SYSTEM, \
+            .ppu.reg_base = SCP_PPU_SYS##_systop_num##_BASE, \
+            .observer_id = FWK_ID_NONE_INIT, \
+            .ppu.irq = FWK_INTERRUPT_NONE, \
+            /* Force the PPU module to power this on during*/ \
+            /* the initialisation stage, this is required */ \
+            /* before accessing any registers external to */ \
+            /* the SCP */ \
+            .default_power_on = true, \
+        }), \
+    }
+
 static const struct fwk_element ppu_v1_element_table[] = {
     TC4_FOR_EACH_CORE(CORE_PPU_ELEMENT_INIT),
     TC4_FOR_EACH_CLUSTER(CLUSTER_PPU_ELEMENT_INIT),
+    PPU_V1_FOR_EACH_SYSTOP(SYSTOP_PPU_ELEMENT_INIT),
     { 0 }
 };
 
