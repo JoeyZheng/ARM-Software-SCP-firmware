@@ -22,4 +22,7 @@
 /* SCP sub-system peripherals */
 #define SCP_UART_BASE                 (0x44002000UL)
 
+/* Base address of SCP expansion memory regions */
+#define SCP_SOC_EXPANSION3_BASE (0x40000000UL) /* 64MB size */
+
 #endif /* SCP_MMAP_H */

@@ -29,3 +29,4 @@ set(SCP_ENABLE_NEWLIB_NANO FALSE)
 # Any change in the order will cause firmware initialization errors.
 list(APPEND SCP_MODULES "armv7m-mpu")
 list(APPEND SCP_MODULES "pl011")
+list(APPEND SCP_MODULES "system-pll")
