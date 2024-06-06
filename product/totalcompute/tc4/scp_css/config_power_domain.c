@@ -81,6 +81,11 @@ static struct fwk_element tc4_power_domain_static_element_table[] = {
                 .allowed_state_mask_table_size =
                     FWK_ARRAY_SIZE(gputop_allowed_state_mask_table) }),
         },
+    /* Note that on TC4, there are actually two separate SYSTOP PDs, SYSTOP0
+     * which powers all system logic except the MCN slices and SYSTOP1 which
+     * controls the MCN slices. In mod_power_domain, however, this is
+     * abstracted out into a single SYSTOP PD. Requests to mod_system_power
+     * will be applied to both SYSTOP0 and SYSTOP1. */
     [PD_STATIC_DEV_IDX_SYSTOP] =
         {
             .name = "SYSTOP",

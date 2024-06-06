@@ -1,11 +1,11 @@
 /*
  * Arm SCP/MCP Software
- * Copyright (c) 2023, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2023-2024, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include "tc4_mock_ppu.h"
+#include "tc4_ppu_v1.h"
 
 #include <mod_mock_ppu.h>
 #include <mod_power_domain.h>
@@ -30,18 +30,34 @@ static const uint8_t
         [MOD_PD_STATE_OFF] = (uint8_t)MOD_PD_STATE_OFF,
     };
 
-static struct fwk_element system_power_element_table[2] = {
+static struct fwk_element system_power_element_table[] = {
     [0] =
         {
             .name = "SYS-PPU-0",
             .data = &((struct mod_system_power_dev_config){
+                .sys_ppu_id = FWK_ID_ELEMENT_INIT(
+                    FWK_MODULE_IDX_PPU_V1,
+                    PPU_V1_ELEMENT_IDX_SYSTOP0),
                 .api_id = FWK_ID_API_INIT(
-                    FWK_MODULE_IDX_MOCK_PPU,
-                    MOCK_PPU_ELEMENT_IDX_SYS0),
+                    FWK_MODULE_IDX_PPU_V1,
+                    MOD_PPU_V1_API_IDX_POWER_DOMAIN_DRIVER),
                 .sys_state_table = system_power_to_sys_ppu0_state,
             }),
         },
-    [1] = { 0 }, /* Termination description */
+    [1] =
+        {
+            .name = "SYS-PPU-1",
+            .data = &((struct mod_system_power_dev_config){
+                .sys_ppu_id = FWK_ID_ELEMENT_INIT(
+                    FWK_MODULE_IDX_PPU_V1,
+                    PPU_V1_ELEMENT_IDX_SYSTOP1),
+                .api_id = FWK_ID_API_INIT(
+                    FWK_MODULE_IDX_PPU_V1,
+                    MOD_PPU_V1_API_IDX_POWER_DOMAIN_DRIVER),
+                .sys_state_table = system_power_to_sys_ppu0_state,
+            }),
+        },
+    { 0 }, /* Termination description */
 };
 
 static struct mod_system_power_config system_power_config = {
@@ -59,14 +75,6 @@ static struct mod_system_power_config system_power_config = {
 
 static const struct fwk_element *tc_system_get_element_table(fwk_id_t unused)
 {
-    struct mod_system_power_dev_config *dev_config_table;
-
-    dev_config_table =
-        (struct mod_system_power_dev_config *)system_power_element_table[0]
-            .data;
-    dev_config_table->sys_ppu_id =
-        fwk_id_build_element_id(fwk_module_id_mock_ppu, 0);
-
     return system_power_element_table;
 }
 
