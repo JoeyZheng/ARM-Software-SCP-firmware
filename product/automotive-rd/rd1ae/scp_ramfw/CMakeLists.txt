@@ -19,7 +19,8 @@ target_include_directories(
 
 target_sources(
     rd1ae-bl2
-    PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/config_apcontext.c"
+    PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/config_atu_mmio.c"
+            "${CMAKE_CURRENT_SOURCE_DIR}/config_apcontext.c"
             "${CMAKE_CURRENT_SOURCE_DIR}/config_armv7m_mpu.c"
             "${CMAKE_CURRENT_SOURCE_DIR}/config_atu.c"
             "${CMAKE_CURRENT_SOURCE_DIR}/config_clock.c"

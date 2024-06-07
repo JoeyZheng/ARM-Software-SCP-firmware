@@ -43,6 +43,7 @@ list(PREPEND SCP_MODULE_PATHS
 list(APPEND SCP_MODULES "armv7m-mpu")
 list(APPEND SCP_MODULES "pl011")
 list(APPEND SCP_MODULES "atu")
+list(APPEND SCP_MODULES "atu-mmio")
 list(APPEND SCP_MODULES "system-pik")
 list(APPEND SCP_MODULES "ppu-v1")
 list(APPEND SCP_MODULES "system-power")
