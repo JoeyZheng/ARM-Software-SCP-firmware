@@ -26,11 +26,16 @@ set(SCP_ARCHITECTURE "arm-m")
 
 set(SCP_ENABLE_NEWLIB_NANO FALSE)
 
+list(PREPEND SCP_MODULE_PATHS
+     "${CMAKE_CURRENT_LIST_DIR}/../module/system_pik")
+
+
 # The order of the modules in the following list is the order in which the
 # modules are initialized, bound, started during the pre-runtime phase.
 # Any change in the order will cause firmware initialization errors.
 list(APPEND SCP_MODULES "armv7m-mpu")
 list(APPEND SCP_MODULES "pl011")
+list(APPEND SCP_MODULES "system-pik")
 list(APPEND SCP_MODULES "ppu-v1")
 list(APPEND SCP_MODULES "system-pll")
 list(APPEND SCP_MODULES "pik-clock")
