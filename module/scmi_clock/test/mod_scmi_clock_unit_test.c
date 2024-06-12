@@ -813,6 +813,43 @@ void test_mod_scmi_clock_attributes_handler_get_state(void)
     TEST_ASSERT_EQUAL(FWK_SUCCESS, status);
 }
 
+int version_handler_respond_callback(
+    fwk_id_t service_id,
+    const void *payload,
+    size_t size,
+    int NumCalls)
+{
+    struct scmi_protocol_version_p2a *return_values;
+    return_values = (struct scmi_protocol_version_p2a *)payload;
+
+    TEST_ASSERT_EQUAL((int32_t)SCMI_SUCCESS, return_values->status);
+    TEST_ASSERT_EQUAL(SCMI_PROTOCOL_VERSION_CLOCK, return_values->version);
+
+    return FWK_SUCCESS;
+}
+
+void test_mod_scmi_clock_protocol_version_handler(void)
+{
+    int status;
+    fwk_id_t service_id =
+        FWK_ID_ELEMENT_INIT(FAKE_MODULE_IDX, FAKE_SCMI_AGENT_IDX_PSCI);
+
+    uint32_t payload = 0;
+
+    mod_scmi_from_protocol_api_scmi_frame_validation_ExpectAnyArgsAndReturn(
+        SCMI_SUCCESS);
+    mod_scmi_from_protocol_api_respond_Stub(version_handler_respond_callback);
+
+    status = scmi_clock_message_handler(
+        (fwk_id_t)MOD_SCMI_PROTOCOL_ID_CLOCK,
+        service_id,
+        (const uint32_t *)&payload,
+        payload_size_table[MOD_SCMI_PROTOCOL_VERSION],
+        MOD_SCMI_PROTOCOL_VERSION);
+
+    TEST_ASSERT_EQUAL(FWK_SUCCESS, status);
+}
+
 int scmi_test_main(void)
 {
     UNITY_BEGIN();
@@ -842,6 +879,8 @@ int scmi_test_main(void)
 
         RUN_TEST(test_mod_scmi_clock_attributes_handler_invalid_clock_id);
         RUN_TEST(test_mod_scmi_clock_attributes_handler_get_state);
+
+        RUN_TEST(test_mod_scmi_clock_protocol_version_handler);
 
     #endif
     return UNITY_END();
