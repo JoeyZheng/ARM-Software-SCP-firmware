@@ -937,6 +937,70 @@ void test_mod_scmi_clock_protocol_attributes_handler_invalid_agent_id(void)
     TEST_ASSERT_EQUAL(FWK_E_PARAM, status);
 }
 
+int protocol_message_attributes_handler_respond_callback_notify_rate(
+    fwk_id_t service_id,
+    const void *payload,
+    size_t size,
+    int NumCalls)
+{
+    struct scmi_protocol_message_attributes_p2a *return_values;
+    return_values = (struct scmi_protocol_message_attributes_p2a *)payload;
+
+#ifdef BUILD_HAS_SCMI_NOTIFICATIONS
+    TEST_ASSERT_EQUAL((int32_t)SCMI_SUCCESS, return_values->status);
+#else
+    TEST_ASSERT_EQUAL((int32_t)SCMI_NOT_FOUND, return_values->status);
+#endif
+
+    return FWK_SUCCESS;
+}
+
+void test_protocol_message_attributes_handler_notify_rate(void)
+{
+    int status;
+    fwk_id_t service_id =
+        FWK_ID_ELEMENT_INIT(FAKE_MODULE_IDX, FAKE_SCMI_AGENT_IDX_OSPM1);
+
+    uint32_t payload = MOD_SCMI_CLOCK_RATE_NOTIFY;
+
+    mod_scmi_from_protocol_api_scmi_frame_validation_ExpectAnyArgsAndReturn(
+        SCMI_SUCCESS);
+    mod_scmi_from_protocol_api_respond_Stub(
+        protocol_message_attributes_handler_respond_callback_notify_rate);
+
+    status = scmi_clock_message_handler(
+        (fwk_id_t)MOD_SCMI_PROTOCOL_ID_CLOCK,
+        service_id,
+        (const uint32_t *)&payload,
+        payload_size_table[MOD_SCMI_PROTOCOL_MESSAGE_ATTRIBUTES],
+        MOD_SCMI_PROTOCOL_MESSAGE_ATTRIBUTES);
+
+    TEST_ASSERT_EQUAL(FWK_SUCCESS, status);
+}
+
+void test_protocol_message_attributes_handler_notify_rate_requested(void)
+{
+    int status;
+    fwk_id_t service_id =
+        FWK_ID_ELEMENT_INIT(FAKE_MODULE_IDX, FAKE_SCMI_AGENT_IDX_OSPM1);
+
+    uint32_t payload = MOD_SCMI_CLOCK_RATE_CHANGE_REQUESTED_NOTIFY;
+
+    mod_scmi_from_protocol_api_scmi_frame_validation_ExpectAnyArgsAndReturn(
+        SCMI_SUCCESS);
+    mod_scmi_from_protocol_api_respond_Stub(
+        protocol_message_attributes_handler_respond_callback_notify_rate);
+
+    status = scmi_clock_message_handler(
+        (fwk_id_t)MOD_SCMI_PROTOCOL_ID_CLOCK,
+        service_id,
+        (const uint32_t *)&payload,
+        payload_size_table[MOD_SCMI_PROTOCOL_MESSAGE_ATTRIBUTES],
+        MOD_SCMI_PROTOCOL_MESSAGE_ATTRIBUTES);
+
+    TEST_ASSERT_EQUAL(FWK_SUCCESS, status);
+}
+
 int scmi_test_main(void)
 {
     UNITY_BEGIN();
@@ -971,6 +1035,10 @@ int scmi_test_main(void)
         RUN_TEST(test_mod_scmi_clock_protocol_attributes_handler);
         RUN_TEST(
             test_mod_scmi_clock_protocol_attributes_handler_invalid_agent_id);
+        RUN_TEST(
+            test_protocol_message_attributes_handler_notify_rate);
+        RUN_TEST(
+            test_protocol_message_attributes_handler_notify_rate_requested);
 
     #endif
     return UNITY_END();
