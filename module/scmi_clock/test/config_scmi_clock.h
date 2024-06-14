@@ -1,6 +1,6 @@
 /*
  * Arm SCP/MCP Software
- * Copyright (c) 2015-2023, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2015-2024, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -65,6 +65,11 @@ static const struct mod_scmi_clock_device agent_device_table_ospm0
         .element_id =
             FWK_ID_ELEMENT_INIT(FWK_MODULE_IDX_CLOCK, CLOCK_DEV_IDX_FAKE1),
         .starts_enabled = true,
+        .supports_extended_name = true,
+#ifdef BUILD_HAS_SCMI_NOTIFICATIONS
+        .notify_changed_rate = true,
+        .notify_requested_rate = true,
+#endif
     },
     [SCMI_CLOCK_OSPM0_IDX2] = {
         /* FAKE2 */

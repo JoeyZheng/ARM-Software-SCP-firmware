@@ -8,11 +8,13 @@
 static const char* CMockString_agent_count = "agent_count";
 static const char* CMockString_agent_id = "agent_id";
 static const char* CMockString_agent_type = "agent_type";
+static const char* CMockString_clock_id = "clock_id";
 static const char* CMockString_command_count = "command_count";
 static const char* CMockString_device_id = "device_id";
 static const char* CMockString_flags = "flags";
 static const char* CMockString_handler_table = "handler_table";
 static const char* CMockString_message_id = "message_id";
+static const char* CMockString_mod_clock_api_get_state = "mod_clock_api_get_state";
 static const char* CMockString_mod_res_permissions_api_agent_has_message_permission = "mod_res_permissions_api_agent_has_message_permission";
 static const char* CMockString_mod_res_permissions_api_agent_has_protocol_permission = "mod_res_permissions_api_agent_has_protocol_permission";
 static const char* CMockString_mod_res_permissions_api_agent_has_resource_permission = "mod_res_permissions_api_agent_has_resource_permission";
@@ -40,6 +42,7 @@ static const char* CMockString_scmi_message_id = "scmi_message_id";
 static const char* CMockString_scmi_protocol_id = "scmi_protocol_id";
 static const char* CMockString_service_id = "service_id";
 static const char* CMockString_size = "size";
+static const char* CMockString_state = "state";
 static const char* CMockString_token = "token";
 
 typedef struct _CMOCK_mod_scmi_from_protocol_api_get_agent_count_CALL_INSTANCE
@@ -298,6 +301,22 @@ typedef struct _CMOCK_mod_res_permissions_api_agent_reset_config_CALL_INSTANCE
 
 } CMOCK_mod_res_permissions_api_agent_reset_config_CALL_INSTANCE;
 
+typedef struct _CMOCK_mod_clock_api_get_state_CALL_INSTANCE
+{
+  UNITY_LINE_TYPE LineNumber;
+  char ExpectAnyArgsBool;
+  int ReturnVal;
+  fwk_id_t Expected_clock_id;
+  enum mod_clock_state* Expected_state;
+  int Expected_state_Depth;
+  char ReturnThruPtr_state_Used;
+  enum mod_clock_state* ReturnThruPtr_state_Val;
+  size_t ReturnThruPtr_state_Size;
+  char IgnoreArg_clock_id;
+  char IgnoreArg_state;
+
+} CMOCK_mod_clock_api_get_state_CALL_INSTANCE;
+
 static struct Mockmod_scmi_clock_extraInstance
 {
   char mod_scmi_from_protocol_api_get_agent_count_IgnoreBool;
@@ -395,6 +414,12 @@ static struct Mockmod_scmi_clock_extraInstance
   CMOCK_mod_res_permissions_api_agent_reset_config_CALLBACK mod_res_permissions_api_agent_reset_config_CallbackFunctionPointer;
   int mod_res_permissions_api_agent_reset_config_CallbackCalls;
   CMOCK_MEM_INDEX_TYPE mod_res_permissions_api_agent_reset_config_CallInstance;
+  char mod_clock_api_get_state_IgnoreBool;
+  int mod_clock_api_get_state_FinalReturn;
+  char mod_clock_api_get_state_CallbackBool;
+  CMOCK_mod_clock_api_get_state_CALLBACK mod_clock_api_get_state_CallbackFunctionPointer;
+  int mod_clock_api_get_state_CallbackCalls;
+  CMOCK_MEM_INDEX_TYPE mod_clock_api_get_state_CallInstance;
 } Mock;
 
 extern jmp_buf AbortFrame;
@@ -607,6 +632,19 @@ void Mockmod_scmi_clock_extra_Verify(void)
     UNITY_TEST_FAIL(cmock_line, CMockStringCalledLess);
   }
   if (Mock.mod_res_permissions_api_agent_reset_config_CallbackFunctionPointer != NULL)
+  {
+    call_instance = CMOCK_GUTS_NONE;
+    (void)call_instance;
+  }
+  call_instance = Mock.mod_clock_api_get_state_CallInstance;
+  if (Mock.mod_clock_api_get_state_IgnoreBool)
+    call_instance = CMOCK_GUTS_NONE;
+  if (CMOCK_GUTS_NONE != call_instance)
+  {
+    UNITY_SET_DETAIL(CMockString_mod_clock_api_get_state);
+    UNITY_TEST_FAIL(cmock_line, CMockStringCalledLess);
+  }
+  if (Mock.mod_clock_api_get_state_CallbackFunctionPointer != NULL)
   {
     call_instance = CMOCK_GUTS_NONE;
     (void)call_instance;
@@ -3250,5 +3288,171 @@ void mod_res_permissions_api_agent_reset_config_CMockIgnoreArg_flags(UNITY_LINE_
   CMOCK_mod_res_permissions_api_agent_reset_config_CALL_INSTANCE* cmock_call_instance = (CMOCK_mod_res_permissions_api_agent_reset_config_CALL_INSTANCE*)CMock_Guts_GetAddressFor(CMock_Guts_MemEndOfChain(Mock.mod_res_permissions_api_agent_reset_config_CallInstance));
   UNITY_TEST_ASSERT_NOT_NULL(cmock_call_instance, cmock_line, CMockStringIgnPreExp);
   cmock_call_instance->IgnoreArg_flags = 1;
+}
+
+int mod_clock_api_get_state(fwk_id_t clock_id, enum mod_clock_state* state)
+{
+  UNITY_LINE_TYPE cmock_line = TEST_LINE_NUM;
+  CMOCK_mod_clock_api_get_state_CALL_INSTANCE* cmock_call_instance;
+  UNITY_SET_DETAIL(CMockString_mod_clock_api_get_state);
+  cmock_call_instance = (CMOCK_mod_clock_api_get_state_CALL_INSTANCE*)CMock_Guts_GetAddressFor(Mock.mod_clock_api_get_state_CallInstance);
+  Mock.mod_clock_api_get_state_CallInstance = CMock_Guts_MemNext(Mock.mod_clock_api_get_state_CallInstance);
+  if (Mock.mod_clock_api_get_state_IgnoreBool)
+  {
+    UNITY_CLR_DETAILS();
+    if (cmock_call_instance == NULL)
+      return Mock.mod_clock_api_get_state_FinalReturn;
+    Mock.mod_clock_api_get_state_FinalReturn = cmock_call_instance->ReturnVal;
+    return cmock_call_instance->ReturnVal;
+  }
+  if (!Mock.mod_clock_api_get_state_CallbackBool &&
+      Mock.mod_clock_api_get_state_CallbackFunctionPointer != NULL)
+  {
+    int cmock_cb_ret = Mock.mod_clock_api_get_state_CallbackFunctionPointer(clock_id, state, Mock.mod_clock_api_get_state_CallbackCalls++);
+    UNITY_CLR_DETAILS();
+    return cmock_cb_ret;
+  }
+  UNITY_TEST_ASSERT_NOT_NULL(cmock_call_instance, cmock_line, CMockStringCalledMore);
+  cmock_line = cmock_call_instance->LineNumber;
+  if (!cmock_call_instance->ExpectAnyArgsBool)
+  {
+  if (!cmock_call_instance->IgnoreArg_clock_id)
+  {
+    UNITY_SET_DETAILS(CMockString_mod_clock_api_get_state,CMockString_clock_id);
+    UNITY_TEST_ASSERT_EQUAL_MEMORY((void*)(&cmock_call_instance->Expected_clock_id), (void*)(&clock_id), sizeof(fwk_id_t), cmock_line, CMockStringMismatch);
+  }
+  if (!cmock_call_instance->IgnoreArg_state)
+  {
+    UNITY_SET_DETAILS(CMockString_mod_clock_api_get_state,CMockString_state);
+    if (cmock_call_instance->Expected_state == NULL)
+      { UNITY_TEST_ASSERT_NULL(state, cmock_line, CMockStringExpNULL); }
+    else
+      { UNITY_TEST_ASSERT_EQUAL_MEMORY_ARRAY((void*)(cmock_call_instance->Expected_state), (void*)(state), sizeof(enum mod_clock_state), cmock_call_instance->Expected_state_Depth, cmock_line, CMockStringMismatch); }
+  }
+  }
+  if (Mock.mod_clock_api_get_state_CallbackFunctionPointer != NULL)
+  {
+    cmock_call_instance->ReturnVal = Mock.mod_clock_api_get_state_CallbackFunctionPointer(clock_id, state, Mock.mod_clock_api_get_state_CallbackCalls++);
+  }
+  if (cmock_call_instance->ReturnThruPtr_state_Used)
+  {
+    UNITY_TEST_ASSERT_NOT_NULL(state, cmock_line, CMockStringPtrIsNULL);
+    memcpy((void*)state, (void*)cmock_call_instance->ReturnThruPtr_state_Val,
+      cmock_call_instance->ReturnThruPtr_state_Size);
+  }
+  UNITY_CLR_DETAILS();
+  return cmock_call_instance->ReturnVal;
+}
+
+void CMockExpectParameters_mod_clock_api_get_state(CMOCK_mod_clock_api_get_state_CALL_INSTANCE* cmock_call_instance, fwk_id_t clock_id, enum mod_clock_state* state, int state_Depth);
+void CMockExpectParameters_mod_clock_api_get_state(CMOCK_mod_clock_api_get_state_CALL_INSTANCE* cmock_call_instance, fwk_id_t clock_id, enum mod_clock_state* state, int state_Depth)
+{
+  memcpy((void*)(&cmock_call_instance->Expected_clock_id), (void*)(&clock_id),
+         sizeof(fwk_id_t[sizeof(clock_id) == sizeof(fwk_id_t) ? 1 : -1])); /* add fwk_id_t to :treat_as_array if this causes an error */
+  cmock_call_instance->IgnoreArg_clock_id = 0;
+  cmock_call_instance->Expected_state = state;
+  cmock_call_instance->Expected_state_Depth = state_Depth;
+  cmock_call_instance->IgnoreArg_state = 0;
+  cmock_call_instance->ReturnThruPtr_state_Used = 0;
+}
+
+void mod_clock_api_get_state_CMockIgnoreAndReturn(UNITY_LINE_TYPE cmock_line, int cmock_to_return)
+{
+  CMOCK_MEM_INDEX_TYPE cmock_guts_index = CMock_Guts_MemNew(sizeof(CMOCK_mod_clock_api_get_state_CALL_INSTANCE));
+  CMOCK_mod_clock_api_get_state_CALL_INSTANCE* cmock_call_instance = (CMOCK_mod_clock_api_get_state_CALL_INSTANCE*)CMock_Guts_GetAddressFor(cmock_guts_index);
+  UNITY_TEST_ASSERT_NOT_NULL(cmock_call_instance, cmock_line, CMockStringOutOfMemory);
+  memset(cmock_call_instance, 0, sizeof(*cmock_call_instance));
+  Mock.mod_clock_api_get_state_CallInstance = CMock_Guts_MemChain(Mock.mod_clock_api_get_state_CallInstance, cmock_guts_index);
+  Mock.mod_clock_api_get_state_IgnoreBool = (char)0;
+  cmock_call_instance->LineNumber = cmock_line;
+  cmock_call_instance->ExpectAnyArgsBool = (char)0;
+  cmock_call_instance->ReturnVal = cmock_to_return;
+  Mock.mod_clock_api_get_state_IgnoreBool = (char)1;
+}
+
+void mod_clock_api_get_state_CMockStopIgnore(void)
+{
+  if(Mock.mod_clock_api_get_state_IgnoreBool)
+    Mock.mod_clock_api_get_state_CallInstance = CMock_Guts_MemNext(Mock.mod_clock_api_get_state_CallInstance);
+  Mock.mod_clock_api_get_state_IgnoreBool = (char)0;
+}
+
+void mod_clock_api_get_state_CMockExpectAnyArgsAndReturn(UNITY_LINE_TYPE cmock_line, int cmock_to_return)
+{
+  CMOCK_MEM_INDEX_TYPE cmock_guts_index = CMock_Guts_MemNew(sizeof(CMOCK_mod_clock_api_get_state_CALL_INSTANCE));
+  CMOCK_mod_clock_api_get_state_CALL_INSTANCE* cmock_call_instance = (CMOCK_mod_clock_api_get_state_CALL_INSTANCE*)CMock_Guts_GetAddressFor(cmock_guts_index);
+  UNITY_TEST_ASSERT_NOT_NULL(cmock_call_instance, cmock_line, CMockStringOutOfMemory);
+  memset(cmock_call_instance, 0, sizeof(*cmock_call_instance));
+  Mock.mod_clock_api_get_state_CallInstance = CMock_Guts_MemChain(Mock.mod_clock_api_get_state_CallInstance, cmock_guts_index);
+  Mock.mod_clock_api_get_state_IgnoreBool = (char)0;
+  cmock_call_instance->LineNumber = cmock_line;
+  cmock_call_instance->ExpectAnyArgsBool = (char)0;
+  cmock_call_instance->ReturnVal = cmock_to_return;
+  cmock_call_instance->ExpectAnyArgsBool = (char)1;
+}
+
+void mod_clock_api_get_state_CMockExpectAndReturn(UNITY_LINE_TYPE cmock_line, fwk_id_t clock_id, enum mod_clock_state* state, int cmock_to_return)
+{
+  CMOCK_MEM_INDEX_TYPE cmock_guts_index = CMock_Guts_MemNew(sizeof(CMOCK_mod_clock_api_get_state_CALL_INSTANCE));
+  CMOCK_mod_clock_api_get_state_CALL_INSTANCE* cmock_call_instance = (CMOCK_mod_clock_api_get_state_CALL_INSTANCE*)CMock_Guts_GetAddressFor(cmock_guts_index);
+  UNITY_TEST_ASSERT_NOT_NULL(cmock_call_instance, cmock_line, CMockStringOutOfMemory);
+  memset(cmock_call_instance, 0, sizeof(*cmock_call_instance));
+  Mock.mod_clock_api_get_state_CallInstance = CMock_Guts_MemChain(Mock.mod_clock_api_get_state_CallInstance, cmock_guts_index);
+  Mock.mod_clock_api_get_state_IgnoreBool = (char)0;
+  cmock_call_instance->LineNumber = cmock_line;
+  cmock_call_instance->ExpectAnyArgsBool = (char)0;
+  CMockExpectParameters_mod_clock_api_get_state(cmock_call_instance, clock_id, state, 1);
+  cmock_call_instance->ReturnVal = cmock_to_return;
+}
+
+void mod_clock_api_get_state_AddCallback(CMOCK_mod_clock_api_get_state_CALLBACK Callback)
+{
+  Mock.mod_clock_api_get_state_IgnoreBool = (char)0;
+  Mock.mod_clock_api_get_state_CallbackBool = (char)1;
+  Mock.mod_clock_api_get_state_CallbackFunctionPointer = Callback;
+}
+
+void mod_clock_api_get_state_Stub(CMOCK_mod_clock_api_get_state_CALLBACK Callback)
+{
+  Mock.mod_clock_api_get_state_IgnoreBool = (char)0;
+  Mock.mod_clock_api_get_state_CallbackBool = (char)0;
+  Mock.mod_clock_api_get_state_CallbackFunctionPointer = Callback;
+}
+
+void mod_clock_api_get_state_CMockExpectWithArrayAndReturn(UNITY_LINE_TYPE cmock_line, fwk_id_t clock_id, enum mod_clock_state* state, int state_Depth, int cmock_to_return)
+{
+  CMOCK_MEM_INDEX_TYPE cmock_guts_index = CMock_Guts_MemNew(sizeof(CMOCK_mod_clock_api_get_state_CALL_INSTANCE));
+  CMOCK_mod_clock_api_get_state_CALL_INSTANCE* cmock_call_instance = (CMOCK_mod_clock_api_get_state_CALL_INSTANCE*)CMock_Guts_GetAddressFor(cmock_guts_index);
+  UNITY_TEST_ASSERT_NOT_NULL(cmock_call_instance, cmock_line, CMockStringOutOfMemory);
+  memset(cmock_call_instance, 0, sizeof(*cmock_call_instance));
+  Mock.mod_clock_api_get_state_CallInstance = CMock_Guts_MemChain(Mock.mod_clock_api_get_state_CallInstance, cmock_guts_index);
+  Mock.mod_clock_api_get_state_IgnoreBool = (char)0;
+  cmock_call_instance->LineNumber = cmock_line;
+  cmock_call_instance->ExpectAnyArgsBool = (char)0;
+  CMockExpectParameters_mod_clock_api_get_state(cmock_call_instance, clock_id, state, state_Depth);
+  cmock_call_instance->ReturnVal = cmock_to_return;
+}
+
+void mod_clock_api_get_state_CMockReturnMemThruPtr_state(UNITY_LINE_TYPE cmock_line, enum mod_clock_state* state, size_t cmock_size)
+{
+  CMOCK_mod_clock_api_get_state_CALL_INSTANCE* cmock_call_instance = (CMOCK_mod_clock_api_get_state_CALL_INSTANCE*)CMock_Guts_GetAddressFor(CMock_Guts_MemEndOfChain(Mock.mod_clock_api_get_state_CallInstance));
+  UNITY_TEST_ASSERT_NOT_NULL(cmock_call_instance, cmock_line, CMockStringPtrPreExp);
+  cmock_call_instance->ReturnThruPtr_state_Used = 1;
+  cmock_call_instance->ReturnThruPtr_state_Val = state;
+  cmock_call_instance->ReturnThruPtr_state_Size = cmock_size;
+}
+
+void mod_clock_api_get_state_CMockIgnoreArg_clock_id(UNITY_LINE_TYPE cmock_line)
+{
+  CMOCK_mod_clock_api_get_state_CALL_INSTANCE* cmock_call_instance = (CMOCK_mod_clock_api_get_state_CALL_INSTANCE*)CMock_Guts_GetAddressFor(CMock_Guts_MemEndOfChain(Mock.mod_clock_api_get_state_CallInstance));
+  UNITY_TEST_ASSERT_NOT_NULL(cmock_call_instance, cmock_line, CMockStringIgnPreExp);
+  cmock_call_instance->IgnoreArg_clock_id = 1;
+}
+
+void mod_clock_api_get_state_CMockIgnoreArg_state(UNITY_LINE_TYPE cmock_line)
+{
+  CMOCK_mod_clock_api_get_state_CALL_INSTANCE* cmock_call_instance = (CMOCK_mod_clock_api_get_state_CALL_INSTANCE*)CMock_Guts_GetAddressFor(CMock_Guts_MemEndOfChain(Mock.mod_clock_api_get_state_CallInstance));
+  UNITY_TEST_ASSERT_NOT_NULL(cmock_call_instance, cmock_line, CMockStringIgnPreExp);
+  cmock_call_instance->IgnoreArg_state = 1;
 }
 

@@ -356,6 +356,28 @@ void mod_res_permissions_api_agent_reset_config_Stub(CMOCK_mod_res_permissions_a
 void mod_res_permissions_api_agent_reset_config_CMockIgnoreArg_agent_id(UNITY_LINE_TYPE cmock_line);
 #define mod_res_permissions_api_agent_reset_config_IgnoreArg_flags() mod_res_permissions_api_agent_reset_config_CMockIgnoreArg_flags(__LINE__)
 void mod_res_permissions_api_agent_reset_config_CMockIgnoreArg_flags(UNITY_LINE_TYPE cmock_line);
+#define mod_clock_api_get_state_IgnoreAndReturn(cmock_retval) mod_clock_api_get_state_CMockIgnoreAndReturn(__LINE__, cmock_retval)
+void mod_clock_api_get_state_CMockIgnoreAndReturn(UNITY_LINE_TYPE cmock_line, int cmock_to_return);
+#define mod_clock_api_get_state_StopIgnore() mod_clock_api_get_state_CMockStopIgnore()
+void mod_clock_api_get_state_CMockStopIgnore(void);
+#define mod_clock_api_get_state_ExpectAnyArgsAndReturn(cmock_retval) mod_clock_api_get_state_CMockExpectAnyArgsAndReturn(__LINE__, cmock_retval)
+void mod_clock_api_get_state_CMockExpectAnyArgsAndReturn(UNITY_LINE_TYPE cmock_line, int cmock_to_return);
+#define mod_clock_api_get_state_ExpectAndReturn(clock_id, state, cmock_retval) mod_clock_api_get_state_CMockExpectAndReturn(__LINE__, clock_id, state, cmock_retval)
+void mod_clock_api_get_state_CMockExpectAndReturn(UNITY_LINE_TYPE cmock_line, fwk_id_t clock_id, enum mod_clock_state* state, int cmock_to_return);
+typedef int (* CMOCK_mod_clock_api_get_state_CALLBACK)(fwk_id_t clock_id, enum mod_clock_state* state, int cmock_num_calls);
+void mod_clock_api_get_state_AddCallback(CMOCK_mod_clock_api_get_state_CALLBACK Callback);
+void mod_clock_api_get_state_Stub(CMOCK_mod_clock_api_get_state_CALLBACK Callback);
+#define mod_clock_api_get_state_StubWithCallback mod_clock_api_get_state_Stub
+#define mod_clock_api_get_state_ExpectWithArrayAndReturn(clock_id, state, state_Depth, cmock_retval) mod_clock_api_get_state_CMockExpectWithArrayAndReturn(__LINE__, clock_id, state, state_Depth, cmock_retval)
+void mod_clock_api_get_state_CMockExpectWithArrayAndReturn(UNITY_LINE_TYPE cmock_line, fwk_id_t clock_id, enum mod_clock_state* state, int state_Depth, int cmock_to_return);
+#define mod_clock_api_get_state_ReturnThruPtr_state(state) mod_clock_api_get_state_CMockReturnMemThruPtr_state(__LINE__, state, sizeof(enum mod_clock_state))
+#define mod_clock_api_get_state_ReturnArrayThruPtr_state(state, cmock_len) mod_clock_api_get_state_CMockReturnMemThruPtr_state(__LINE__, state, cmock_len * sizeof(*state))
+#define mod_clock_api_get_state_ReturnMemThruPtr_state(state, cmock_size) mod_clock_api_get_state_CMockReturnMemThruPtr_state(__LINE__, state, cmock_size)
+void mod_clock_api_get_state_CMockReturnMemThruPtr_state(UNITY_LINE_TYPE cmock_line, enum mod_clock_state* state, size_t cmock_size);
+#define mod_clock_api_get_state_IgnoreArg_clock_id() mod_clock_api_get_state_CMockIgnoreArg_clock_id(__LINE__)
+void mod_clock_api_get_state_CMockIgnoreArg_clock_id(UNITY_LINE_TYPE cmock_line);
+#define mod_clock_api_get_state_IgnoreArg_state() mod_clock_api_get_state_CMockIgnoreArg_state(__LINE__)
+void mod_clock_api_get_state_CMockIgnoreArg_state(UNITY_LINE_TYPE cmock_line);
 
 #if defined(__GNUC__) && !defined(__ICC) && !defined(__TMS470__)
 #if __GNUC__ > 4 || (__GNUC__ == 4 && (__GNUC_MINOR__ > 6 || (__GNUC_MINOR__ == 6 && __GNUC_PATCHLEVEL__ > 0)))

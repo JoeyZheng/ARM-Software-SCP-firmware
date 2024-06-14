@@ -7,6 +7,7 @@
  * Description:
  *      System Control and Management Interface (SCMI) unit test support.
  */
+#include <mod_clock.h>
 #include <mod_scmi.h>
 #include <mod_resource_perms.h>
 
@@ -270,3 +271,22 @@ int mod_res_permissions_api_agent_set_device_protocol_permission(
  * \retval ::FWK_E_PARAM  Invalid flags.
  */
 int mod_res_permissions_api_agent_reset_config(uint32_t agent_id, uint32_t flags);
+
+/*!
+ * \brief Get the running state of a clock.
+ *
+ * \param clock_id Clock device identifier.
+ *
+ * \param[out] state The current clock state.
+ *
+ * \retval ::FWK_SUCCESS The operation succeeded.
+ * \retval ::FWK_PENDING The request is pending. The requested state will be
+ *      provided via a response event.
+ * \retval ::FWK_E_PARAM An invalid parameter was encountered:
+ *      - The `clock_id` parameter was not a valid system entity identifier.
+ *      - The `state` parameter was a null pointer value.
+ * \retval ::FWK_E_SUPPORT Deferred handling of asynchronous drivers is not
+ *      supported.
+ * \return One of the standard framework error codes.
+ */
+int mod_clock_api_get_state(fwk_id_t clock_id, enum mod_clock_state *state);

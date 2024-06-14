@@ -45,6 +45,12 @@ struct mod_scmi_from_protocol_api from_protocol_api = {
     .notify = mod_scmi_from_protocol_api_notify,
 };
 
+struct mod_clock_api clock_api = {
+    .get_state = mod_clock_api_get_state,
+};
+
+static char *mock_clock_name = "TestClockDevice001";
+
 #if defined(BUILD_HAS_MOD_RESOURCE_PERMS)
 struct mod_res_permissions_api perm_api = {
     .agent_has_protocol_permission = mod_res_permissions_api_agent_has_protocol_permission,
@@ -122,6 +128,7 @@ void setUp(void)
     }
 
     scmi_clock_ctx.scmi_api = &from_protocol_api;
+    scmi_clock_ctx.clock_api = &clock_api;
     #if defined(BUILD_HAS_MOD_RESOURCE_PERMS)
         scmi_clock_ctx.res_perms_api = &perm_api;
     #endif
@@ -1001,6 +1008,74 @@ void test_protocol_message_attributes_handler_notify_rate_requested(void)
     TEST_ASSERT_EQUAL(FWK_SUCCESS, status);
 }
 
+int get_state_callback_success(
+    fwk_id_t service_id,
+    const void *payload,
+    size_t size,
+    int NumCalls
+)
+{
+    uint32_t expected_attributes;
+    struct scmi_clock_attributes_p2a *return_values;
+    return_values = (struct scmi_clock_attributes_p2a *)payload;
+    bool clock_enable, extended_name, notify_rate, notify_requested_rate;
+
+    clock_enable = true;
+    extended_name = true;
+
+    TEST_ASSERT_EQUAL((int32_t)SCMI_SUCCESS, return_values->status);
+    TEST_ASSERT_EQUAL_STRING_LEN(mock_clock_name, return_values->clock_name,
+                                 SCMI_CLOCK_NAME_LENGTH-1);
+    TEST_ASSERT_EQUAL(0, return_values->clock_enable_delay);
+
+#ifdef BUILD_HAS_SCMI_NOTIFICATIONS
+    notify_rate = true;
+    notify_requested_rate = true;
+#else
+    notify_rate = false;
+    notify_requested_rate = false;
+#endif
+
+    expected_attributes = SET_SCMI_CLOCK_ATTRIBUTES(clock_enable,
+                                                extended_name,
+                                                notify_rate,
+                                                notify_requested_rate);
+    TEST_ASSERT_EQUAL(expected_attributes, return_values->attributes);
+
+    return FWK_SUCCESS;
+}
+
+void test_process_request_event_get_state(void)
+{
+    int status;
+    uint32_t agent_id = FAKE_SCMI_AGENT_IDX_OSPM0;
+    struct fwk_event event;
+    enum mod_clock_state expected_state = MOD_CLOCK_STATE_RUNNING;
+
+    fwk_id_get_element_idx_ExpectAnyArgsAndReturn(SCMI_CLOCK_OSPM0_IDX1);
+    fwk_id_get_event_idx_ExpectAnyArgsAndReturn(
+        SCMI_CLOCK_EVENT_IDX_CLOCK_ATTRIBUTES);
+    mod_scmi_from_protocol_api_get_agent_id_ExpectAnyArgsAndReturn(
+        FWK_SUCCESS);
+    mod_scmi_from_protocol_api_get_agent_id_ReturnThruPtr_agent_id(&agent_id);
+
+    mod_clock_api_get_state_ExpectAnyArgsAndReturn(FWK_SUCCESS);
+    mod_clock_api_get_state_ReturnThruPtr_state(&expected_state);
+
+    fwk_module_get_element_name_ExpectAnyArgsAndReturn(mock_clock_name);
+
+    fwk_id_get_element_idx_ExpectAnyArgsAndReturn(SCMI_CLOCK_OSPM0_IDX1);
+    mod_scmi_from_protocol_api_get_agent_id_ExpectAnyArgsAndReturn(
+        FWK_SUCCESS);
+    mod_scmi_from_protocol_api_get_agent_id_ReturnThruPtr_agent_id(&agent_id);
+
+    mod_scmi_from_protocol_api_respond_Stub(get_state_callback_success);
+
+    status = process_request_event(&event);
+
+    TEST_ASSERT_EQUAL(status, FWK_SUCCESS);
+}
+
 int scmi_test_main(void)
 {
     UNITY_BEGIN();
@@ -1039,6 +1114,7 @@ int scmi_test_main(void)
             test_protocol_message_attributes_handler_notify_rate);
         RUN_TEST(
             test_protocol_message_attributes_handler_notify_rate_requested);
+        RUN_TEST(test_process_request_event_get_state);
 
     #endif
     return UNITY_END();
