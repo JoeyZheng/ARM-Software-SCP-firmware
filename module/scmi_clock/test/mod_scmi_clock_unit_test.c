@@ -1076,6 +1076,137 @@ void test_process_request_event_get_state(void)
     TEST_ASSERT_EQUAL(status, FWK_SUCCESS);
 }
 
+int get_extended_name_callback_success(
+    fwk_id_t service_id,
+    const void *payload,
+    size_t size,
+    int NumCalls
+)
+{
+    struct scmi_clock_name_get_p2a *return_values;
+    return_values = (struct scmi_clock_name_get_p2a *)payload;
+
+    TEST_ASSERT_EQUAL((int32_t)SCMI_SUCCESS, return_values->status);
+    TEST_ASSERT_EQUAL(0, return_values->flags);
+    TEST_ASSERT_EQUAL_STRING_LEN(mock_clock_name, return_values->clock_extended_name,
+                                 SCMI_CLOCK_EXTENDED_NAME_LENGTH-1);
+
+    return FWK_SUCCESS;
+}
+
+void test_process_request_event_get_clock_extended_name(void)
+{
+    int status;
+    uint32_t agent_id = FAKE_SCMI_AGENT_IDX_OSPM0;
+    struct fwk_event event;
+
+    fwk_id_get_element_idx_ExpectAnyArgsAndReturn(SCMI_CLOCK_OSPM0_IDX1);
+    fwk_id_get_event_idx_ExpectAnyArgsAndReturn(SCMI_CLOCK_EVENT_IDX_GET_NAME);
+    mod_scmi_from_protocol_api_get_agent_id_ExpectAnyArgsAndReturn(
+        FWK_SUCCESS);
+    mod_scmi_from_protocol_api_get_agent_id_ReturnThruPtr_agent_id(&agent_id);
+    fwk_module_get_element_name_ExpectAnyArgsAndReturn(mock_clock_name);
+
+    mod_scmi_from_protocol_api_respond_Stub(
+        get_extended_name_callback_success);
+
+    status = process_request_event(&event);
+
+    TEST_ASSERT_EQUAL(status, FWK_SUCCESS);
+}
+
+void test_scmi_clock_name_get_handler_success(void)
+{
+    int status;
+    uint32_t agent_id = FAKE_SCMI_AGENT_IDX_OSPM0;
+
+    fwk_id_t service_id =
+        FWK_ID_ELEMENT_INIT(FAKE_MODULE_IDX, FAKE_SCMI_AGENT_IDX_OSPM0);
+
+    struct scmi_clock_name_get_a2p payload = {
+        .clock_id = SCMI_CLOCK_OSPM0_IDX1,
+    };
+
+    mod_scmi_from_protocol_api_scmi_frame_validation_ExpectAnyArgsAndReturn(
+            FWK_SUCCESS);
+
+    mod_scmi_from_protocol_api_get_agent_id_ExpectAnyArgsAndReturn(FWK_SUCCESS);
+    mod_scmi_from_protocol_api_get_agent_id_ReturnThruPtr_agent_id(&agent_id);
+
+    fwk_module_is_valid_element_id_ExpectAnyArgsAndReturn(true);
+
+    mod_scmi_from_protocol_api_get_agent_id_ExpectAnyArgsAndReturn(FWK_SUCCESS);
+    mod_scmi_from_protocol_api_get_agent_id_ReturnThruPtr_agent_id(&agent_id);
+
+    fwk_id_get_element_idx_ExpectAnyArgsAndReturn(CLOCK_DEV_IDX_FAKE1);
+
+    fwk_id_get_element_idx_ExpectAnyArgsAndReturn(CLOCK_DEV_IDX_FAKE1);
+    fwk_id_is_equal_ExpectAnyArgsAndReturn(true);
+
+    __fwk_put_event_ExpectAnyArgsAndReturn(FWK_SUCCESS);
+
+    status = scmi_clock_message_handler(
+        (fwk_id_t)MOD_SCMI_PROTOCOL_ID_CLOCK,
+        service_id,
+        (const uint32_t *)&payload,
+        payload_size_table[MOD_SCMI_CLOCK_NAME_GET],
+        MOD_SCMI_CLOCK_NAME_GET);
+
+    TEST_ASSERT_EQUAL(FWK_SUCCESS, status);
+}
+
+int clock_has_extended_name_callback(
+    fwk_id_t service_id,
+    const void *payload,
+    size_t size,
+    int NumCalls)
+{
+    struct scmi_clock_name_get_p2a *return_values;
+    return_values = (struct scmi_clock_name_get_p2a *)payload;
+
+    TEST_ASSERT_EQUAL((int32_t)SCMI_NOT_SUPPORTED, return_values->status);
+
+    return FWK_SUCCESS;
+}
+
+void test_scmi_clock_name_get_handler_extended_name_not_supported(void)
+{
+    int status;
+    uint32_t agent_id = FAKE_SCMI_AGENT_IDX_OSPM0;
+
+    fwk_id_t service_id =
+        FWK_ID_ELEMENT_INIT(FAKE_MODULE_IDX, FAKE_SCMI_AGENT_IDX_OSPM0);
+
+    struct scmi_clock_name_get_a2p payload = {
+        .clock_id = SCMI_CLOCK_OSPM0_IDX0,
+    };
+
+    mod_scmi_from_protocol_api_scmi_frame_validation_ExpectAnyArgsAndReturn(
+            FWK_SUCCESS);
+
+    mod_scmi_from_protocol_api_get_agent_id_ExpectAnyArgsAndReturn(FWK_SUCCESS);
+    mod_scmi_from_protocol_api_get_agent_id_ReturnThruPtr_agent_id(&agent_id);
+
+    fwk_module_is_valid_element_id_ExpectAnyArgsAndReturn(true);
+
+    mod_scmi_from_protocol_api_get_agent_id_ExpectAnyArgsAndReturn(FWK_SUCCESS);
+    mod_scmi_from_protocol_api_get_agent_id_ReturnThruPtr_agent_id(&agent_id);
+
+    fwk_id_get_element_idx_ExpectAnyArgsAndReturn(CLOCK_DEV_IDX_FAKE0);
+
+    mod_scmi_from_protocol_api_respond_Stub(
+        clock_has_extended_name_callback);
+
+    status = scmi_clock_message_handler(
+        (fwk_id_t)MOD_SCMI_PROTOCOL_ID_CLOCK,
+        service_id,
+        (const uint32_t *)&payload,
+        payload_size_table[MOD_SCMI_CLOCK_NAME_GET],
+        MOD_SCMI_CLOCK_NAME_GET);
+
+    TEST_ASSERT_EQUAL(FWK_SUCCESS, status);
+}
+
 int scmi_test_main(void)
 {
     UNITY_BEGIN();
@@ -1115,6 +1246,9 @@ int scmi_test_main(void)
         RUN_TEST(
             test_protocol_message_attributes_handler_notify_rate_requested);
         RUN_TEST(test_process_request_event_get_state);
+        RUN_TEST(test_process_request_event_get_clock_extended_name);
+        RUN_TEST(test_scmi_clock_name_get_handler_success);
+        RUN_TEST(test_scmi_clock_name_get_handler_extended_name_not_supported);
 
     #endif
     return UNITY_END();
