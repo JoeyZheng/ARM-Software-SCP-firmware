@@ -39,6 +39,12 @@ contributions.
 Arm platforms typically come under the maintainership of the project core
 maintainers. The platforms listed here represent the exceptions to this rule.
 
+#### Automotive RD platforms (rd1ae)
+
+- [Diego Sueiro](https://gitlab.arm.com/Diego.Sueiro)
+- [Peter Hoyes](https://gitlab.arm.com/Peter.Hoyes)
+- [Ziad Elhanafy](https://gitlab.arm.com/Ziad.Elhanafy)
+
 #### Morello (morello)
 
 - [Deepak Pandey](https://gitlab.arm.com/Deepak.Pandey)
