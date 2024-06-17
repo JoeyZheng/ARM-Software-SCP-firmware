@@ -62,6 +62,13 @@ struct mod_res_permissions_api perm_api = {
 };
 #endif
 
+#ifdef BUILD_HAS_SCMI_NOTIFICATIONS
+static const struct mod_scmi_notification_api scmi_notification_api = {
+    .scmi_notification_add_subscriber = scmi_notification_add_subscriber,
+    .scmi_notification_remove_subscriber = scmi_notification_remove_subscriber,
+};
+#endif
+
 void assert_clock_state_and_ref_count_meets_expectations(void)
 {
     TEST_ASSERT_EQUAL_INT8_ARRAY(
@@ -133,6 +140,10 @@ void setUp(void)
         scmi_clock_ctx.res_perms_api = &perm_api;
     #endif
 
+#ifdef BUILD_HAS_SCMI_NOTIFICATIONS
+    scmi_clock_ctx.scmi_notification_api = &scmi_notification_api;
+#endif
+
     scmi_clock_ctx.dev_clock_ref_count_table = dev_clock_ref_count_table;
     scmi_clock_ctx.agent_clock_state_table = agent_clock_state_table;
     memcpy(
@@ -156,6 +167,8 @@ void setUp(void)
 
 void tearDown(void)
 {
+    Mockmod_scmi_clock_extra_Verify();
+    Mockmod_scmi_clock_extra_Destroy();
     Mockfwk_core_internal_Verify();
     Mockfwk_core_internal_Destroy();
 }
@@ -1207,6 +1220,196 @@ void test_scmi_clock_name_get_handler_extended_name_not_supported(void)
     TEST_ASSERT_EQUAL(FWK_SUCCESS, status);
 }
 
+int rate_notify_invalid_param_callback(
+    fwk_id_t service_id,
+    const void *payload,
+    size_t size,
+    int NumCalls
+)
+{
+    struct scmi_clock_rate_notify_p2a *return_values;
+    return_values = (struct scmi_clock_rate_notify_p2a *)payload;
+
+    TEST_ASSERT_EQUAL((int32_t)SCMI_NOT_FOUND, return_values->status);
+
+    return FWK_SUCCESS;
+}
+
+void test_clock_rate_changed_notify_handler_invalid_agent_id(void)
+{
+    int status;
+    unsigned int agent_id = FAKE_SCMI_AGENT_IDX_COUNT;
+    fwk_id_t service_id =
+        FWK_ID_ELEMENT_INIT(FAKE_MODULE_IDX, agent_id);
+
+    struct scmi_clock_rate_notify_a2p payload = {
+        .clock_id = SCMI_CLOCK_OSPM0_IDX1,
+        .notify_enable = true,
+    };
+
+    mod_scmi_from_protocol_api_get_agent_id_ExpectAnyArgsAndReturn(
+        FWK_SUCCESS);
+    mod_scmi_from_protocol_api_get_agent_id_ReturnThruPtr_agent_id(&agent_id);
+
+    mod_scmi_from_protocol_api_scmi_frame_validation_ExpectAnyArgsAndReturn(
+        FWK_SUCCESS);
+
+    mod_scmi_from_protocol_api_respond_Stub(rate_notify_invalid_param_callback);
+
+    status = scmi_clock_message_handler(
+        (fwk_id_t)MOD_SCMI_PROTOCOL_ID_CLOCK,
+        service_id,
+        (const uint32_t *)&payload,
+        payload_size_table[MOD_SCMI_CLOCK_RATE_NOTIFY],
+        MOD_SCMI_CLOCK_RATE_NOTIFY);
+
+    TEST_ASSERT_EQUAL(FWK_E_PARAM, status);
+}
+
+void test_clock_rate_changed_notify_handler_invalid_clock_id(void)
+{
+    int status;
+    unsigned int agent_id = FAKE_SCMI_AGENT_IDX_OSPM0;
+    fwk_id_t service_id =
+        FWK_ID_ELEMENT_INIT(FAKE_MODULE_IDX, agent_id);
+
+    struct scmi_clock_rate_notify_a2p payload = {
+        .clock_id = SCMI_CLOCK_OSPM0_COUNT,
+        .notify_enable = true,
+    };
+
+    mod_scmi_from_protocol_api_get_agent_id_ExpectAnyArgsAndReturn(
+        FWK_SUCCESS);
+    mod_scmi_from_protocol_api_get_agent_id_ReturnThruPtr_agent_id(&agent_id);
+
+    mod_scmi_from_protocol_api_scmi_frame_validation_ExpectAnyArgsAndReturn(
+        FWK_SUCCESS);
+
+    mod_scmi_from_protocol_api_respond_Stub(rate_notify_invalid_param_callback);
+
+    status = scmi_clock_message_handler(
+        (fwk_id_t)MOD_SCMI_PROTOCOL_ID_CLOCK,
+        service_id,
+        (const uint32_t *)&payload,
+        payload_size_table[MOD_SCMI_CLOCK_RATE_NOTIFY],
+        MOD_SCMI_CLOCK_RATE_NOTIFY);
+
+    TEST_ASSERT_EQUAL(FWK_E_RANGE, status);
+}
+
+int scmi_notification_add_subscriber_rate_changed_callback(
+    unsigned int protocol_id,
+    unsigned int clock_id,
+    unsigned int command_id,
+    fwk_id_t service_id,
+    int NumCalls
+)
+{
+    fwk_id_t expected_service_id =
+        FWK_ID_ELEMENT_INIT(FAKE_MODULE_IDX, FAKE_SCMI_AGENT_IDX_OSPM0);
+
+    TEST_ASSERT_EQUAL(MOD_SCMI_PROTOCOL_ID_CLOCK, protocol_id);
+    TEST_ASSERT_EQUAL(SCMI_CLOCK_OSPM0_IDX1, clock_id);
+    TEST_ASSERT_EQUAL(MOD_SCMI_CLOCK_RATE_NOTIFY, command_id);
+    TEST_ASSERT_EQUAL(expected_service_id.value, service_id.value);
+
+    return FWK_SUCCESS;
+}
+
+void test_clock_rate_changed_notify_handler_add_subscriber(void)
+{
+    int status;
+    unsigned int agent_id = FAKE_SCMI_AGENT_IDX_OSPM0;
+    fwk_id_t service_id =
+        FWK_ID_ELEMENT_INIT(FAKE_MODULE_IDX, agent_id);
+
+    struct scmi_clock_rate_notify_a2p payload = {
+        .clock_id = SCMI_CLOCK_OSPM0_IDX1,
+        .notify_enable = true,
+    };
+
+    mod_scmi_from_protocol_api_get_agent_id_ExpectAnyArgsAndReturn(
+        FWK_SUCCESS);
+    mod_scmi_from_protocol_api_get_agent_id_ReturnThruPtr_agent_id(&agent_id);
+    fwk_module_is_valid_element_id_ExpectAnyArgsAndReturn(true);
+    fwk_id_get_element_idx_ExpectAnyArgsAndReturn(SCMI_CLOCK_OSPM0_IDX1);
+    mod_scmi_from_protocol_api_get_agent_id_ExpectAnyArgsAndReturn(
+        FWK_SUCCESS);
+    mod_scmi_from_protocol_api_get_agent_id_ReturnThruPtr_agent_id(&agent_id);
+
+    mod_scmi_from_protocol_api_scmi_frame_validation_ExpectAnyArgsAndReturn(
+        FWK_SUCCESS);
+
+    scmi_notification_add_subscriber_Stub(
+        scmi_notification_add_subscriber_rate_changed_callback);
+
+    mod_scmi_from_protocol_api_respond_ExpectAnyArgsAndReturn(FWK_SUCCESS);
+
+    status = scmi_clock_message_handler(
+        (fwk_id_t)MOD_SCMI_PROTOCOL_ID_CLOCK,
+        service_id,
+        (const uint32_t *)&payload,
+        payload_size_table[MOD_SCMI_CLOCK_RATE_NOTIFY],
+        MOD_SCMI_CLOCK_RATE_NOTIFY);
+
+    TEST_ASSERT_EQUAL(FWK_SUCCESS, status);
+}
+
+int scmi_notification_remove_subscriber_rate_changed_callback(
+    unsigned int protocol_id,
+    unsigned int agent_id,
+    unsigned int clock_id,
+    unsigned int command_id,
+    int NumCalls
+)
+{
+    TEST_ASSERT_EQUAL(MOD_SCMI_PROTOCOL_ID_CLOCK, protocol_id);
+    TEST_ASSERT_EQUAL(FAKE_SCMI_AGENT_IDX_OSPM0, agent_id);
+    TEST_ASSERT_EQUAL(SCMI_CLOCK_OSPM0_IDX1, clock_id);
+    TEST_ASSERT_EQUAL(MOD_SCMI_CLOCK_RATE_NOTIFY, command_id);
+
+    return FWK_SUCCESS;
+}
+
+void test_clock_rate_changed_notify_handler_remove_subscriber(void)
+{
+    int status;
+    unsigned int agent_id = FAKE_SCMI_AGENT_IDX_OSPM0;
+    fwk_id_t service_id =
+        FWK_ID_ELEMENT_INIT(FAKE_MODULE_IDX, agent_id);
+
+    struct scmi_clock_rate_notify_a2p payload = {
+        .clock_id = SCMI_CLOCK_OSPM0_IDX1,
+        .notify_enable = false,
+    };
+
+    mod_scmi_from_protocol_api_get_agent_id_ExpectAnyArgsAndReturn(
+        FWK_SUCCESS);
+    mod_scmi_from_protocol_api_get_agent_id_ReturnThruPtr_agent_id(&agent_id);
+    fwk_module_is_valid_element_id_ExpectAnyArgsAndReturn(true);
+    fwk_id_get_element_idx_ExpectAnyArgsAndReturn(SCMI_CLOCK_OSPM0_IDX1);
+    mod_scmi_from_protocol_api_get_agent_id_ExpectAnyArgsAndReturn(
+        FWK_SUCCESS);
+    mod_scmi_from_protocol_api_get_agent_id_ReturnThruPtr_agent_id(&agent_id);
+
+    mod_scmi_from_protocol_api_scmi_frame_validation_ExpectAnyArgsAndReturn(
+        FWK_SUCCESS);
+
+    scmi_notification_remove_subscriber_Stub(
+        scmi_notification_remove_subscriber_rate_changed_callback);
+
+    mod_scmi_from_protocol_api_respond_ExpectAnyArgsAndReturn(FWK_SUCCESS);
+
+    status = scmi_clock_message_handler(
+        (fwk_id_t)MOD_SCMI_PROTOCOL_ID_CLOCK,
+        service_id,
+        (const uint32_t *)&payload,
+        payload_size_table[MOD_SCMI_CLOCK_RATE_NOTIFY],
+        MOD_SCMI_CLOCK_RATE_NOTIFY);
+
+    TEST_ASSERT_EQUAL(FWK_SUCCESS, status);
+}
+
 int scmi_test_main(void)
 {
     UNITY_BEGIN();
@@ -1249,6 +1452,12 @@ int scmi_test_main(void)
         RUN_TEST(test_process_request_event_get_clock_extended_name);
         RUN_TEST(test_scmi_clock_name_get_handler_success);
         RUN_TEST(test_scmi_clock_name_get_handler_extended_name_not_supported);
+#ifdef BUILD_HAS_SCMI_NOTIFICATIONS
+        RUN_TEST(test_clock_rate_changed_notify_handler_invalid_agent_id);
+        RUN_TEST(test_clock_rate_changed_notify_handler_invalid_clock_id);
+        RUN_TEST(test_clock_rate_changed_notify_handler_add_subscriber);
+        RUN_TEST(test_clock_rate_changed_notify_handler_remove_subscriber);
+#endif
 
     #endif
     return UNITY_END();
