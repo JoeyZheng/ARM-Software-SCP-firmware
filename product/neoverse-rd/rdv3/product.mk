@@ -6,7 +6,7 @@
 #
 #
 
-BS_PRODUCT_NAME := rdfremont
+BS_PRODUCT_NAME := rdv3
 BS_FIRMWARE_LIST := lcp_ramfw \
                     scp_ramfw \
                     mcp_ramfw

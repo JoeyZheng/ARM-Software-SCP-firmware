@@ -23,7 +23,7 @@
 /* SCP sub-system peripherals */
 #define MCP_REFCLK_CNTCTL_BASE   (0x4C000000)
 #define MCP_REFCLK_CNTBASE0_BASE (0x4C001000)
-#define MCP_UART_BASE (0x4C002000)
+#define MCP_UART_BASE            (0x4C002000)
 
 /* MCP addresses translation window base addresses */
 #define MCP_ADDRESS_TRANSLATION_WINDOW1_BASE (0xA0000000)

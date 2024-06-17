@@ -22,7 +22,7 @@
   toolchains:
     - name: GNU
 
-- product: rdfremont
+- product: rdv3
   product_group: neoverse-rd
 
 - product: rdv1

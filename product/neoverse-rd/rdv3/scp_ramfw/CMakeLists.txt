@@ -11,16 +11,16 @@
 
 # cmake-lint: disable=E1122
 
-add_executable(rdfremont-bl2)
+add_executable(rdv3-bl2)
 
 target_include_directories(
-    rdfremont-bl2
+    rdv3-bl2
     PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include"
            "${CMAKE_CURRENT_SOURCE_DIR}/../include"
            "${CMAKE_CURRENT_SOURCE_DIR}/../../common/include")
 
 target_sources(
-    rdfremont-bl2
+    rdv3-bl2
     PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/config_system_power.c"
             "${CMAKE_CURRENT_SOURCE_DIR}/config_armv7m_mpu.c"
             "${CMAKE_CURRENT_SOURCE_DIR}/config_atu.c"
@@ -48,7 +48,7 @@ target_sources(
 # Some of our firmware includes require CMSIS.
 #
 
-target_link_libraries(rdfremont-bl2 PUBLIC cmsis::core-m)
+target_link_libraries(rdv3-bl2 PUBLIC cmsis::core-m)
 
 #
 # We explicitly add the CMSIS include directories to our interface include
@@ -57,5 +57,5 @@ target_link_libraries(rdfremont-bl2 PUBLIC cmsis::core-m)
 #
 
 target_include_directories(
-    rdfremont-bl2
+    rdv3-bl2
     PUBLIC $<TARGET_PROPERTY:cmsis::core-m,INTERFACE_INCLUDE_DIRECTORIES>)

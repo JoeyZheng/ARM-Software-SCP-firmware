@@ -16,16 +16,16 @@
 #include <fwk_id.h>
 #include <fwk_module.h>
 
-#define RD_FREMONT_PART_NUMBER 0x7EE
+#define RD_V3_PART_NUMBER 0x7EE
 
 /* Module 'sid' element count */
 #define MOD_SID_ELEMENT_COUNT 2
 
 static const struct fwk_element subsystem_table[MOD_SID_ELEMENT_COUNT] = {
-    { .name = "RD-Fremont",
+    { .name = "RD-V3",
       .data =
           &(struct mod_sid_subsystem_config){
-              .part_number = RD_FREMONT_PART_NUMBER,
+              .part_number = RD_V3_PART_NUMBER,
           } },
     { 0 },
 };

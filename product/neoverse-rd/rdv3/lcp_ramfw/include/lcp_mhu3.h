@@ -11,7 +11,7 @@
 #ifndef SCP_MHU3_H
 #define SCP_MHU3_H
 
-enum fremont_mhu_devices {
+enum rdv3_mhu_devices {
     MHU3_DEVICE_IDX_LCP_AP_FCH_DVFS_SET_LVL,
     MHU3_DEVICE_IDX_COUNT,
 };

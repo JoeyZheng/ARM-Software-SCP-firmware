@@ -9,9 +9,9 @@
 # Configure the build system.
 #
 
-set(SCP_FIRMWARE "rdfremont-bl2")
+set(SCP_FIRMWARE "rdv3-bl2")
 
-set(SCP_FIRMWARE_TARGET "rdfremont-bl2")
+set(SCP_FIRMWARE_TARGET "rdv3-bl2")
 
 set(SCP_TOOLCHAIN_INIT "GNU")
 

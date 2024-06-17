@@ -9,11 +9,11 @@
 # Configure the build system.
 #
 
-set(SCP_FIRMWARE "rdfremont-mcp-bl2")
+set(SCP_FIRMWARE "rdv3-mcp-bl2")
 
 set(SCP_ENABLE_NEWLIB_NANO FALSE)
 
-set(SCP_FIRMWARE_TARGET "rdfremont-mcp-bl2")
+set(SCP_FIRMWARE_TARGET "rdv3-mcp-bl2")
 
 set(SCP_TOOLCHAIN_INIT "GNU")
 

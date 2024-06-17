@@ -44,7 +44,7 @@ maintainers. The platforms listed here represent the exceptions to this rule.
 - [Deepak Pandey](https://gitlab.arm.com/Deepak.Pandey)
 - [Chandni Cherukuri](https://gitlab.arm.com/chandnich)
 
-#### Neoverse RD platforms (rdv1, rdv1mc, rdn1e1, rdn2, rdfremont)
+#### Neoverse RD platforms (rdv1, rdv1mc, rdn1e1, rdn2, rdv3)
 
 - [Thomas Abraham](https://gitlab.arm.com/thomas.abraham)
 - [Vijayenthiran Subramaniam](https://gitlab.arm.com/Vijayenthiran.Subramaniam)

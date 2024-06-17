@@ -37,7 +37,7 @@
   parallel:
     matrix:
       - BUILD_PRODUCT:
-          [host, juno, morello, n1sdp, rcar, rdfremont, rdv1, rdv1mc, rdn1e1, rdn2,
+          [host, juno, morello, n1sdp, rcar, rdv3, rdv1, rdv1mc, rdn1e1, rdn2,
            sgi575, sgm775, sgm776, synquacer, tc2]
 
 .build-products-all-products-all-log-levels:
@@ -45,7 +45,7 @@
   parallel:
     matrix:
       - BUILD_PRODUCT:
-          [host, juno, morello, n1sdp, rcar, rdfremont, rdv1, rdv1mc, rdn1e1, rdn2,
+          [host, juno, morello, n1sdp, rcar, rdv3, rdv1, rdv1mc, rdn1e1, rdn2,
            sgi575, sgm775, sgm776, synquacer, tc2]
         BUILD_PRODUCTS_LOG_LEVEL:
           [DEBUG, INFO, WARN, ERROR, CRIT, DISABLED]

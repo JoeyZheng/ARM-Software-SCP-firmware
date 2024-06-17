@@ -13,7 +13,7 @@
 
 /*
  * Offsets of the system counter implementation defined registers found on
- * RD-N2, RD-Fremont platforms and their variants.
+ * RD-N2, RD-V3 platforms and their variants.
  */
 #define NEOVERSE_RD_SYSCNT_IMPDEF0_CNTENCR      0xC0
 #define NEOVERSE_RD_SYSCNT_IMPDEF0_CNTSAMPVAL_L 0xC8
