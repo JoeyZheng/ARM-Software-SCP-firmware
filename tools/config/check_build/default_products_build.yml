@@ -56,3 +56,6 @@
     - name: 0
     - name: 1
   product_group: totalcompute
+
+- product: rd1ae
+  product_group: automotive-rd
