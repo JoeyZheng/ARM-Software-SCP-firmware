@@ -66,6 +66,7 @@ struct mod_res_permissions_api perm_api = {
 static const struct mod_scmi_notification_api scmi_notification_api = {
     .scmi_notification_add_subscriber = scmi_notification_add_subscriber,
     .scmi_notification_remove_subscriber = scmi_notification_remove_subscriber,
+    .scmi_notification_notify = scmi_notification_notify,
 };
 #endif
 
@@ -1523,6 +1524,74 @@ void test_clock_rate_change_requested_notify_handler_remove_subscriber(void)
     TEST_ASSERT_EQUAL(FWK_SUCCESS, status);
 }
 
+#ifdef BUILD_HAS_SCMI_NOTIFICATIONS
+int scmi_notification_notify_rate_changed_callback(
+    unsigned int protocol_id,
+    unsigned int operation_id,
+    unsigned int scmi_response_id,
+    void *payload_p2a,
+    size_t payload_size,
+    int NumCalls
+)
+{
+    struct scmi_clock_rate_notification_message_p2a *message = payload_p2a;
+
+    TEST_ASSERT_EQUAL(MOD_SCMI_PROTOCOL_ID_CLOCK, protocol_id);
+    TEST_ASSERT_EQUAL(MOD_SCMI_CLOCK_RATE_NOTIFY, operation_id);
+    TEST_ASSERT_EQUAL(SCMI_CLOCK_RATE_CHANGED, scmi_response_id);
+
+    TEST_ASSERT_EQUAL(FAKE_SCMI_AGENT_IDX_OSPM1, message->agent_id);
+    TEST_ASSERT_EQUAL(SCMI_CLOCK_OSPM1_IDX0, message->clock_id);
+    TEST_ASSERT_EQUAL(0x0000000A, message->rate[0]);
+    TEST_ASSERT_EQUAL(0x0000000B, message->rate[1]);
+
+    return FWK_SUCCESS;
+}
+
+unsigned int get_element_idx(
+    fwk_id_t clock_id
+)
+{
+    return clock_id.element.element_idx;
+}
+
+unsigned int get_element_idx_callback(
+    fwk_id_t clock_id,
+    int NumCalls)
+{
+    return get_element_idx(clock_id);
+}
+
+void test_mod_scmi_clock_process_notification_rate_changed(void)
+{
+    int status;
+    unsigned int agent_id, clock_idx;
+    agent_id = FAKE_SCMI_AGENT_IDX_OSPM1;
+    clock_idx = CLOCK_DEV_IDX_FAKE3;
+    fwk_id_t clock_id = FWK_ID_ELEMENT(FWK_MODULE_IDX_CLOCK, clock_idx);
+    struct fwk_event notification_event, resp_event;
+    struct mod_clock_notification_params *notification_params =
+        ((struct mod_clock_notification_params *)notification_event.params);
+
+    notification_event.id = FWK_ID_NOTIFICATION(
+        FWK_MODULE_IDX_CLOCK, MOD_CLOCK_NOTIFICATION_IDX_RATE_CHANGED);
+    notification_params->clock_id = clock_id;
+    notification_params->requester_id = agent_id;
+    notification_params->rate = (uint64_t) 0x0000000B0000000A;
+
+    fwk_id_get_notification_idx_ExpectAnyArgsAndReturn(
+        MOD_CLOCK_NOTIFICATION_IDX_RATE_CHANGED);
+    fwk_id_get_element_idx_Stub(get_element_idx_callback);
+
+    scmi_notification_notify_Stub(
+        scmi_notification_notify_rate_changed_callback);
+
+    status = scmi_clock_process_notification(&notification_event, &resp_event);
+
+    TEST_ASSERT_EQUAL(status, FWK_SUCCESS);
+}
+#endif
+
 int scmi_test_main(void)
 {
     UNITY_BEGIN();
@@ -1575,6 +1644,9 @@ int scmi_test_main(void)
             test_clock_rate_change_requested_notify_handler_add_subscriber);
         RUN_TEST(
             test_clock_rate_change_requested_notify_handler_remove_subscriber);
+
+        RUN_TEST(
+            test_mod_scmi_clock_process_notification_rate_changed);
 #endif
 
     #endif
