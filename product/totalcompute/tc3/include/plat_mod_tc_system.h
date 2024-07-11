@@ -15,9 +15,4 @@
 #define PD_INIT_STATE_PRIMARY_CLUSTER (MOD_PD_STATE_ON)
 #define PD_INIT_STATE_PRIMARY_CORE    (MOD_PD_STATE_ON)
 
-__NO_RETURN __STATIC_INLINE void __system_reset(void)
-{
-    NVIC_SystemReset();
-}
-
 #endif /* PLAT_MOD_TC_SYSTEM_H */

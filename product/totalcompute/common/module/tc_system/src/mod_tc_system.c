@@ -10,7 +10,9 @@
 
 #include "clock_soc.h"
 #include "plat_mod_tc_system.h"
+#include "scp_mmap.h"
 #include "scp_pik.h"
+#include "system_control_regs_sse310.h"
 #include "tc_core.h"
 #include "tc_scmi.h"
 #include "tc_sds.h"
@@ -24,6 +26,7 @@
 #include <mod_tc_system.h>
 
 #include <fwk_assert.h>
+#include <fwk_attributes.h>
 #include <fwk_id.h>
 #include <fwk_interrupt.h>
 #include <fwk_log.h>
@@ -85,6 +88,22 @@ static int messaging_stack_ready(void)
 /*
  * System power's driver API
  */
+
+FWK_WEAK void __system_reset(void)
+{
+    struct scp_sysctrl_reg *scp_sysctrl = (void *)SCP_SYSTEM_CONTROL_BASE;
+
+    __ISB();
+    __DSB();
+    /* Request System Cold Reset */
+    scp_sysctrl->SWRESET = 1 << SCP_SCB_SWRESET_POS;
+    __DSB();
+
+    /* Never Return */
+    while (1) {
+        __NOP();
+    }
+}
 
 static int tc_system_shutdown(enum mod_pd_system_shutdown system_shutdown)
 {

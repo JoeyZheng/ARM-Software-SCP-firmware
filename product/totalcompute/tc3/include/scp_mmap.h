@@ -43,6 +43,9 @@
 #define SCP_PERIPHERAL_BASE UINT32_C(0x44000000)
 #define SCP_PIK_SYSTEM_BASE UINT32_C(0x57000000)
 
+/* System Control Register Block Base Address */
+#define SCP_SYSTEM_CONTROL_BASE UINT32_C(0x58021000)
+
 /* Base address of the SCP ATU */
 #define SCP_ATU_BASE (0x50150000)
 
