@@ -88,7 +88,7 @@ static int messaging_stack_ready(void)
 
 static int tc_system_shutdown(enum mod_pd_system_shutdown system_shutdown)
 {
-    NVIC_SystemReset();
+    __system_reset();
 
     return FWK_E_DEVICE;
 }
