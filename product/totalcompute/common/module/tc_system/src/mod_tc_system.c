@@ -1,6 +1,6 @@
 /*
  * Arm SCP/MCP Software
- * Copyright (c) 2022-2023, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2022-2024, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -9,6 +9,7 @@
  */
 
 #include "clock_soc.h"
+#include "plat_mod_tc_system.h"
 #include "scp_pik.h"
 #include "tc_core.h"
 #include "tc_scmi.h"
@@ -50,11 +51,6 @@ struct tc_system_ctx {
 
     /* SDS API pointer */
     const struct mod_sds_api *sds_api;
-};
-
-struct tc_system_isr {
-    unsigned int interrupt;
-    void (*handler)(void);
 };
 
 static struct tc_system_ctx mod_ctx;
@@ -191,8 +187,8 @@ static int tc_system_start(fwk_id_t id)
             MOD_PD_LEVEL_2,
             0,
             MOD_PD_STATE_ON,
-            MOD_PD_STATE_OFF,
-            MOD_PD_STATE_OFF));
+            PD_INIT_STATE_PRIMARY_CLUSTER,
+            PD_INIT_STATE_PRIMARY_CORE));
 }
 
 static int tc_system_process_notification(
