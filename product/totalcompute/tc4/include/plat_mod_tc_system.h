@@ -10,9 +10,7 @@
 
 #include <mod_power_domain.h>
 
-#include <fmw_cmsis.h>
-
-#define PD_INIT_STATE_PRIMARY_CLUSTER   (MOD_PD_STATE_OFF)
-#define PD_INIT_STATE_PRIMARY_CORE      (MOD_PD_STATE_OFF)
+#define PD_INIT_STATE_PRIMARY_CLUSTER (MOD_PD_STATE_OFF)
+#define PD_INIT_STATE_PRIMARY_CORE    (MOD_PD_STATE_OFF)
 
 #endif /* PLAT_MOD_TC_SYSTEM_H */
