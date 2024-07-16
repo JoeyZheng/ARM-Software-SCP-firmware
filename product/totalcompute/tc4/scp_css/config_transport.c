@@ -24,12 +24,10 @@
 
 #include <stdint.h>
 
-static const struct fwk_element transport_element_table[
+static const struct fwk_element transport_element_table[] = {
 #ifdef BUILD_HAS_MOD_TRANSPORT_FC
-    TC4_TRANSPORT_CHANNELS_COUNT + 1] = {
     [TC4_TRANSPORT_SCMI_SERVICE_PSCI] = {
 #else
-    SCP_TC4_TRANSPORT_SERVICE_IDX_COUNT + 1] = {
     [SCP_TC4_TRANSPORT_SERVICE_IDX_PSCI] = {
 #endif
         .name = "PSCI",
@@ -385,11 +383,7 @@ static const struct fwk_element transport_element_table[
         }),
     },
 #endif
-#ifdef BUILD_HAS_MOD_TRANSPORT_FC
-    [TC4_TRANSPORT_CHANNELS_COUNT] = { 0 },
-#else
-    [SCP_TC4_TRANSPORT_SERVICE_IDX_COUNT] = { 0 },
-#endif
+    { 0 },
 };
 
 static const struct fwk_element *transport_get_element_table(fwk_id_t module_id)
@@ -397,11 +391,7 @@ static const struct fwk_element *transport_get_element_table(fwk_id_t module_id)
     unsigned int idx;
     struct mod_transport_channel_config *config;
 
-#ifdef BUILD_HAS_MOD_TRANSPORT_FC
-    for (idx = 0; idx < TC4_TRANSPORT_CHANNELS_COUNT; idx++) {
-#else
-    for (idx = 0; idx < SCP_TC4_TRANSPORT_SERVICE_IDX_SCP2RSS; idx++) {
-#endif
+    for (idx = 0; idx < FWK_ARRAY_SIZE(transport_element_table) - 1; idx++) {
         config =
             (struct mod_transport_channel_config *)(transport_element_table[idx]
                                                         .data);

@@ -5,37 +5,18 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include "scp_mmap.h"
 #include "tc4_dvfs.h"
 #include "tc4_scmi.h"
 #include "tc4_timer.h"
 #include "tc_core.h"
+#include "tc_scmi_perf.h"
 
 #include <mod_fch_polled.h>
-#include <mod_scmi_perf.h>
 
 #include <fwk_element.h>
 #include <fwk_id.h>
 #include <fwk_module.h>
 #include <fwk_module_idx.h>
-
-#include <stdint.h>
-
-#define FC_LEVEL_SET_ADDR(PERF_IDX) \
-    (SCMI_FAST_CHANNEL_BASE + MOD_SCMI_PERF_FAST_CHANNEL_OFFSET_LEVEL_SET + \
-     (MOD_SCMI_PERF_FAST_CHANNEL_OFFSET_TOTAL * PERF_IDX))
-
-#define FC_LIMIT_SET_ADDR(PERF_IDX) \
-    (SCMI_FAST_CHANNEL_BASE + MOD_SCMI_PERF_FAST_CHANNEL_OFFSET_LIMIT_SET + \
-     (MOD_SCMI_PERF_FAST_CHANNEL_OFFSET_TOTAL * PERF_IDX))
-
-#define FC_LEVEL_GET_ADDR(PERF_IDX) \
-    (SCMI_FAST_CHANNEL_BASE + MOD_SCMI_PERF_FAST_CHANNEL_OFFSET_LEVEL_GET + \
-     (MOD_SCMI_PERF_FAST_CHANNEL_OFFSET_TOTAL * PERF_IDX))
-
-#define FC_LIMIT_GET_ADDR(PERF_IDX) \
-    (SCMI_FAST_CHANNEL_BASE + MOD_SCMI_PERF_FAST_CHANNEL_OFFSET_LIMIT_GET + \
-     (MOD_SCMI_PERF_FAST_CHANNEL_OFFSET_TOTAL * PERF_IDX))
 
 /* get the channel offset by itself and add the AP location */
 #define FC_LEVEL_SET_AP_ADDR(PERF_IDX) \
@@ -63,23 +44,6 @@ static struct mod_fch_polled_config module_config = {
     .rate_limit = (4 * 1000),
     .attributes = 0,
 };
-
-enum fch_polled_length {
-    FCH_POLLED_LEVEL_SET_LENGTH = sizeof(uint32_t),
-    FCH_POLLED_LIMIT_SET_LENGTH =
-        sizeof(struct mod_scmi_perf_fast_channel_limit),
-    FCH_POLLED_LEVEL_GET_LENGTH = sizeof(uint32_t),
-    FCH_POLLED_LIMIT_GET_LENGTH =
-        sizeof(struct mod_scmi_perf_fast_channel_limit)
-};
-
-#define FCH_ADDR_INIT(scp_addr, ap_addr, len) \
-    &((struct mod_fch_polled_channel_config){ \
-        .fch_addr = { \
-            .local_view_address = scp_addr, \
-            .target_view_address = ap_addr, \
-            .length = len, \
-        } })
 
 static const struct fwk_element fch_polled_element_table[] = {
     [TC4_PLAT_FCH_GROUP_LITTLE_LEVEL_SET] = {
