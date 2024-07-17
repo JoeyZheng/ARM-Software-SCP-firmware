@@ -97,7 +97,7 @@ static const struct fwk_element element_table[] = {
                                     &(struct mod_ccsm_dev_config){
                                         .clock_type =
                                             MOD_CCSM_CLOCK_TYPE_INDEXED,
-                                        .base_address = 0xBA5E,
+                                        .base_address = 0x1DBA5E,
                                         .clock_default = &clock_config_default,
                                         .dm_config = &dm_config_default,
                                         .mod_config = &mod_config_default,
@@ -144,7 +144,7 @@ void setUp(void)
     ctx->current_rate_nom = ctx->config->clock_default->rate_nom;
     ctx->current_rate_fb = ctx->config->clock_default->rate_fb;
     ctx->pll_api = pll_api;
-    ctx->base_address = 0xBA5E;
+    ctx->base_address = ctx->config->base_address;
     ctx->current_state = MOD_CLOCK_STATE_RUNNING;
 
     ctx = &module_ctx.dev_ctx_table[FAKE_CCSM_IDX_INDEXED];
@@ -154,7 +154,7 @@ void setUp(void)
     ctx->current_rate_nom = ctx->config->clock_default->rate_nom;
     ctx->current_rate_fb = ctx->config->clock_default->rate_fb;
     ctx->pll_api = pll_api;
-    ctx->base_address = 0xBA5E;
+    ctx->base_address = ctx->config->base_address;
     ctx->current_state = MOD_CLOCK_STATE_RUNNING;
 }
 
@@ -248,6 +248,7 @@ void test_function_ccsm_clock_set_rate_pass_continuous_uninitialized(void)
 
     mod_ccsm_pll_gen_dynamic_registers_ExpectAnyArgsAndReturn(FWK_SUCCESS);
     ccsm_drv_set_pll_dynamic_settings_ExpectAnyArgsAndReturn(FWK_SUCCESS);
+    ccsm_drv_set_pll_dynamic_settings_ExpectAnyArgsAndReturn(FWK_SUCCESS);
     ccsm_drv_req_set_dvfs_ExpectAndReturn(ctx->base_address, FWK_SUCCESS);
 
     status = ccsm_clock_set_rate(dev_id, rate, MOD_CLOCK_ROUND_MODE_NEAREST);
@@ -279,6 +280,7 @@ void test_function_ccsm_clock_set_rate_pass_indexed_initialized(void)
     fwk_id_get_element_idx_ExpectAndReturn(dev_id, FAKE_CCSM_IDX_INDEXED);
 
     mod_ccsm_pll_gen_dynamic_registers_ExpectAnyArgsAndReturn(FWK_SUCCESS);
+    ccsm_drv_set_pll_dynamic_settings_ExpectAnyArgsAndReturn(FWK_SUCCESS);
     ccsm_drv_set_pll_dynamic_settings_ExpectAnyArgsAndReturn(FWK_SUCCESS);
     ccsm_drv_req_dvfs_go_up_ExpectAndReturn(ctx->base_address, FWK_SUCCESS);
 
@@ -322,6 +324,7 @@ void test_function_ccsm_clock_set_rate_pass_indexed_uninitialized(void)
 
     mod_ccsm_pll_gen_dynamic_registers_ExpectAnyArgsAndReturn(FWK_SUCCESS);
     ccsm_drv_set_pll_dynamic_settings_ExpectAnyArgsAndReturn(FWK_SUCCESS);
+    ccsm_drv_set_pll_dynamic_settings_ExpectAnyArgsAndReturn(FWK_SUCCESS);
     ccsm_drv_req_set_dvfs_ExpectAndReturn(ctx->base_address, FWK_SUCCESS);
 
     status = ccsm_clock_set_rate(dev_id, rate, MOD_CLOCK_ROUND_MODE_NEAREST);
@@ -350,6 +353,7 @@ void test_function_ccsm_clock_set_rate_pass_continuous_initialized(void)
     fwk_id_get_element_idx_ExpectAndReturn(dev_id, FAKE_CCSM_IDX_CONTINUOUS);
 
     mod_ccsm_pll_gen_dynamic_registers_ExpectAnyArgsAndReturn(FWK_SUCCESS);
+    ccsm_drv_set_pll_dynamic_settings_ExpectAnyArgsAndReturn(FWK_SUCCESS);
     ccsm_drv_set_pll_dynamic_settings_ExpectAnyArgsAndReturn(FWK_SUCCESS);
     ccsm_drv_req_dvfs_go_up_ExpectAndReturn(ctx->base_address, FWK_SUCCESS);
 
@@ -380,6 +384,7 @@ void test_function_ccsm_clock_set_rate_pass_continuous_initialized_dn(void)
     fwk_id_get_element_idx_ExpectAndReturn(dev_id, FAKE_CCSM_IDX_CONTINUOUS);
 
     mod_ccsm_pll_gen_dynamic_registers_ExpectAnyArgsAndReturn(FWK_SUCCESS);
+    ccsm_drv_set_pll_dynamic_settings_ExpectAnyArgsAndReturn(FWK_SUCCESS);
     ccsm_drv_set_pll_dynamic_settings_ExpectAnyArgsAndReturn(FWK_SUCCESS);
     ccsm_drv_req_dvfs_go_dn_ExpectAndReturn(ctx->base_address, FWK_SUCCESS);
 
@@ -821,6 +826,7 @@ void test_function_ccsm_power_state_change_on_pass(void)
     ccsm_drv_set_pll_static_settings_ExpectAnyArgsAndReturn(FWK_SUCCESS);
 
     mod_ccsm_pll_gen_dynamic_registers_ExpectAnyArgsAndReturn(FWK_SUCCESS);
+    ccsm_drv_set_pll_dynamic_settings_ExpectAnyArgsAndReturn(FWK_SUCCESS);
     ccsm_drv_set_pll_dynamic_settings_ExpectAnyArgsAndReturn(FWK_SUCCESS);
     ccsm_drv_req_set_dvfs_ExpectAndReturn(ctx->base_address, FWK_SUCCESS);
 
