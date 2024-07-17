@@ -114,9 +114,7 @@ static int get_register_value_rate(
         return FWK_E_PARAM;
     }
 
-    if (pll_settings_0 == NULL || pll_settings_1 == NULL) {
-        return FWK_E_PARAM;
-    }
+    fwk_assert((pll_settings_0 != NULL) || (pll_settings_1 != NULL));
 
     /*
      * Perform a binary search to find the entry matching the requested rate.
@@ -217,6 +215,32 @@ static int set_static_pll_settings(struct ccsm_dev_ctx *ctx)
         (struct ccsm_reg *)ctx->config->base_address,
         MOD_CCSM_PLL_1,
         ctx->config->pll_1_static_reg_value);
+
+    return status;
+}
+
+static int set_fallback_dynamic_settings(
+    struct ccsm_dev_ctx *ctx,
+    uint64_t fallback_clock_rate_hz)
+{
+    int status;
+    uint32_t settings_0_register_value;
+    uint32_t settings_1_register_value;
+
+    status = get_register_value_rate(
+        ctx,
+        fallback_clock_rate_hz,
+        &settings_0_register_value,
+        &settings_1_register_value);
+    if (status != FWK_SUCCESS) {
+        return status;
+    }
+
+    status = ccsm_drv_set_pll_dynamic_settings(
+        (struct ccsm_reg *)ctx->config->base_address,
+        MOD_CCSM_PLL_FALLBACK,
+        settings_0_register_value,
+        settings_1_register_value);
 
     return status;
 }
@@ -432,6 +456,50 @@ static int ccsm_dm_get_configuration(
     return FWK_SUCCESS;
 }
 
+static int sw_fb_dm_config_handler(
+    struct ccsm_dev_ctx *ctx,
+    struct mod_ccsm_clock_rate rate_entry)
+{
+    int status;
+    struct mod_ccsm_dm_config dm_config;
+
+    /* Fallback remains enabled, no change required. */
+    if ((rate_entry.fallback_clock_rate_hz != 0) &&
+        (ctx->current_fallback_clock_rate_hz != 0)) {
+        return FWK_SUCCESS;
+    }
+
+    /* Fallback remains disabled, no change required. */
+    if ((rate_entry.fallback_clock_rate_hz == 0) &&
+        (ctx->current_fallback_clock_rate_hz == 0)) {
+        return FWK_SUCCESS;
+    }
+
+    status = ccsm_dm_get_configuration(ctx, &dm_config);
+    if (status != FWK_SUCCESS) {
+        return status;
+    }
+
+    if ((rate_entry.fallback_clock_rate_hz == 0) &&
+        (dm_config.strategy == MOD_CCSM_DM_SW_FB)) {
+        /* Switch to nominal only so fallback can be disabled */
+        dm_config.strategy = MOD_CCSM_DM_NOM_ONLY;
+
+        status = ccsm_dm_set_configuration(ctx, &dm_config);
+    } else if (
+        (ctx->current_fallback_clock_rate_hz == 0) &&
+        (dm_config.strategy == MOD_CCSM_DM_NOM_ONLY)) {
+        /* Restore switch to fallback configuration */
+        dm_config.strategy = MOD_CCSM_DM_SW_FB;
+
+        status = ccsm_dm_set_configuration(ctx, &dm_config);
+    } else {
+        status = FWK_SUCCESS;
+    }
+
+    return status;
+}
+
 /*! Get register values from PLL driver and update CCSM. */
 static int ccsm_clock_update_registers(
     struct ccsm_dev_ctx *ctx,
@@ -464,6 +532,11 @@ static int ccsm_clock_update_registers(
         settings_1_register_value);
     if (status != FWK_SUCCESS) {
         return status;
+    }
+
+    if (clock_rates->fallback_clock_rate_hz != 0) {
+        status = set_fallback_dynamic_settings(
+            ctx, clock_rates->fallback_clock_rate_hz);
     }
 
     return status;
@@ -565,6 +638,13 @@ static int ccsm_clock_set_rate(
     status = ccsm_clock_update_registers(ctx, &clock_rates);
     if (status != FWK_SUCCESS) {
         return status;
+    }
+
+    if (ctx->config->droop_mitigation_default->strategy == MOD_CCSM_DM_SW_FB) {
+        status = sw_fb_dm_config_handler(ctx, clock_rates);
+        if (status != FWK_SUCCESS) {
+            return status;
+        }
     }
 
     /* Send DVFS command as required */
