@@ -32,6 +32,7 @@
 enum fake_ccsm {
     FAKE_CCSM_IDX_CONTINUOUS,
     FAKE_CCSM_IDX_INDEXED,
+    FAKE_CCSM_IDX_INDEXED_SWFB,
     FAKE_CCSM_IDX_COUNT,
 };
 
@@ -43,8 +44,16 @@ enum fake_ccsm {
 static const struct mod_ccsm_clock_rate clock_config_default = { 1500 * FWK_MHZ,
                                                                  0 };
 
-static const struct mod_ccsm_dm_config dm_config_default = {
+static const struct mod_ccsm_dm_config dm_config_default_nom_only = {
     .strategy = MOD_CCSM_DM_NOM_ONLY,
+    .dd = MOD_CCSM_DM_ARM_DD,
+    .soff = MOD_CCSM_DM_SW_SOFF_STOP,
+    .transition_pause = 6,
+    .mitigation_duration = 144
+};
+
+static const struct mod_ccsm_dm_config dm_config_default_sw_fb = {
+    .strategy = MOD_CCSM_DM_SW_FB,
     .dd = MOD_CCSM_DM_ARM_DD,
     .soff = MOD_CCSM_DM_SW_SOFF_STOP,
     .transition_pause = 6,
@@ -154,7 +163,7 @@ static const struct fwk_element element_table[] = {
                                                reg_rate_table_fake,
                                            .register_rate_count = 20,
                                            .droop_mitigation_default =
-                                               &dm_config_default,
+                                               &dm_config_default_nom_only,
                                            .modulator_default =
                                                &mod_config_default,
                                            .modulator_count = 1 } },
@@ -169,7 +178,7 @@ static const struct fwk_element element_table[] = {
                                         .default_rates_table =
                                             &clock_config_default,
                                         .droop_mitigation_default =
-                                            &dm_config_default,
+                                            &dm_config_default_nom_only,
                                         .modulator_default =
                                             &mod_config_default,
                                         .modulator_count = 1,
@@ -178,6 +187,30 @@ static const struct fwk_element element_table[] = {
                                         .register_rate_count = 20,
                                         .rate_table = rate_table_fake,
                                         .rate_count = 4 } },
+    [FAKE_CCSM_IDX_INDEXED_SWFB] = { .name = "CCSM indexed switch to fallback",
+                                     .data =
+                                         &(struct mod_ccsm_dev_config){
+                                             .rate_lookup_table_is_provided =
+                                                 true,
+                                             .base_address = 0xFBBA5E,
+                                             .min_clock_rate_hz =
+                                                 CLOCK_RATE_MIN,
+                                             .max_clock_rate_hz =
+                                                 CLOCK_RATE_MAX,
+                                             .clock_rate_step_hz =
+                                                 100 * FWK_MHZ,
+                                             .default_rates_table =
+                                                 &clock_config_default,
+                                             .droop_mitigation_default =
+                                                 &dm_config_default_sw_fb,
+                                             .modulator_default =
+                                                 &mod_config_default,
+                                             .modulator_count = 1,
+                                             .register_rate_table =
+                                                 reg_rate_table_fake,
+                                             .register_rate_count = 20,
+                                             .rate_table = rate_table_fake,
+                                             .rate_count = 4 } },
     [FAKE_CCSM_IDX_COUNT] = { 0 },
 };
 
@@ -225,6 +258,18 @@ void setUp(void)
     ctx = &module_ctx.dev_ctx_table[FAKE_CCSM_IDX_INDEXED];
     ctx->config =
         (struct mod_ccsm_dev_config *)element_table[FAKE_CCSM_IDX_INDEXED].data;
+    ctx->initialized = true;
+    ctx->current_nominal_clock_rate_hz =
+        ctx->config->default_rates_table->nominal_clock_rate_hz;
+    ctx->current_fallback_clock_rate_hz =
+        ctx->config->default_rates_table->fallback_clock_rate_hz;
+    ctx->current_state = MOD_CLOCK_STATE_RUNNING;
+    ctx->timer_api = timer_api;
+
+    ctx = &module_ctx.dev_ctx_table[FAKE_CCSM_IDX_INDEXED_SWFB];
+    ctx->config =
+        (struct mod_ccsm_dev_config *)element_table[FAKE_CCSM_IDX_INDEXED_SWFB]
+            .data;
     ctx->initialized = true;
     ctx->current_nominal_clock_rate_hz =
         ctx->config->default_rates_table->nominal_clock_rate_hz;
@@ -676,6 +721,122 @@ void test_function_ccsm_clock_set_rate_pass_continuous_initialized_dn(void)
     status = ccsm_clock_get_rate(dev_id, &read_rate);
     TEST_ASSERT_EQUAL(FWK_SUCCESS, status);
     TEST_ASSERT_EQUAL(1800 * FWK_MHZ, read_rate);
+}
+
+void test_function_ccsm_clock_set_rate_pass_swfb_up(void)
+{
+    int status;
+    uint64_t rate = 1800 * FWK_MHZ;
+    uint64_t read_rate;
+    uint32_t ccsm_strategy_nom_only = 0x000200FFu;
+    uint32_t ccsm_strategy_swfb = 0x000100FFu;
+    struct ccsm_dev_ctx *ctx;
+    fwk_id_t dev_id =
+        FWK_ID_ELEMENT_INIT(FAKE_MODULE_ID, FAKE_CCSM_IDX_INDEXED_SWFB);
+
+    ctx = &module_ctx.dev_ctx_table[FAKE_CCSM_IDX_INDEXED_SWFB];
+    ctx->initialized = true;
+    ctx->current_nominal_clock_rate_hz = 1500 * FWK_MHZ;
+    ctx->current_fallback_clock_rate_hz = 0;
+
+    fwk_module_is_valid_element_id_ExpectAndReturn(dev_id, true);
+    fwk_id_get_element_idx_ExpectAndReturn(dev_id, FAKE_CCSM_IDX_INDEXED_SWFB);
+
+    ccsm_drv_set_pll_dynamic_settings_ExpectAnyArgsAndReturn(FWK_SUCCESS);
+    ccsm_drv_set_pll_dynamic_settings_ExpectAnyArgsAndReturn(FWK_SUCCESS);
+
+    ccsm_drv_get_dm_configuration_ExpectAnyArgsAndReturn(FWK_SUCCESS);
+    ccsm_drv_get_dm_configuration_ReturnThruPtr_config(&ccsm_strategy_nom_only);
+
+    ccsm_drv_set_dm_configuration_ExpectAndReturn(
+        (struct ccsm_reg *)ctx->config->base_address,
+        ccsm_strategy_swfb,
+        FWK_SUCCESS);
+
+    ccsm_drv_set_request_ExpectAndReturn(
+        (struct ccsm_reg *)ctx->config->base_address,
+        CCSM_REQUEST_TYPE_GO_UP,
+        FWK_SUCCESS);
+    ccsm_drv_get_clear_irq_status_ExpectAnyArgsAndReturn(FWK_SUCCESS);
+    ccsm_drv_clear_request_ExpectAndReturn(
+        (struct ccsm_reg *)ctx->config->base_address, FWK_SUCCESS);
+
+    ccsm_drv_set_request_ExpectAndReturn(
+        (struct ccsm_reg *)ctx->config->base_address,
+        CCSM_REQUEST_TYPE_GO_UP2,
+        FWK_SUCCESS);
+    ccsm_drv_get_clear_irq_status_ExpectAnyArgsAndReturn(FWK_SUCCESS);
+    ccsm_drv_clear_request_ExpectAndReturn(
+        (struct ccsm_reg *)ctx->config->base_address, FWK_SUCCESS);
+
+    status = ccsm_clock_set_rate(dev_id, rate, MOD_CLOCK_ROUND_MODE_NEAREST);
+    TEST_ASSERT_EQUAL(FWK_SUCCESS, status);
+
+    fwk_module_is_valid_element_id_ExpectAndReturn(dev_id, true);
+    fwk_id_get_element_idx_ExpectAndReturn(dev_id, FAKE_CCSM_IDX_INDEXED_SWFB);
+
+    status = ccsm_clock_get_rate(dev_id, &read_rate);
+    TEST_ASSERT_EQUAL(FWK_SUCCESS, status);
+    TEST_ASSERT_EQUAL(1800 * FWK_MHZ, read_rate);
+    TEST_ASSERT_EQUAL(1600 * FWK_MHZ, ctx->current_fallback_clock_rate_hz);
+}
+
+void test_function_ccsm_clock_set_rate_pass_swfb_down(void)
+{
+    int status;
+    uint64_t rate = 1500 * FWK_MHZ;
+    uint64_t read_rate;
+    uint32_t ccsm_strategy_nom_only = 0x000200FFu;
+    uint32_t ccsm_strategy_swfb = 0x000100FFu;
+    struct ccsm_dev_ctx *ctx;
+    fwk_id_t dev_id =
+        FWK_ID_ELEMENT_INIT(FAKE_MODULE_ID, FAKE_CCSM_IDX_INDEXED_SWFB);
+
+    ctx = &module_ctx.dev_ctx_table[FAKE_CCSM_IDX_INDEXED_SWFB];
+    ctx->initialized = true;
+    ctx->current_nominal_clock_rate_hz = 1800 * FWK_MHZ;
+    ctx->current_fallback_clock_rate_hz = 1600;
+
+    fwk_module_is_valid_element_id_ExpectAndReturn(dev_id, true);
+    fwk_id_get_element_idx_ExpectAndReturn(dev_id, FAKE_CCSM_IDX_INDEXED_SWFB);
+
+    ccsm_drv_set_pll_dynamic_settings_ExpectAnyArgsAndReturn(FWK_SUCCESS);
+    ccsm_drv_set_pll_dynamic_settings_ExpectAnyArgsAndReturn(FWK_SUCCESS);
+
+    ccsm_drv_get_dm_configuration_ExpectAnyArgsAndReturn(FWK_SUCCESS);
+    ccsm_drv_get_dm_configuration_ReturnThruPtr_config(&ccsm_strategy_swfb);
+
+    ccsm_drv_set_dm_configuration_ExpectAndReturn(
+        (struct ccsm_reg *)ctx->config->base_address,
+        ccsm_strategy_nom_only,
+        FWK_SUCCESS);
+
+    ccsm_drv_set_request_ExpectAndReturn(
+        (struct ccsm_reg *)ctx->config->base_address,
+        CCSM_REQUEST_TYPE_GO_DN,
+        FWK_SUCCESS);
+    ccsm_drv_get_clear_irq_status_ExpectAnyArgsAndReturn(FWK_SUCCESS);
+    ccsm_drv_clear_request_ExpectAndReturn(
+        (struct ccsm_reg *)ctx->config->base_address, FWK_SUCCESS);
+
+    ccsm_drv_set_request_ExpectAndReturn(
+        (struct ccsm_reg *)ctx->config->base_address,
+        CCSM_REQUEST_TYPE_GO_DN2,
+        FWK_SUCCESS);
+    ccsm_drv_get_clear_irq_status_ExpectAnyArgsAndReturn(FWK_SUCCESS);
+    ccsm_drv_clear_request_ExpectAndReturn(
+        (struct ccsm_reg *)ctx->config->base_address, FWK_SUCCESS);
+
+    status = ccsm_clock_set_rate(dev_id, rate, MOD_CLOCK_ROUND_MODE_NEAREST);
+    TEST_ASSERT_EQUAL(FWK_SUCCESS, status);
+
+    fwk_module_is_valid_element_id_ExpectAndReturn(dev_id, true);
+    fwk_id_get_element_idx_ExpectAndReturn(dev_id, FAKE_CCSM_IDX_INDEXED_SWFB);
+
+    status = ccsm_clock_get_rate(dev_id, &read_rate);
+    TEST_ASSERT_EQUAL(FWK_SUCCESS, status);
+    TEST_ASSERT_EQUAL(1500 * FWK_MHZ, read_rate);
+    TEST_ASSERT_EQUAL(0, ctx->current_fallback_clock_rate_hz);
 }
 
 void test_function_ccsm_clock_set_rate_fail_stopped(void)
@@ -1229,6 +1390,9 @@ int ccsm_test_main(void)
     RUN_TEST(test_function_ccsm_clock_set_rate_pass_continuous_uninitialized);
     RUN_TEST(test_function_ccsm_clock_set_rate_pass_continuous_initialized);
     RUN_TEST(test_function_ccsm_clock_set_rate_pass_continuous_initialized_dn);
+
+    RUN_TEST(test_function_ccsm_clock_set_rate_pass_swfb_up);
+    RUN_TEST(test_function_ccsm_clock_set_rate_pass_swfb_down);
 
     RUN_TEST(test_function_ccsm_clock_set_rate_pass_same_rate);
     RUN_TEST(test_function_ccsm_clock_set_rate_fail_stopped);
