@@ -293,6 +293,14 @@ static int ccsm_clock_update_registers(
         return status;
     }
 
+    if (clock_rates->rate_fb != 0) {
+        status = ccsm_drv_set_pll_dynamic_settings(
+            ctx->base_address,
+            MOD_CCSM_PLL_FALLBACK,
+            pll_reg_values.pll_fb_settings_0,
+            pll_reg_values.pll_fb_settings_1);
+    }
+
     return status;
 }
 
@@ -371,6 +379,7 @@ static int ccsm_clock_set_rate(
 {
     struct ccsm_dev_ctx *ctx;
     struct mod_ccsm_clock_rate clock_rates;
+    struct mod_ccsm_dm_config dm_config;
     int status;
 
     if (!fwk_module_is_valid_element_id(dev_id))
@@ -396,6 +405,28 @@ static int ccsm_clock_set_rate(
     status = ccsm_clock_update_registers(ctx, &clock_rates);
     if (status != FWK_SUCCESS) {
         return status;
+    }
+
+    if (ctx->config->dm_config->strategy == MOD_CCSM_DM_SW_FB) {
+        status = ccsm_dm_get_configuration(ctx, &dm_config);
+        if (status != FWK_SUCCESS) {
+            return status;
+        }
+        if ((clock_rates.rate_fb == 0) && (dm_config.strategy == MOD_CCSM_DM_SW_FB)) {
+            /* Switch to nominal only so fallback can be disabled */
+            dm_config.strategy = MOD_CCSM_DM_NOM_ONLY;
+            status = ccsm_dm_set_configuration(ctx, &dm_config);
+            if (status != FWK_SUCCESS) {
+                return status;
+            }
+        } else if ((ctx->current_rate_fb == 0) && (dm_config.strategy == MOD_CCSM_DM_NOM_ONLY)) {
+            /* Restore switch to fallback configuration */
+            dm_config.strategy = MOD_CCSM_DM_SW_FB;
+            status = ccsm_dm_set_configuration(ctx, &dm_config);
+            if (status != FWK_SUCCESS) {
+                return status;
+            }
+        }
     }
 
     // Send DVFS command as required
