@@ -96,6 +96,30 @@ struct mod_perf_controller_power_model_api {
         uint32_t *performance_level);
 };
 
+#ifdef BUILD_HAS_NOTIFICATION
+/*!
+ * \brief Perf controller Notification indices.
+ */
+enum mod_perf_controller_notification_index {
+    /* DVFS Complete */
+    MOD_PERF_CONTROLLER_NOTIFICATION_IDX_DVFS_COMPLETE,
+
+    /* Total number of perf controllers notification. */
+    MOD_PERF_CONTROLLER_NOTIFICATION_COUNT,
+};
+
+/*!
+ * \brief Perf controller Notification identifiers.
+ */
+#    ifdef BUILD_HAS_MOD_PERF_CONTROLLER
+/*! Identifier of the power state transition notification */
+static const fwk_id_t mod_perf_controller_notification_dvfs_complete =
+    FWK_ID_NOTIFICATION_INIT(
+        FWK_MODULE_IDX_PERF_CONTROLLER,
+        MOD_PERF_CONTROLLER_NOTIFICATION_IDX_DVFS_COMPLETE);
+#    endif /* BUILD_HAS_MOD_PERF_CONTROLLER */
+#endif /* BUILD_HAS_NOTIFICATION */
+
 struct mod_perf_controller_cluster_config {
     /*! Module or element identifier of the performance driver. */
     fwk_id_t performance_driver_id;
