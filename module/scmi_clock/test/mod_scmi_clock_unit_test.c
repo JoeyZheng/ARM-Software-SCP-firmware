@@ -15,6 +15,7 @@
 #    include <Mockfwk_id.h>
 #    include <Mockfwk_mm.h>
 #    include <Mockfwk_module.h>
+#    include <Mockfwk_notification.h>
 #    include <internal/Mockfwk_core_internal.h>
 #endif
 #include <Mockmod_scmi_clock_extra.h>
@@ -64,6 +65,7 @@ struct mod_res_permissions_api perm_api = {
 
 #ifdef BUILD_HAS_SCMI_NOTIFICATIONS
 static const struct mod_scmi_notification_api scmi_notification_api = {
+    .scmi_notification_init = scmi_notification_init,
     .scmi_notification_add_subscriber = scmi_notification_add_subscriber,
     .scmi_notification_remove_subscriber = scmi_notification_remove_subscriber,
     .scmi_notification_notify = scmi_notification_notify,
@@ -1644,6 +1646,78 @@ void test_mod_scmi_clock_process_notification_rate_change_requested(void)
 
     TEST_ASSERT_EQUAL(status, FWK_SUCCESS);
 }
+
+void test_mod_scmi_clock_start()
+{
+    int status;
+    fwk_id_t module_id = FWK_ID_MODULE_INIT(FWK_MODULE_IDX_SCMI_CLOCK);
+
+    fwk_notification_subscribe_ExpectAndReturn(
+        mod_clock_notification_id_rate_changed,
+        FWK_ID_MODULE(FWK_MODULE_IDX_CLOCK),
+        module_id,
+        FWK_SUCCESS);
+
+    fwk_notification_subscribe_ExpectAndReturn(
+        mod_clock_notification_id_rate_change_requested,
+        FWK_ID_MODULE(FWK_MODULE_IDX_CLOCK),
+        module_id,
+        FWK_SUCCESS);
+
+    mod_scmi_from_protocol_api_get_agent_count_ExpectAndReturn(
+        (unsigned int *) &scmi_clock_ctx.config->agent_count,
+        FWK_SUCCESS);
+
+    scmi_notification_init_ExpectAndReturn(
+        MOD_SCMI_PROTOCOL_ID_CLOCK,
+        scmi_clock_ctx.config->agent_count,
+        scmi_clock_ctx.clock_devices,
+        MOD_SCMI_CLOCK_NOTIFICATION_COUNT,
+        FWK_SUCCESS);
+
+    status = scmi_clock_start(module_id);
+
+    TEST_ASSERT_EQUAL(status, FWK_SUCCESS);
+}
+
+void test_mod_scmi_clock_bind(void)
+{
+    int status;
+    fwk_id_t mod_scmi_clock_id = FWK_ID_MODULE_INIT(FWK_MODULE_IDX_SCMI_CLOCK);
+    fwk_id_t mod_scmi_id = FWK_ID_MODULE(FWK_MODULE_IDX_SCMI);
+    fwk_id_t mod_clock_id = FWK_ID_MODULE(FWK_MODULE_IDX_CLOCK);
+
+    fwk_id_t mod_scmi_api_protocol =
+        FWK_ID_API(FWK_MODULE_IDX_SCMI,
+                   MOD_SCMI_API_IDX_PROTOCOL);
+
+    fwk_id_t mod_scmi_api_notification =
+        FWK_ID_API(FWK_MODULE_IDX_SCMI,
+                   MOD_SCMI_API_IDX_NOTIFICATION);
+
+    fwk_id_t mod_clock_api =
+        FWK_ID_API(FWK_MODULE_IDX_CLOCK,
+                   0);
+
+    fwk_module_bind_ExpectAndReturn(mod_scmi_id,
+                                    mod_scmi_api_protocol,
+                                    &scmi_clock_ctx.scmi_api,
+                                    FWK_SUCCESS);
+
+    fwk_module_bind_ExpectAndReturn(mod_scmi_id,
+                                    mod_scmi_api_notification,
+                                    &scmi_clock_ctx.scmi_notification_api,
+                                    FWK_SUCCESS);
+
+    fwk_module_bind_ExpectAndReturn(mod_clock_id,
+                                    mod_clock_api,
+                                    &scmi_clock_ctx.clock_api,
+                                    FWK_SUCCESS);
+
+    status = scmi_clock_bind(mod_scmi_clock_id, 0);
+
+    TEST_ASSERT_EQUAL(status, FWK_SUCCESS);
+}
 #endif
 
 int scmi_test_main(void)
@@ -1703,6 +1777,9 @@ int scmi_test_main(void)
             test_mod_scmi_clock_process_notification_rate_changed);
         RUN_TEST(
             test_mod_scmi_clock_process_notification_rate_change_requested);
+
+        RUN_TEST(test_mod_scmi_clock_start);
+        RUN_TEST(test_mod_scmi_clock_bind);
 #endif
 
     #endif
