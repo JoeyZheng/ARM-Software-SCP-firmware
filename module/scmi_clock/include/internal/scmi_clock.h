@@ -1,6 +1,6 @@
 /*
  * Arm SCP/MCP Software
- * Copyright (c) 2015-2022, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2015-2024, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -19,7 +19,7 @@
  * Identifiers for the type of request being processed
  */
 enum scmi_clock_request_type {
-    SCMI_CLOCK_REQUEST_GET_STATE,
+    SCMI_CLOCK_REQUEST_CLOCK_ATTRIBUTES,
     SCMI_CLOCK_REQUEST_GET_RATE,
     SCMI_CLOCK_REQUEST_SET_RATE,
     SCMI_CLOCK_REQUEST_SET_STATE,
@@ -30,7 +30,7 @@ enum scmi_clock_request_type {
  * Identifiers of the internal events
  */
 enum scmi_clock_event_idx {
-    SCMI_CLOCK_EVENT_IDX_GET_STATE,
+    SCMI_CLOCK_EVENT_IDX_CLOCK_ATTRIBUTES,
     SCMI_CLOCK_EVENT_IDX_GET_RATE,
     SCMI_CLOCK_EVENT_IDX_SET_RATE,
     SCMI_CLOCK_EVENT_IDX_SET_STATE,
