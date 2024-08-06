@@ -1,6 +1,6 @@
 /*
  * Arm SCP/MCP Software
- * Copyright (c) 2023, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2023-2024, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -18,6 +18,11 @@
 #    include <internal/Mockfwk_core_internal.h>
 #endif
 
+#include <Mockmod_dvfs_extra.h>
+
+#include <mod_dvfs_extra.h>
+#include <mod_psu.h>
+
 #include <fwk_element.h>
 #include <fwk_macros.h>
 
@@ -30,6 +35,14 @@ void setUp(void)
 void tearDown(void)
 {
 }
+
+struct mod_psu_device_api psu_api = {
+    .set_voltage = mod_psu_device_api_set_voltage,
+};
+
+struct mod_clock_api clock_api = {
+    .set_rate = mod_clock_api_set_rate,
+};
 
 void utest_dvfs_count_opps(void)
 {
@@ -578,6 +591,79 @@ void utest_dvfs_get_latency(void)
     TEST_ASSERT_EQUAL(3, latency);
 }
 
+void utest_dvfs_handle_set_opp_set_rate_inc_voltage(void)
+{
+    int32_t status;
+
+    struct mod_dvfs_domain_ctx dvfs_domain_ctx;
+    dvfs_domain_ctx.request.new_opp.voltage = 5;
+    dvfs_domain_ctx.apis.psu = &psu_api;
+    dvfs_domain_ctx.apis.clock = &clock_api;
+    uint32_t voltage = 2;
+
+    mod_psu_device_api_set_voltage_ExpectAnyArgsAndReturn(FWK_SUCCESS);
+    mod_clock_api_set_rate_ExpectAnyArgsAndReturn(FWK_PENDING);
+
+    status = dvfs_handle_set_opp(&dvfs_domain_ctx, voltage);
+
+    TEST_ASSERT_EQUAL(FWK_PENDING, status);
+}
+
+void utest_dvfs_handle_set_opp_set_rate_dec_voltage(void)
+{
+    int32_t status;
+
+    struct mod_dvfs_domain_ctx dvfs_domain_ctx;
+    dvfs_domain_ctx.request.new_opp.voltage = 2;
+    dvfs_domain_ctx.apis.clock = &clock_api;
+    uint32_t voltage = 5;
+
+    mod_clock_api_set_rate_ExpectAnyArgsAndReturn(FWK_PENDING);
+
+    status = dvfs_handle_set_opp(&dvfs_domain_ctx, voltage);
+
+    TEST_ASSERT_EQUAL(FWK_PENDING, status);
+}
+
+void utest_dvfs_handle_set_opp_set_rate_startup(void)
+{
+    int32_t status;
+
+    struct mod_dvfs_domain_ctx dvfs_domain_ctx;
+    dvfs_domain_ctx.request.new_opp.voltage = 0;
+    dvfs_domain_ctx.current_opp.frequency = 0;
+    dvfs_domain_ctx.apis.psu = &psu_api;
+    dvfs_domain_ctx.apis.clock = &clock_api;
+    uint32_t voltage = 0;
+
+    mod_psu_device_api_set_voltage_ExpectAnyArgsAndReturn(FWK_SUCCESS);
+    mod_clock_api_set_rate_ExpectAnyArgsAndReturn(FWK_PENDING);
+
+    status = dvfs_handle_set_opp(&dvfs_domain_ctx, voltage);
+
+    TEST_ASSERT_EQUAL(FWK_PENDING, status);
+}
+
+void utest_dvfs_handle_psu_set_voltage_resp_set_rate(void)
+{
+    int32_t status;
+
+    struct mod_dvfs_domain_ctx dvfs_domain_ctx;
+    struct fwk_event event;
+    struct mod_psu_driver_response *psu_response;
+    psu_response = (struct mod_psu_driver_response *)&(event.params[0]);
+    psu_response->status = FWK_SUCCESS;
+
+    dvfs_domain_ctx.state = DVFS_DOMAIN_SET_FREQUENCY;
+    dvfs_domain_ctx.apis.clock = &clock_api;
+
+    mod_clock_api_set_rate_ExpectAnyArgsAndReturn(FWK_PENDING);
+
+    status = dvfs_handle_psu_set_voltage_resp(&dvfs_domain_ctx, &event);
+
+    TEST_ASSERT_EQUAL(FWK_PENDING, status);
+}
+
 int dvfs_test_main(void)
 {
     UNITY_BEGIN();
@@ -615,6 +701,11 @@ int dvfs_test_main(void)
     RUN_TEST(utest_dvfs_get_latency_null_latency);
     RUN_TEST(utest_dvfs_get_latency_invalid_dvfs_id);
     RUN_TEST(utest_dvfs_get_latency);
+
+    RUN_TEST(utest_dvfs_handle_set_opp_set_rate_inc_voltage);
+    RUN_TEST(utest_dvfs_handle_set_opp_set_rate_dec_voltage);
+    RUN_TEST(utest_dvfs_handle_set_opp_set_rate_startup);
+    RUN_TEST(utest_dvfs_handle_psu_set_voltage_resp_set_rate);
 
     return UNITY_END();
 }
