@@ -7,7 +7,10 @@
 
 #include "gtimer_reg.h"
 
-#include <mod_clock.h>
+#ifdef BUILD_HAS_MOD_CLOCK
+#    include <mod_clock.h>
+#endif
+
 #include <mod_gtimer.h>
 #include <mod_timer.h>
 
