@@ -634,17 +634,17 @@ const struct fwk_module module_xxx = {
 When `SCP_ENABLE_MARKED_LIST` is set, the maximum size of linked list will be
 traced and marked.
 
-#### Tracing
-To enable tracing functionality `FWK_TRACE_ENABLE` should be defined.
-There is an example configuration for CMake that should be included in
-`CMakeLists.txt` in every module that uses this feature. This configuration
- requires `SCP_TRACE_ENABLE_MOD_<module name>` to be defined as a build flag
+#### Module-level logging
+To enable module-level logging `FWK_LOG_LOCAL_ENABLE` should be defined.
+Below is a configuration for CMake that should be included in
+`CMakeLists.txt` of every module that uses this feature. This configuration
+ requires `SCP_LOG_LOCAL_ENABLE_MOD_<module name>` to be defined as a build flag
  parameter.
 
 ```
-include(SCPModuleTrace)
+include(SCPModuleLogLocal)
 
 ...
 
-scp_module_trace(${SCP_MODULE})
+scp_module_log_local(${SCP_MODULE})
 ```

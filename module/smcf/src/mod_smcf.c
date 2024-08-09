@@ -176,14 +176,14 @@ static void sample_data_set_complete_handler(
 
     status = fwk_put_event(&req);
     if (status != FWK_SUCCESS) {
-        FWK_TRACE("[SMCF] Send data sample event failed!");
+        FWK_LOG_LOCAL("[SMCF] Send data sample event failed!");
     }
 }
 
 static void no_handler_for_this_interrupt_source(
     struct smcf_element_ctx *element_ctx)
 {
-    FWK_TRACE("[SMCF] Interrupt received but the event is not handled");
+    FWK_LOG_LOCAL("[SMCF] Interrupt received but the event is not handled");
 }
 
 static void (*mgi_interrupt_manager_table[SMCF_MGI_IRQ_SOURCE_MAX])(
@@ -555,7 +555,7 @@ static int smcf_process_event(
      * local SMCF event
      */
     if (fwk_id_is_equal(event->id, smcf_event_id_new_data_sample)) {
-        FWK_TRACE("[SMCF] New data sample event received");
+        FWK_LOG_LOCAL("[SMCF] New data sample event received");
 #ifdef BUILD_HAS_NOTIFICATION
         status = smcf_new_data_sample_ready_notify();
 #endif

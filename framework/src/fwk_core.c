@@ -1,6 +1,6 @@
 /*
  * Arm SCP/MCP Software
- * Copyright (c) 2015-2023, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2015-2024, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -21,7 +21,7 @@
 #include <fwk_list.h>
 
 #ifdef FWK_EVENTS_WATERMARK_TRACE_ENABLE
-#    define FWK_TRACE_ENABLE
+#    define FWK_LOG_LOCAL_ENABLE
 #endif
 
 #include <fwk_log.h>
@@ -153,13 +153,13 @@ static int put_event(
     if (intr_state == NOT_INTERRUPT_STATE) {
         fwk_list_push_tail(&ctx.event_queue, &allocated_event->slist_node);
 
-        FWK_TRACE(
+        FWK_LOG_LOCAL(
             "[FWK] event_queue peak: %d", fwk_list_get_max(&ctx.event_queue));
 
     } else {
         fwk_list_push_tail(&ctx.isr_event_queue, &allocated_event->slist_node);
 
-        FWK_TRACE(
+        FWK_LOG_LOCAL(
             "[FWK] isr_event_queue peak: %d",
             fwk_list_get_max(&ctx.isr_event_queue));
     }
@@ -277,7 +277,8 @@ static bool process_isr(void)
 
     fwk_list_push_tail(&ctx.event_queue, &isr_event->slist_node);
 
-    FWK_TRACE("[FWK] event_queue peak: %d", fwk_list_get_max(&ctx.event_queue));
+    FWK_LOG_LOCAL(
+        "[FWK] event_queue peak: %d", fwk_list_get_max(&ctx.event_queue));
 
     return true;
 }

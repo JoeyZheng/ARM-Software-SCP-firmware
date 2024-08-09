@@ -1,6 +1,6 @@
 /*
  * Arm SCP/MCP Software
- * Copyright (c) 2020-2023, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2020-2024, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -218,17 +218,17 @@
 #define FWK_LOG_FLUSH() fwk_log_flush()
 
 /*!
- * \def FWK_TRACE
+ * \def FWK_LOG_LOCAL
  *
- * \brief Trace a message.
+ * \brief Log a module-level message.
  *
  * \param[in] ... Format string and any associated parameters.
  */
 
-#ifdef FWK_TRACE_ENABLE
-#    define FWK_TRACE(...) fwk_log_printf(__VA_ARGS__)
+#ifdef FWK_LOG_LOCAL_ENABLE
+#    define FWK_LOG_LOCAL(...) fwk_log_printf(__VA_ARGS__)
 #else
-#    define FWK_TRACE(...)
+#    define FWK_LOG_LOCAL(...)
 #endif
 
 /*!
