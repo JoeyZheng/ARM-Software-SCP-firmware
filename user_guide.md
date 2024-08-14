@@ -258,7 +258,7 @@ building the system and running it on an FVP, please refer to, and follow, the
 privileges.
 
 [TC2 User guide]:
-https://totalcompute.docs.arm.com/en/latest/totalcompute/tc2/user-guide.html
+https://totalcompute.docs.arm.com/en/tc2-2024.02.22-lsc/totalcompute/tc2/user-guide.html
 
 The instructions within this section use TC2 BSP only without Android
 (buildroot) as an example platform, but they are relevant for all TC platforms.
@@ -272,12 +272,65 @@ git fetch <remote name/url> <branch/tag/hash commit id>
 git checkout FETCH_HEAD
 ```
 
+#### Patch build-scripts
+The current TC2 release is not using the latest SCP-firmware. Hence, In order to build the latest a few modification need to be applied on `build-scp.sh`
+
+To do so, please apply the following patch in `<tc2_workspace>/build-scripts`
+<details open>
+  <summary>tc2-scp-build-script-modification</summary>
+
+```diff
+diff --git a/build-scp.sh b/build-scp.sh
+index 4b4118d..c5fbe65 100755
+--- a/build-scp.sh
++++ b/build-scp.sh
+@@ -59,8 +59,8 @@ do_build() {
+             (*) die "Unsupported value for SCP_BUILD_MODE: $SCP_BUILD_MODE"
+             esac
+ 
+-            if [ ! -d  "$SCP_OUTDIR/$scp_fw/product/$PLATFORM/${scp_fw}_${scp_type}" ]; then
+-                makeopts+=("-DSCP_FIRMWARE_SOURCE_DIR:PATH="$PLATFORM/${scp_fw}_${scp_type}"")
++            if [ ! -d  "$SCP_OUTDIR/$scp_fw/product/totalcompute/$PLATFORM/${scp_fw}_${scp_type}" ]; then
++                makeopts+=("-DSCP_FIRMWARE_SOURCE_DIR:PATH=totalcompute/"$PLATFORM/${scp_fw}_${scp_type}"")
+                 $CMAKE -GNinja "${makeopts[@]}"
+             fi
+```
+
+</details>
+
+Please run
+```sh
+cd <tc2_workspace>/build-scripts
+git apply <tc2-scp-build-script-modification>
+```
+__Note:__ This patch is required only with SCP-firmware from this [Version]
+
+[Version]:https://gitlab.arm.com/firmware/SCP-firmware/-/commit/09d41f6db3d7551516d7a1b0a6a998ae8ba83761
+
 ### Build all components
 
 ```sh
 export PLATFORM=tc2
 export FILESYSTEM=buildroot
 <tc2_workspace>/build-scripts/run_docker.sh <tc2_workspace>/build-scripts/build-all.sh -p $PLATFORM -f $FILESYSTEM build
+```
+### Re-build SCP only
+To re build SCP without rebuilding all the components please run the following:
+```sh
+set -e
+
+export PLATFORM=tc2
+export FILESYSTEM=buildroot
+export TC_TARGET_FLAVOR=fvp
+
+components=("build-scp.sh" "build-tfa.sh" "build-rss.sh" "build-flash-image.sh")
+
+for component in "${components[@]}"
+do
+    ./run_docker.sh $component clean
+    ./run_docker.sh $component build
+    ./run_docker.sh $component deploy
+done
 ```
 
 ### Running Buildroot
