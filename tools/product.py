@@ -108,6 +108,7 @@ class Build:
                             for extra in self.config.arguments) + ' '
         if build_path:
             cmd += f'BUILD_PATH={build_path} '
+            cmd += f'DIRECT_BUILD=y '
         return cmd
 
     @classmethod
