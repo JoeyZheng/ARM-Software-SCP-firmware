@@ -59,6 +59,7 @@ DEFAULT_BUILD_SYSTEM := Ninja
 export CMSIS_DIR := $(TOP_DIR)/contrib/cmsis/git/CMSIS/Core
 DEFAULT_LOG_LEVEL_debug := INFO
 DEFAULT_LOG_LEVEL_release := WARN
+DEFAULT_DIRECT_BUILD := n
 
 DEFAULT_CMAKE_TOOL_LOG_LEVEL := NOTICE
 
@@ -110,6 +111,10 @@ else
     MAKEFLAGS += --no-print-directory
 endif
 
+# Build directly to build directory
+DIRECT_BUILD ?= $(DEFAULT_DIRECT_BUILD)
+export DIRECT_BUILD
+
 # Include debugger library: y/n
 DEBUGGER ?= $(DEFAULT_DEBUGGER)
 ifeq ($(DEBUGGER),y)
@@ -155,10 +160,12 @@ ifneq ($(filter-out $(PRODUCT_INDEPENDENT_GOALS), $(MAKECMDGOALS)),)
 
     FIRMWARE_TARGETS := $(addprefix firmware-, $(BS_FIRMWARE_LIST))
 
-ifndef PLATFORM_VARIANT
-    PRODUCT_BUILD_PATH := $(BUILD_PATH)/$(BS_PRODUCT_NAME)/$(TOOLCHAIN)/$(MODE)
-else
-    PRODUCT_BUILD_PATH := $(BUILD_PATH)/$(BS_PRODUCT_NAME)/platform_variant_$(PLATFORM_VARIANT)/$(TOOLCHAIN)/$(MODE)
+ifeq ($(DIRECT_BUILD), n)
+	ifndef PLATFORM_VARIANT
+    	BUILD_PATH := $(BUILD_PATH)/$(BS_PRODUCT_NAME)/$(TOOLCHAIN)/$(MODE)
+	else
+    	BUILD_PATH := $(BUILD_PATH)/$(BS_PRODUCT_NAME)/platform_variant_$(PLATFORM_VARIANT)/$(TOOLCHAIN)/$(MODE)
+	endif
 endif
 
 define msg_start
@@ -298,19 +305,23 @@ help:
 	@echo "        Enable or disable generation of code coverage reports for unit tests."
 	@echo "        Use ENABLE_COVERAGE=y to enable coverage for 'fwk_test' and 'mod_test' targets."
 	@echo ""
-
+	@echo "    DIRECT_BUILD"
+	@echo "        Value: <y|n>"
+	@echo "        Default: n"
+	@echo "        Build directly to the specified build path without modifying it."
+	@echo ""
 
 .SECONDEXPANSION:
 
 .PHONY: all
 all: $(FIRMWARE_TARGETS)
 
-firmware-%: $(PRODUCT_BUILD_PATH)/$$@/CMakeCache.txt
+firmware-%: $(BUILD_PATH)/$$@/CMakeCache.txt
 	$(CMAKE) --build $(<D)/ $(CMAKE_BUILD_VERBOSE_OPTION) $(EXTRA_BUILD_ARGS)
 
-.PRECIOUS: $(PRODUCT_BUILD_PATH)/firmware-%/CMakeCache.txt
+.PRECIOUS: $(BUILD_PATH)/firmware-%/CMakeCache.txt
 
-$(PRODUCT_BUILD_PATH)/firmware-%/CMakeCache.txt:  $(PRODUCT_DIR)/%/Firmware.cmake
+$(BUILD_PATH)/firmware-%/CMakeCache.txt:  $(PRODUCT_DIR)/%/Firmware.cmake
 	$(RM) $(@D)
 	$(CMAKE) -B $(@D) -DSCP_FIRMWARE_SOURCE_DIR:PATH=$(PRODUCT_DIR)/$* $(CMAKE_COMMAND_OPTION) $(EXTRA_CONFIG_ARGS)
 
