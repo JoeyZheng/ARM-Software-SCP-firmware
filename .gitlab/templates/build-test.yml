@@ -30,7 +30,7 @@
     when: on_failure
     expire_in: 2 days
     paths:
-      - build/*.txt
+      - build/**/*.log
 
 .build-products-all-products:
   extends: .build-products

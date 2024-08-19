@@ -67,7 +67,7 @@ class Build:
             filename += f'_{self.variant.name}'
         if self.config:
             filename += f'_{self.config.name}'
-        filename += '.txt'
+        filename += '.log'
         return filename
 
     def build_output_directory(self):
