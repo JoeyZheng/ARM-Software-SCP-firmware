@@ -149,6 +149,8 @@ void setUp(void)
 
 void tearDown(void)
 {
+    Mockfwk_core_internal_Verify();
+    Mockfwk_core_internal_Destroy();
 }
 
 int fwk_put_event_callback(struct fwk_event *event, int numCalls)
@@ -697,6 +699,117 @@ void test_mod_scmi_clock_state_update_ref_count_1_stopped(void)
     assert_clock_state_and_ref_count_meets_expectations();
 }
 
+int clock_attributes_invalid_clock_id_callback(
+    fwk_id_t service_id,
+    const void *payload,
+    size_t size,
+    int NumCalls)
+{
+    struct scmi_clock_attributes_p2a *return_values;
+    return_values = (struct scmi_clock_attributes_p2a *)payload;
+
+    TEST_ASSERT_EQUAL((int32_t)SCMI_NOT_FOUND, return_values->status);
+
+    return FWK_SUCCESS;
+}
+
+void test_mod_scmi_clock_attributes_handler_invalid_clock_id(void)
+{
+    int status;
+    uint32_t agent_id = FAKE_SCMI_AGENT_IDX_OSPM0;
+
+    fwk_id_t service_id =
+        FWK_ID_ELEMENT_INIT(FAKE_MODULE_IDX, FAKE_SCMI_AGENT_IDX_OSPM0);
+
+    struct scmi_clock_attributes_a2p payload = {
+        .clock_id = SCMI_CLOCK_OSPM0_COUNT,
+    };
+
+    mod_scmi_from_protocol_api_scmi_frame_validation_ExpectAnyArgsAndReturn(
+        FWK_SUCCESS);
+
+    mod_scmi_from_protocol_api_get_agent_id_ExpectAnyArgsAndReturn(FWK_SUCCESS);
+    mod_scmi_from_protocol_api_get_agent_id_ReturnThruPtr_agent_id(&agent_id);
+
+    mod_scmi_from_protocol_api_respond_Stub(
+        clock_attributes_invalid_clock_id_callback);
+
+    status = scmi_clock_message_handler(
+        (fwk_id_t)MOD_SCMI_PROTOCOL_ID_CLOCK,
+        service_id,
+        (const uint32_t *)&payload,
+        payload_size_table[MOD_SCMI_CLOCK_ATTRIBUTES],
+        MOD_SCMI_CLOCK_ATTRIBUTES);
+
+    TEST_ASSERT_EQUAL(FWK_E_RANGE, status);
+}
+
+int clock_attributes_get_state_callback(
+    fwk_id_t service_id,
+    const void *payload,
+    size_t size,
+    int NumCalls)
+{
+    struct scmi_clock_attributes_p2a *return_values;
+    return_values = (struct scmi_clock_attributes_p2a *)payload;
+
+    TEST_ASSERT_EQUAL((int32_t)SCMI_SUCCESS, return_values->status);
+    TEST_ASSERT_EQUAL(
+        (int32_t)MOD_CLOCK_STATE_RUNNING, return_values->attributes);
+
+    return FWK_SUCCESS;
+}
+
+void test_mod_scmi_clock_attributes_handler_get_state(void)
+{
+    int status;
+    uint32_t agent_id = FAKE_SCMI_AGENT_IDX_OSPM1;
+
+    fwk_id_t service_id =
+        FWK_ID_ELEMENT_INIT(FAKE_MODULE_IDX, FAKE_SCMI_AGENT_IDX_OSPM0);
+
+    struct scmi_clock_attributes_a2p payload = {
+        .clock_id = SCMI_CLOCK_OSPM1_IDX0,
+    };
+
+    setup_agent_state_table(
+        FAKE_SCMI_AGENT_IDX_OSPM1,
+        SCMI_CLOCK_OSPM1_IDX0,
+        MOD_CLOCK_STATE_RUNNING);
+
+    mod_scmi_from_protocol_api_scmi_frame_validation_ExpectAnyArgsAndReturn(
+        FWK_SUCCESS);
+
+    mod_scmi_from_protocol_api_get_agent_id_ExpectAnyArgsAndReturn(FWK_SUCCESS);
+    mod_scmi_from_protocol_api_get_agent_id_ReturnThruPtr_agent_id(&agent_id);
+
+    fwk_module_is_valid_element_id_ExpectAnyArgsAndReturn(true);
+
+#ifdef BUILD_HAS_AGENT_LOGICAL_DOMAIN
+    mod_scmi_from_protocol_api_get_agent_id_ExpectAnyArgsAndReturn(FWK_SUCCESS);
+    mod_scmi_from_protocol_api_get_agent_id_ReturnThruPtr_agent_id(&agent_id);
+
+    fwk_module_get_element_name_ExpectAnyArgsAndReturn("");
+
+    mod_scmi_from_protocol_api_respond_Stub(
+        clock_attributes_get_state_callback);
+#else
+    fwk_id_get_element_idx_ExpectAnyArgsAndReturn(CLOCK_DEV_IDX_FAKE0);
+    fwk_id_is_equal_ExpectAnyArgsAndReturn(true);
+
+    __fwk_put_event_ExpectAnyArgsAndReturn(FWK_SUCCESS);
+#endif
+
+    status = scmi_clock_message_handler(
+        (fwk_id_t)MOD_SCMI_PROTOCOL_ID_CLOCK,
+        service_id,
+        (const uint32_t *)&payload,
+        payload_size_table[MOD_SCMI_CLOCK_ATTRIBUTES],
+        MOD_SCMI_CLOCK_ATTRIBUTES);
+
+    TEST_ASSERT_EQUAL(FWK_SUCCESS, status);
+}
+
 int scmi_test_main(void)
 {
     UNITY_BEGIN();
@@ -723,6 +836,9 @@ int scmi_test_main(void)
         RUN_TEST(test_mod_scmi_clock_state_update_ref_count_1_running);
         RUN_TEST(test_mod_scmi_clock_state_update_ref_count_2_stopped);
         RUN_TEST(test_mod_scmi_clock_state_update_ref_count_1_stopped);
+
+        RUN_TEST(test_mod_scmi_clock_attributes_handler_invalid_clock_id);
+        RUN_TEST(test_mod_scmi_clock_attributes_handler_get_state);
 
     #endif
     return UNITY_END();
