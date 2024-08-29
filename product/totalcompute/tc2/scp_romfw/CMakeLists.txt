@@ -23,7 +23,7 @@ target_sources(
     tc2-bl1
     PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../../common/config_timer.c"
             "${CMAKE_CURRENT_SOURCE_DIR}/../../common/config_bootloader.c"
-            "${CMAKE_CURRENT_SOURCE_DIR}/config_pl011.c"
+            "${CMAKE_CURRENT_SOURCE_DIR}/../../common/config_pl011.c"
             "${CMAKE_CURRENT_SOURCE_DIR}/config_ppu_v1.c"
             "${CMAKE_CURRENT_SOURCE_DIR}/config_sds.c"
             "${CMAKE_CURRENT_SOURCE_DIR}/config_cmn_booker.c"
