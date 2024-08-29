@@ -161,11 +161,13 @@ ifneq ($(filter-out $(PRODUCT_INDEPENDENT_GOALS), $(MAKECMDGOALS)),)
     FIRMWARE_TARGETS := $(addprefix firmware-, $(BS_FIRMWARE_LIST))
 
 ifeq ($(DIRECT_BUILD), n)
-	ifndef PLATFORM_VARIANT
-    	BUILD_PATH := $(BUILD_PATH)/$(BS_PRODUCT_NAME)/$(TOOLCHAIN)/$(MODE)
-	else
-    	BUILD_PATH := $(BUILD_PATH)/$(BS_PRODUCT_NAME)/platform_variant_$(PLATFORM_VARIANT)/$(TOOLCHAIN)/$(MODE)
-	endif
+    ifndef PLATFORM_VARIANT
+        PRODUCT_BUILD_DIR := $(BUILD_PATH)/$(BS_PRODUCT_NAME)/$(TOOLCHAIN)/$(MODE)
+    else
+        PRODUCT_BUILD_DIR := $(BUILD_PATH)/$(BS_PRODUCT_NAME)/platform_variant_$(PLATFORM_VARIANT)/$(TOOLCHAIN)/$(MODE)
+    endif
+else
+	PRODUCT_BUILD_DIR := $(BUILD_PATH)
 endif
 
 define msg_start
@@ -316,12 +318,12 @@ help:
 .PHONY: all
 all: $(FIRMWARE_TARGETS)
 
-firmware-%: $(BUILD_PATH)/$$@/CMakeCache.txt
+firmware-%: $(PRODUCT_BUILD_DIR)/$$@/CMakeCache.txt
 	$(CMAKE) --build $(<D)/ $(CMAKE_BUILD_VERBOSE_OPTION) $(EXTRA_BUILD_ARGS)
 
-.PRECIOUS: $(BUILD_PATH)/firmware-%/CMakeCache.txt
+.PRECIOUS: $(PRODUCT_BUILD_DIR)/firmware-%/CMakeCache.txt
 
-$(BUILD_PATH)/firmware-%/CMakeCache.txt:  $(PRODUCT_DIR)/%/Firmware.cmake
+$(PRODUCT_BUILD_DIR)/firmware-%/CMakeCache.txt:  $(PRODUCT_DIR)/%/Firmware.cmake
 	$(RM) $(@D)
 	$(CMAKE) -B $(@D) -DSCP_FIRMWARE_SOURCE_DIR:PATH=$(PRODUCT_DIR)/$* $(CMAKE_COMMAND_OPTION) $(EXTRA_CONFIG_ARGS)
 
