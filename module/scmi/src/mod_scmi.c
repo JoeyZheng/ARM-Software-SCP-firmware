@@ -983,6 +983,9 @@ static int scmi_bind(fwk_id_t id, unsigned int round)
         scmi_ctx.scmi_protocol_requester_id_to_idx[scmi_protocol_id] =
             (uint8_t)(protocol_idx);
         protocol_req->message_handler = protocol_api->message_handler;
+#ifdef BUILD_HAS_SCMI_NOTIFICATIONS
+        protocol_req->notification_handler = protocol_api->notification_handler;
+#endif
     }
 
 #ifdef BUILD_HAS_MOD_RESOURCE_PERMS
