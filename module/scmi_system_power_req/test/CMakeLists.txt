@@ -1,6 +1,6 @@
 #
 # Arm SCP/MCP Software
-# Copyright (c) 2022, Arm Limited and Contributors. All rights reserved.
+# Copyright (c) 2024, Arm Limited and Contributors. All rights reserved.
 #
 # SPDX-License-Identifier: BSD-3-Clause
 #
@@ -22,5 +22,13 @@ list(APPEND MOCK_REPLACEMENTS fwk_module)
 list(APPEND MOCK_REPLACEMENTS fwk_mm)
 list(APPEND MOCK_REPLACEMENTS fwk_id)
 list(APPEND MOCK_REPLACEMENTS fwk_core)
+list(APPEND MOCK_REPLACEMENTS fwk_notification)
+list(APPEND MOCK_REPLACEMENTS fwk_string)
 
 include(${SCP_ROOT}/unit_test/module_common.cmake)
+
+target_compile_definitions(${UNIT_TEST_TARGET} PUBLIC
+    "BUILD_HAS_SCMI_NOTIFICATIONS")
+
+target_compile_definitions(${UNIT_TEST_TARGET} PUBLIC
+    "BUILD_HAS_NOTIFICATION")

@@ -1,6 +1,6 @@
 /*
  * Arm SCP/MCP Software
- * Copyright (c) 2022-2023, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2022-2024, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -11,8 +11,9 @@
 #include <Mockfwk_id.h>
 #include <Mockfwk_mm.h>
 #include <Mockfwk_module.h>
+#include <Mockfwk_notification.h>
+#include <Mockfwk_string.h>
 #include <Mockmod_scmi_system_power_req_extra.h>
-
 #include <internal/Mockfwk_core_internal.h>
 
 #include <mod_scmi.h>
@@ -21,6 +22,8 @@
 #include <fwk_macros.h>
 
 #include UNIT_TEST_SRC
+
+#define SCMI_SYS_POWER_STATE_SET_NOTIFY 0x000
 
 enum scp_sys_pow_nums {
     MOD_SCMI_SYS_POWER_REQ_IDX_0,
@@ -374,6 +377,54 @@ void test_function_scmi_system_power_req_set_state_no_response(void)
     TEST_ASSERT_EQUAL(status, FWK_SUCCESS);
 }
 
+void test_function_scmi_system_power_req_notification_subscribe(void)
+{
+    int status;
+    fwk_id_t id;
+    uint8_t scmi_protocol_id = (uint8_t)MOD_SCMI_PROTOCOL_ID_SYS_POWER;
+    uint8_t scmi_message_id = (uint8_t)MOD_SCMI_SYS_POWER_STATE_NOTIFY;
+
+    const struct scmi_sys_power_req_state_notify_a2p payload = {
+        .flags = STATE_NOTIFY_FLAGS_MASK,
+    };
+
+    fwk_id_get_element_idx_ExpectAnyArgsAndReturn(1);
+    fwk_id_is_type_ExpectAnyArgsAndReturn(true);
+
+    scmi_send_message_ExpectWithArrayAndReturn(
+        scmi_message_id,
+        scmi_protocol_id,
+        0,
+        dev_ctx[MOD_SCMI_SYS_POWER_REQ_IDX_1].config->service_id,
+        (const void *)&payload,
+        sizeof(payload),
+        sizeof(payload),
+        false,
+        FWK_SUCCESS);
+
+    status = scmi_system_power_req_notification_subscribe(id);
+    TEST_ASSERT_EQUAL(status, FWK_SUCCESS);
+}
+
+void test_function_scmi_system_power_req_notification_subscribe_err(void)
+{
+    int status;
+    fwk_id_t id;
+
+    /* Element number >= element count */
+    fwk_id_get_element_idx_ExpectAnyArgsAndReturn(2);
+    fwk_id_is_type_ExpectAnyArgsAndReturn(true);
+
+    status = scmi_system_power_req_notification_subscribe(id);
+    TEST_ASSERT_EQUAL(status, FWK_E_RANGE);
+
+    /* id is not element */
+    fwk_id_is_type_ExpectAnyArgsAndReturn(false);
+
+    status = scmi_system_power_req_notification_subscribe(id);
+    TEST_ASSERT_EQUAL(status, FWK_E_RANGE);
+}
+
 void test_scmi_system_power_req_state_set_handler(void)
 {
     int status;
@@ -459,6 +510,82 @@ void test_scmi_system_power_req_message_handler(void)
     TEST_ASSERT_EQUAL(status, FWK_SUCCESS);
 }
 
+void test_scmi_scmi_system_power_req_notification_handler(void)
+{
+    int status;
+    fwk_id_t service_id;
+    fwk_id_t protocol_id;
+    unsigned int message_id = SCMI_SYS_POWER_STATE_SET_NOTIFY;
+    unsigned int count = 0;
+
+    const struct scmi_sys_power_notification_payload payload = {
+        .system_state = MOD_PD_STATE_OFF,
+        .flags = 1,
+    };
+
+    size_t payload_size = sizeof(payload);
+
+    struct fwk_event notification_event = {
+        .id = mod_scmi_system_power_notification_system_power_change,
+        .response_requested = false,
+        .source_id = FWK_ID_MODULE_INIT(FWK_MODULE_IDX_SCMI_SYSTEM_POWER_REQ),
+    };
+
+    TEST_ASSERT_TRUE(
+        sizeof(notification_event.params) >
+        (sizeof(payload.system_state) + sizeof(payload.flags)));
+
+    fwk_str_memcpy_ExpectWithArray(
+        notification_event.params,
+        sizeof(notification_event.params),
+        &payload.system_state,
+        sizeof(payload.system_state),
+        sizeof(payload.system_state));
+
+    fwk_str_memcpy_ExpectWithArray(
+        &notification_event.params[sizeof(payload.system_state)],
+        sizeof(notification_event.params[sizeof(payload.system_state)]),
+        &payload.flags,
+        sizeof(payload.flags),
+        sizeof(payload.flags));
+
+    fwk_notification_notify_ExpectWithArrayAndReturn(
+        &notification_event, 1, &count, 1, FWK_SUCCESS);
+
+    status = scmi_system_power_req_notification_handler(
+        protocol_id,
+        service_id,
+        (const uint32_t *)&payload,
+        payload_size,
+        message_id);
+
+    TEST_ASSERT_EQUAL(status, FWK_SUCCESS);
+}
+
+void test_scmi_scmi_system_power_req_notification_handler_wrong_size(void)
+{
+    int status;
+    fwk_id_t service_id;
+    fwk_id_t protocol_id;
+    unsigned int message_id = SCMI_SYS_POWER_STATE_SET_NOTIFY;
+
+    const struct scmi_sys_power_notification_payload payload = {
+        .system_state = MOD_PD_STATE_OFF,
+        .flags = 0,
+    };
+
+    size_t payload_size = sizeof(payload) + 1;
+
+    status = scmi_system_power_req_notification_handler(
+        protocol_id,
+        service_id,
+        (const uint32_t *)&payload,
+        payload_size,
+        message_id);
+
+    TEST_ASSERT_EQUAL(status, FWK_E_PARAM);
+}
+
 int scmi_test_main(void)
 {
     UNITY_BEGIN();
@@ -470,9 +597,13 @@ int scmi_test_main(void)
     RUN_TEST(test_function_scmi_system_power_req_get_state);
     RUN_TEST(test_function_scmi_system_power_req_set_state);
     RUN_TEST(test_function_scmi_system_power_req_set_state_no_response);
+    RUN_TEST(test_function_scmi_system_power_req_notification_subscribe);
+    RUN_TEST(test_function_scmi_system_power_req_notification_subscribe_err);
     RUN_TEST(test_scmi_system_power_req_state_set_handler);
     RUN_TEST(test_scmi_system_power_req_get_scmi_protocol_id);
     RUN_TEST(test_scmi_system_power_req_message_handler);
+    RUN_TEST(test_scmi_scmi_system_power_req_notification_handler);
+    RUN_TEST(test_scmi_scmi_system_power_req_notification_handler_wrong_size);
     return UNITY_END();
 }
 
