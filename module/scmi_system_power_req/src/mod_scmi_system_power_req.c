@@ -1,9 +1,10 @@
 /*
  * Arm SCP/MCP Software
- * Copyright (c) 2022-2023, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2022-2024, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
+#include <internal/scmi_system_power_req.h>
 
 #include <mod_power_domain.h>
 #include <mod_scmi.h>
@@ -19,6 +20,7 @@
 #include <fwk_mm.h>
 #include <fwk_module.h>
 #include <fwk_module_idx.h>
+#include <fwk_notification.h>
 #include <fwk_status.h>
 #include <fwk_string.h>
 
@@ -69,6 +71,15 @@ static int scmi_system_power_req_message_handler(
     const uint32_t *payload,
     size_t payload_size,
     unsigned int message_id);
+
+#ifdef BUILD_HAS_SCMI_NOTIFICATIONS
+static int scmi_system_power_req_notification_handler(
+    fwk_id_t protocol_id,
+    fwk_id_t service_id,
+    const uint32_t *payload,
+    size_t payload_size,
+    unsigned int message_id);
+#endif
 
 /*
  * Internal variables.
@@ -178,6 +189,9 @@ static struct mod_scmi_to_protocol_api
     scmi_system_power_req_scmi_to_protocol_api = {
         .get_scmi_protocol_id = scmi_system_power_req_get_scmi_protocol_id,
         .message_handler = scmi_system_power_req_message_handler,
+#ifdef BUILD_HAS_SCMI_NOTIFICATIONS
+        .notification_handler = scmi_system_power_req_notification_handler,
+#endif
     };
 
 static bool try_get_element_idx_from_service(
@@ -339,12 +353,115 @@ static int scmi_system_power_req_get_state(fwk_id_t id, uint32_t *state)
     return FWK_E_PARAM;
 }
 
+#ifdef BUILD_HAS_SCMI_NOTIFICATIONS
+/* Agent subscribe to SCMI system power notifications */
+static int scmi_system_power_req_notification_subscribe(fwk_id_t id)
+{
+    int status;
+    struct scmi_sys_power_req_state_notify_a2p payload;
+    uint8_t token;
+    bool request_ack_by_interrupt;
+    uint32_t element_id;
+
+    if (!try_get_element_idx(id, &element_id)) {
+        return FWK_E_RANGE;
+    }
+
+    struct scmi_system_power_req_dev_ctx *dev_ctx =
+        &(mod_ctx.dev_ctx_table[element_id]);
+
+    /* No ack needed */
+    request_ack_by_interrupt = false;
+    token = (uint8_t)0;
+
+    payload.flags = STATE_NOTIFY_FLAGS_MASK;
+
+    /* Send to platform to subscribe to system power change notification */
+    status = mod_ctx.scmi_api->scmi_send_message(
+        MOD_SCMI_SYS_POWER_STATE_NOTIFY,
+        MOD_SCMI_PROTOCOL_ID_SYS_POWER,
+        token,
+        dev_ctx->config->service_id,
+        (const void *)&payload,
+        sizeof(payload),
+        request_ack_by_interrupt);
+
+    return status;
+}
+#endif
+
 static const struct mod_system_power_requester_api
     scmi_system_power_req_driver_api = {
         .set_req_state = scmi_system_power_req_set_state,
         .get_req_state = scmi_system_power_req_get_state,
+#ifdef BUILD_HAS_SCMI_NOTIFICATIONS
+        .notification_subscribe = scmi_system_power_req_notification_subscribe,
+#endif
     };
 
+/*
+ * SCMI notifications APIs
+ */
+#ifdef BUILD_HAS_SCMI_NOTIFICATIONS
+
+/* System power SCMI notification handler */
+static int scmi_system_power_req_notification_handler(
+    fwk_id_t protocol_id,
+    fwk_id_t service_id,
+    const uint32_t *payload,
+    size_t payload_size,
+    unsigned int message_id)
+{
+#    ifdef BUILD_HAS_NOTIFICATION
+    struct scmi_sys_power_notification_payload *parameters;
+    int status = FWK_SUCCESS;
+
+    if (payload_size != sizeof(struct scmi_sys_power_notification_payload)) {
+        return FWK_E_PARAM;
+    }
+
+    unsigned int count = 0;
+
+    /*
+     * Framework notification is propagated when SCMI system power
+     * notification is received
+     */
+    struct fwk_event notification_event = {
+        .id = mod_scmi_system_power_notification_system_power_change,
+        .response_requested = false,
+        .source_id = FWK_ID_MODULE_INIT(FWK_MODULE_IDX_SCMI_SYSTEM_POWER_REQ),
+    };
+
+    parameters = (struct scmi_sys_power_notification_payload *)payload;
+
+    /* Add the system state to the notification parameter */
+    fwk_str_memcpy(
+        notification_event.params,
+        &parameters->system_state,
+        sizeof(parameters->system_state));
+
+    /*
+     * Send forceful or graceful to the notification params
+     */
+    fwk_str_memcpy(
+        &notification_event.params[sizeof(parameters->system_state)],
+        &parameters->flags,
+        sizeof(parameters->flags));
+
+    status = fwk_notification_notify(&notification_event, &count);
+
+    return status;
+
+#    else
+    /*
+     * Framework notification is not supported
+     */
+    return FWK_E_SUPPORT;
+
+#    endif
+}
+
+#endif
 /*
  * Framework handlers
  */
@@ -353,7 +470,6 @@ static int scmi_system_power_req_init(
     unsigned int element_count,
     const void *data)
 {
-    unsigned int i;
     /* We definitely need elements in this module. */
     if (element_count == 0) {
         return FWK_E_SUPPORT;
@@ -362,15 +478,6 @@ static int scmi_system_power_req_init(
     mod_ctx.dev_count = element_count;
     mod_ctx.dev_ctx_table =
         fwk_mm_calloc(element_count, sizeof(mod_ctx.dev_ctx_table[0]));
-
-    /*
-     * Configure each element's state at the startup with that set in the
-     * config file.
-     */
-    for (i = 0; i < element_count; i++) {
-        mod_ctx.dev_ctx_table[i].state =
-            mod_ctx.dev_ctx_table[i].config->start_state;
-    }
 
     return FWK_SUCCESS;
 }
@@ -396,6 +503,12 @@ static int scmi_system_power_req_elem_init(
         (const struct mod_scmi_system_power_req_dev_config *)data;
 
     dev_ctx->config = mod_sys_pow_req_config;
+
+    /*
+     * Configure each element's state at the startup with that set in the
+     * config file.
+     */
+    dev_ctx->state = dev_ctx->config->start_state;
 
     return FWK_SUCCESS;
 }

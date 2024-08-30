@@ -1,6 +1,6 @@
 /*
  * Arm SCP/MCP Software
- * Copyright (c) 2022-2023, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2022-2024, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -8,10 +8,12 @@
 #ifndef MOD_SCMI_SYSTEM_POWER_REQ_H
 #define MOD_SCMI_SYSTEM_POWER_REQ_H
 
+#include <fwk_event.h>
 #include <fwk_id.h>
 #include <fwk_macros.h>
 #include <fwk_module_idx.h>
 
+#include <assert.h>
 #include <stddef.h>
 #include <stdint.h>
 
@@ -35,6 +37,18 @@ struct scmi_sys_power_req_state_set_a2p {
     /*! The state being transitioned to.*/
     uint32_t system_state;
 };
+
+/* Supported notifications */
+enum mod_system_power_req_notifications {
+    MOD_SYS_POWER_REQ_STATE_CHANGE_NOTIFICATION,
+    MOD_SYS_POWER_REQ_NOTIFICATION_COUNT,
+};
+
+/* System change notification */
+static const fwk_id_t mod_scmi_system_power_notification_system_power_change =
+    FWK_ID_NOTIFICATION_INIT(
+        FWK_MODULE_IDX_SCMI_SYSTEM_POWER_REQ,
+        MOD_SYS_POWER_REQ_STATE_CHANGE_NOTIFICATION);
 
 /*!
  * \brief System Power Requester module restricted interface.
@@ -90,6 +104,22 @@ struct mod_system_power_requester_api {
      *
      */
     int (*get_req_state)(fwk_id_t id, uint32_t *state);
+
+#ifdef BUILD_HAS_SCMI_NOTIFICATIONS
+    /*!
+     * \brief Subscribe to scmi notifications of system power state change
+     *        Used for agents.
+     * \param id ID to determine which element to subscribe
+     *
+     * \retval ::FWK_SUCCESS The subscription message is sent successfully.
+     *
+     * \retval ::FWK_PENDING The power state transition request was submitted.
+     *
+     * \retval ::FWK_E_ACCESS Invalid access, the framework has rejected the
+     *      call to the API.
+     */
+    int (*notification_subscribe)(fwk_id_t id);
+#endif
 };
 
 /*!
