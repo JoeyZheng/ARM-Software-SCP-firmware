@@ -64,7 +64,8 @@ struct noc_s3_fmu_reg {
 };
 
 static_assert(
-        FMU_ERRCIDR3_OFFSET == offsetof(struct noc_s3_fmu_reg, fmu_errcidr3));
+    FMU_ERRCIDR3_OFFSET == offsetof(struct noc_s3_fmu_reg, fmu_errcidr3),
+    "[NOC_S3] FMU_ERRCIDR3_OFFSET mismatch");
 
 /*!
  * \brief Interconnect Part Number for NoC S3.
@@ -111,8 +112,9 @@ struct noc_s3_component_cfg_hdr {
 };
 
 static_assert(
-        COMPONENT_CFG_HEADER_SUBFEATURE_OFFSET ==
-        offsetof(struct noc_s3_component_cfg_hdr, subfeature));
+    COMPONENT_CFG_HEADER_SUBFEATURE_OFFSET ==
+        offsetof(struct noc_s3_component_cfg_hdr, subfeature),
+    "[NOC_S3] COMPONENT_CFG_HEADER_SUBFEATURE_OFFSET mismatch");
 
 /*! Offset of the last register in the Global register definition. */
 #define COMPONENT_ID3_OFFSET (0xFFC)
@@ -153,8 +155,8 @@ struct noc_s3_global_reg {
 };
 
 static_assert(
-    COMPONENT_ID3_OFFSET ==
-        offsetof(struct noc_s3_global_reg, component_id3));
+    COMPONENT_ID3_OFFSET == offsetof(struct noc_s3_global_reg, component_id3),
+    "[NOC_S3] COMPONENT_ID3_OFFSET mismatch");
 
 /*! Definitions for number of regions in the PSAM. */
 #define NOC_S3_MAX_NUM_REGIONS      128
@@ -195,8 +197,8 @@ struct noc_s3_psam_reg {
 };
 
 static_assert(
-        NP2_TOP_ADDR_CFG_OFFSET ==
-            offsetof(struct noc_s3_psam_reg, np2_top_addr_cfg));
+    NP2_TOP_ADDR_CFG_OFFSET == offsetof(struct noc_s3_psam_reg, np2_top_addr_cfg),
+    "[NOC_S3] NP2_TOP_ADDR_CFG_OFFSET mismatch");
 
 // clang-format on
 
