@@ -795,8 +795,8 @@ int fwk_module_bind(fwk_id_t target_id, fwk_id_t api_id, const void *api)
     return FWK_SUCCESS;
 
 error:
-    fwk_check((bool)false);
     FWK_LOG_CRIT(fwk_module_err_msg_func, status, __func__);
+    fwk_check((bool)false);
     return status;
 }
 
