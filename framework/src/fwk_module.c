@@ -62,8 +62,8 @@ extern const struct fwk_module_config
     *module_config_table[FWK_MODULE_IDX_COUNT];
 
 #if (FWK_LOG_LEVEL < FWK_LOG_LEVEL_DISABLED)
-static const char fwk_module_err_msg_line[] = "[MOD] Error %d in %s @%d";
-static const char fwk_module_err_msg_func[] = "[MOD] Error %d in %s";
+static const char fwk_module_err_msg_line[] = "[MOD] Error %s in %s @%d";
+static const char fwk_module_err_msg_func[] = "[MOD] Error %s in %s";
 #endif
 
 static size_t fwk_module_count_elements(const struct fwk_element *elements)
@@ -291,7 +291,8 @@ static int fwk_module_bind_elements(
             fwk_id_build_element_id(fwk_mod_ctx->id, element_idx);
         status = module->bind(fwk_module_ctx.bind_id, round);
         if (!fwk_expect(status == FWK_SUCCESS)) {
-            FWK_LOG_CRIT(fwk_module_err_msg_func, status, __func__);
+            FWK_LOG_CRIT(
+                fwk_module_err_msg_func, fwk_status_str(status), __func__);
             return status;
         }
 
@@ -320,7 +321,7 @@ static int fwk_module_bind_module(
     fwk_module_ctx.bind_id = fwk_mod_ctx->id;
     status = module->bind(fwk_mod_ctx->id, round);
     if (!fwk_expect(status == FWK_SUCCESS)) {
-        FWK_LOG_CRIT(fwk_module_err_msg_func, status, __func__);
+        FWK_LOG_CRIT(fwk_module_err_msg_func, fwk_status_str(status), __func__);
         return status;
     }
 
@@ -361,7 +362,8 @@ static int fwk_module_start_elements(struct fwk_module_context *fwk_mod_ctx)
             status = module->start(
                 fwk_id_build_element_id(fwk_mod_ctx->id, element_idx));
             if (!fwk_expect(status == FWK_SUCCESS)) {
-                FWK_LOG_CRIT(fwk_module_err_msg_func, status, __func__);
+                FWK_LOG_CRIT(
+                    fwk_module_err_msg_func, fwk_status_str(status), __func__);
                 return status;
             }
         }
@@ -383,7 +385,8 @@ static int fwk_module_start_module(struct fwk_module_context *fwk_mod_ctx)
     if (module->start != NULL) {
         status = module->start(fwk_mod_ctx->id);
         if (!fwk_expect(status == FWK_SUCCESS)) {
-            FWK_LOG_CRIT(fwk_module_err_msg_func, status, __func__);
+            FWK_LOG_CRIT(
+                fwk_module_err_msg_func, fwk_status_str(status), __func__);
             return status;
         }
     }
@@ -416,7 +419,8 @@ int fwk_module_start(void)
     unsigned int bind_round;
 
     if (fwk_module_ctx.initialized) {
-        FWK_LOG_CRIT(fwk_module_err_msg_func, FWK_E_STATE, __func__);
+        FWK_LOG_CRIT(
+            fwk_module_err_msg_func, fwk_status_str(FWK_E_STATE), __func__);
         return FWK_E_STATE;
     }
 
@@ -466,7 +470,8 @@ static int fwk_module_stop_elements(struct fwk_module_context *fwk_mod_ctx)
             status = module->stop(
                 fwk_id_build_element_id(fwk_mod_ctx->id, element_idx));
             if (!fwk_expect(status == FWK_SUCCESS)) {
-                FWK_LOG_CRIT(fwk_module_err_msg_func, status, __func__);
+                FWK_LOG_CRIT(
+                    fwk_module_err_msg_func, fwk_status_str(status), __func__);
                 return status;
             }
         }
@@ -488,7 +493,8 @@ static int fwk_module_stop_module(struct fwk_module_context *fwk_mod_ctx)
     if (module->stop != NULL) {
         status = module->stop(fwk_mod_ctx->id);
         if (!fwk_expect(status == FWK_SUCCESS)) {
-            FWK_LOG_CRIT(fwk_module_err_msg_func, status, __func__);
+            FWK_LOG_CRIT(
+                fwk_module_err_msg_func, fwk_status_str(status), __func__);
             return status;
         }
     }
@@ -520,7 +526,8 @@ int fwk_module_stop(void)
     int status;
 
     if (!fwk_module_ctx.initialized) {
-        FWK_LOG_CRIT(fwk_module_err_msg_func, FWK_E_STATE, __func__);
+        FWK_LOG_CRIT(
+            fwk_module_err_msg_func, fwk_status_str(FWK_E_STATE), __func__);
         return FWK_E_STATE;
     }
 
@@ -783,7 +790,11 @@ int fwk_module_bind(fwk_id_t target_id, fwk_id_t api_id, const void *api)
     status = fwk_mod_ctx->desc->process_bind_request(
         fwk_module_ctx.bind_id, target_id, api_id, (const void **)api);
     if (!fwk_expect(status == FWK_SUCCESS)) {
-        FWK_LOG_CRIT(fwk_module_err_msg_line, status, __func__, __LINE__);
+        FWK_LOG_CRIT(
+            fwk_module_err_msg_line,
+            fwk_status_str(status),
+            __func__,
+            __LINE__);
         return status;
     }
 
@@ -795,7 +806,7 @@ int fwk_module_bind(fwk_id_t target_id, fwk_id_t api_id, const void *api)
     return FWK_SUCCESS;
 
 error:
-    FWK_LOG_CRIT(fwk_module_err_msg_func, status, __func__);
+    FWK_LOG_CRIT(fwk_module_err_msg_func, fwk_status_str(status), __func__);
     fwk_check((bool)false);
     return status;
 }

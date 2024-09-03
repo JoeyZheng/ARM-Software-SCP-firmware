@@ -132,6 +132,7 @@ list(APPEND COMMON_SRC ${FWK_TEST_SRC_ROOT}/fwk_test.c)
 list(APPEND COMMON_SRC ${FWK_SRC_ROOT}/fwk_delayed_resp.c)
 list(APPEND COMMON_SRC ${FWK_SRC_ROOT}/fwk_time.c)
 list(APPEND COMMON_SRC ${FWK_SRC_ROOT}/fwk_trace.c)
+list(APPEND COMMON_SRC ${FWK_SRC_ROOT}/fwk_status.c)
 
 # CMake internal function enables testing for this directory
 enable_testing()
