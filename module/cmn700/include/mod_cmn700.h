@@ -144,7 +144,7 @@ struct mod_cmn700_mem_region_map {
     /*!
      * \brief HN-F's top right node position
      *
-     * \details \ref hnf_pos_start is the HN-F's bottom left node position in
+     * \details \ref hnf_pos_end is the HN-F's top right node position in
      * the rectangle covering the HN-Fs for a SCG/HTG
      *
      * \note To be used only with \ref
