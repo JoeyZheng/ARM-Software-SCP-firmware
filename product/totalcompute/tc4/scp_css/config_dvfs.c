@@ -6,6 +6,7 @@
  */
 
 #include "clock_soc.h"
+#include "tc4_core.h"
 #include "tc4_dvfs.h"
 #include "tc4_psu.h"
 #include "tc4_timer.h"
@@ -31,108 +32,108 @@
  */
 
 /* dynamic-power-coeffient/1000 */
-#define NEVIS_DPC   0.230
-#define GELAS_DPC     0.495
-#define TRAVIS_DPC     1.054
+#define GROUP_LITTLE_DPC 0.230
+#define GROUP_MID_DPC    0.495
+#define GROUP_BIG_DPC    1.054
 
-static struct mod_dvfs_opp operating_points_nevis[6] = {
+static struct mod_dvfs_opp operating_points_group_little[6] = {
     {
         .level = 768 * 1000000UL,
         .frequency = 768 * FWK_KHZ,
         .voltage = 550,
-        .power = (uint32_t)(NEVIS_DPC * 768 * 0.550 * 0.550),
+        .power = (uint32_t)(GROUP_LITTLE_DPC * 768 * 0.550 * 0.550),
     },
     {
         .level = 1153 * 1000000UL,
         .frequency = 1153 * FWK_KHZ,
         .voltage = 650,
-        .power = (uint32_t)(NEVIS_DPC * 1153 * 0.650 * 0.650),
+        .power = (uint32_t)(GROUP_LITTLE_DPC * 1153 * 0.650 * 0.650),
     },
     {
         .level = 1537 * 1000000UL,
         .frequency = 1537 * FWK_KHZ,
         .voltage = 750,
-        .power = (uint32_t)(NEVIS_DPC * 1537 * 0.750 * 0.750),
+        .power = (uint32_t)(GROUP_LITTLE_DPC * 1537 * 0.750 * 0.750),
     },
     {
         .level = 1844 * 1000000UL,
         .frequency = 1844 * FWK_KHZ,
         .voltage = 850,
-        .power = (uint32_t)(NEVIS_DPC * 1844 * 0.850 * 0.850),
+        .power = (uint32_t)(GROUP_LITTLE_DPC * 1844 * 0.850 * 0.850),
     },
     {
         .level = 2152 * 1000000UL,
         .frequency = 2152 * FWK_KHZ,
         .voltage = 950,
-        .power = (uint32_t)(NEVIS_DPC * 2152 * 0.950 * 0.950),
+        .power = (uint32_t)(GROUP_LITTLE_DPC * 2152 * 0.950 * 0.950),
     },
     { 0 }
 };
 
-static struct mod_dvfs_opp operating_points_gelas[6] = {
+static struct mod_dvfs_opp operating_points_group_mid[6] = {
     {
         .level = 946 * 1000000UL,
         .frequency = 946 * FWK_KHZ,
         .voltage = 550,
-        .power = (uint32_t)(GELAS_DPC * 946 * 0.550 * 0.550),
+        .power = (uint32_t)(GROUP_MID_DPC * 946 * 0.550 * 0.550),
     },
     {
         .level = 1419 * 1000000UL,
         .frequency = 1419 * FWK_KHZ,
         .voltage = 650,
-        .power = (uint32_t)(GELAS_DPC * 1419 * 0.650 * 0.650),
+        .power = (uint32_t)(GROUP_MID_DPC * 1419 * 0.650 * 0.650),
     },
     {
         .level = 1893 * 1000000UL,
         .frequency = 1893 * FWK_KHZ,
         .voltage = 750,
-        .power = (uint32_t)(GELAS_DPC * 1893 * 0.750 * 0.750),
+        .power = (uint32_t)(GROUP_MID_DPC * 1893 * 0.750 * 0.750),
     },
     {
         .level = 2271 * 1000000UL,
         .frequency = 2271 * FWK_KHZ,
         .voltage = 850,
-        .power = (uint32_t)(GELAS_DPC * 2271 * 0.850 * 0.850),
+        .power = (uint32_t)(GROUP_MID_DPC * 2271 * 0.850 * 0.850),
     },
     {
         .level = 2650 * 1000000UL,
         .frequency = 2650 * FWK_KHZ,
         .voltage = 950,
-        .power = (uint32_t)(GELAS_DPC * 2650 * 0.950 * 0.950),
+        .power = (uint32_t)(GROUP_MID_DPC * 2650 * 0.950 * 0.950),
     },
     { 0 }
 };
 
-static struct mod_dvfs_opp operating_points_travis[6] = {
+static struct mod_dvfs_opp operating_points_group_big[6] = {
     {
         .level = 1088 * 1000000UL,
         .frequency = 1088 * FWK_KHZ,
         .voltage = 550,
-        .power = (uint32_t)(TRAVIS_DPC * 1088 * 0.550 * 0.550),
+        .power = (uint32_t)(GROUP_BIG_DPC * 1088 * 0.550 * 0.550),
     },
     {
         .level = 1632 * 1000000UL,
         .frequency = 1632 * FWK_KHZ,
         .voltage = 650,
-        .power = (uint32_t)(TRAVIS_DPC * 1632 * 0.650 * 0.650),
+        .power = (uint32_t)(GROUP_BIG_DPC * 1632 * 0.650 * 0.650),
     },
     {
         .level = 2176 * 1000000UL,
         .frequency = 2176 * FWK_KHZ,
         .voltage = 750,
-        .power = (uint32_t)(TRAVIS_DPC * 2176 * 0.750 * 0.750),
+        .power = (uint32_t)(GROUP_BIG_DPC * 2176 * 0.750 * 0.750),
     },
     {
         .level = 2612 * 1000000UL,
         .frequency = 2612 * FWK_KHZ,
         .voltage = 850,
-        .power = (uint32_t)(TRAVIS_DPC * 2612 * 0.850 * 0.850),
+        .power = (uint32_t)(GROUP_BIG_DPC * 2612 * 0.850 * 0.850),
     },
     {
         .level = 3047 * 1000000UL,
         .frequency = 3047 * FWK_KHZ,
         .voltage = 950,
-        .power = (uint32_t)(TRAVIS_DPC * 3047 * 0.950 * 0.950),
+        .power = (uint32_t)(GROUP_BIG_DPC * 3047 * 0.950 * 0.950),
     },
     { 0 }
 };
@@ -161,56 +162,57 @@ static struct mod_dvfs_opp operating_points_gpu[5] = {
     { 0 }
 };
 
-static const struct mod_dvfs_domain_config cpu_group_nevis = {
-    .psu_id = FWK_ID_ELEMENT_INIT(FWK_MODULE_IDX_PSU, PSU_ELEMENT_IDX_NEVIS),
-    .clock_id =
-        FWK_ID_ELEMENT_INIT(FWK_MODULE_IDX_CLOCK, CLOCK_IDX_CPU_GROUP_NEVIS),
-    .alarm_id = FWK_ID_SUB_ELEMENT_INIT(
-        FWK_MODULE_IDX_TIMER,
-        0,
-        TC4_CONFIG_TIMER_DVFS_CPU_NEVIS),
-    .retry_ms = 1,
-    .latency = 1200,
-    .sustained_idx = 2,
-    .opps = operating_points_nevis,
-};
-
-static const struct mod_dvfs_domain_config cpu_group_gelas = {
-    .psu_id = FWK_ID_ELEMENT_INIT(FWK_MODULE_IDX_PSU, PSU_ELEMENT_IDX_GELAS),
-    .clock_id =
-        FWK_ID_ELEMENT_INIT(FWK_MODULE_IDX_CLOCK, CLOCK_IDX_CPU_GROUP_GELAS),
-    .alarm_id = FWK_ID_SUB_ELEMENT_INIT(
-        FWK_MODULE_IDX_TIMER,
-        0,
-        TC4_CONFIG_TIMER_DVFS_CPU_GELAS),
-    .retry_ms = 1,
-    .latency = 1200,
-    .sustained_idx = 2,
-    .opps = operating_points_gelas,
-};
-
-static const struct mod_dvfs_domain_config cpu_group_travis = {
+static const struct mod_dvfs_domain_config cpu_group_little = {
     .psu_id =
-        FWK_ID_ELEMENT_INIT(FWK_MODULE_IDX_PSU, PSU_ELEMENT_IDX_TRAVIS),
+        FWK_ID_ELEMENT_INIT(FWK_MODULE_IDX_PSU, PSU_ELEMENT_IDX_GROUP_LITTLE),
     .clock_id = FWK_ID_ELEMENT_INIT(
         FWK_MODULE_IDX_CLOCK,
-        CLOCK_IDX_CPU_GROUP_TRAVIS),
+        CLOCK_IDX_CPU_GROUP_GROUP_LITTLE),
     .alarm_id = FWK_ID_SUB_ELEMENT_INIT(
         FWK_MODULE_IDX_TIMER,
         0,
-        TC4_CONFIG_TIMER_DVFS_CPU_TRAVIS),
+        TC4_CONFIG_TIMER_DVFS_CPU_GROUP_LITTLE),
     .retry_ms = 1,
     .latency = 1200,
     .sustained_idx = 2,
-    .opps = operating_points_travis,
+    .opps = operating_points_group_little,
+};
+
+static const struct mod_dvfs_domain_config cpu_group_mid = {
+    .psu_id =
+        FWK_ID_ELEMENT_INIT(FWK_MODULE_IDX_PSU, PSU_ELEMENT_IDX_GROUP_MID),
+    .clock_id = FWK_ID_ELEMENT_INIT(
+        FWK_MODULE_IDX_CLOCK,
+        CLOCK_IDX_CPU_GROUP_GROUP_MID),
+    .alarm_id = FWK_ID_SUB_ELEMENT_INIT(
+        FWK_MODULE_IDX_TIMER,
+        0,
+        TC4_CONFIG_TIMER_DVFS_CPU_GROUP_MID),
+    .retry_ms = 1,
+    .latency = 1200,
+    .sustained_idx = 2,
+    .opps = operating_points_group_mid,
+};
+
+static const struct mod_dvfs_domain_config cpu_group_big = {
+    .psu_id =
+        FWK_ID_ELEMENT_INIT(FWK_MODULE_IDX_PSU, PSU_ELEMENT_IDX_GROUP_BIG),
+    .clock_id = FWK_ID_ELEMENT_INIT(
+        FWK_MODULE_IDX_CLOCK,
+        CLOCK_IDX_CPU_GROUP_GROUP_BIG),
+    .alarm_id = FWK_ID_SUB_ELEMENT_INIT(
+        FWK_MODULE_IDX_TIMER,
+        0,
+        TC4_CONFIG_TIMER_DVFS_CPU_GROUP_BIG),
+    .retry_ms = 1,
+    .latency = 1200,
+    .sustained_idx = 2,
+    .opps = operating_points_group_big,
 };
 
 static const struct mod_dvfs_domain_config gpu = {
-    .psu_id =
-        FWK_ID_ELEMENT_INIT(FWK_MODULE_IDX_PSU, PSU_ELEMENT_IDX_GPU),
-    .clock_id = FWK_ID_ELEMENT_INIT(
-        FWK_MODULE_IDX_CLOCK,
-        CLOCK_IDX_GPU),
+    .psu_id = FWK_ID_ELEMENT_INIT(FWK_MODULE_IDX_PSU, PSU_ELEMENT_IDX_GPU),
+    .clock_id = FWK_ID_ELEMENT_INIT(FWK_MODULE_IDX_CLOCK, CLOCK_IDX_GPU),
     .alarm_id = FWK_ID_SUB_ELEMENT_INIT(
         FWK_MODULE_IDX_TIMER,
         0,
@@ -222,20 +224,20 @@ static const struct mod_dvfs_domain_config gpu = {
 };
 
 static const struct fwk_element element_table[DVFS_ELEMENT_IDX_COUNT + 1] = {
-    [DVFS_ELEMENT_IDX_NEVIS] =
+    [DVFS_ELEMENT_IDX_GROUP_LITTLE] =
         {
-            .name = "CPU_GROUP_NEVIS",
-            .data = &cpu_group_nevis,
+            .name = "CPU_GROUP_" TC4_GROUP_LITTLE_NAME,
+            .data = &cpu_group_little,
         },
-    [DVFS_ELEMENT_IDX_GELAS] =
+    [DVFS_ELEMENT_IDX_GROUP_MID] =
         {
-            .name = "CPU_GROUP_GELAS",
-            .data = &cpu_group_gelas,
+            .name = "CPU_GROUP_" TC4_GROUP_MID_NAME,
+            .data = &cpu_group_mid,
         },
-    [DVFS_ELEMENT_IDX_TRAVIS] =
+    [DVFS_ELEMENT_IDX_GROUP_BIG] =
         {
-            .name = "CPU_GROUP_TRAVIS",
-            .data = &cpu_group_travis,
+            .name = "CPU_GROUP_" TC4_GROUP_BIG_NAME,
+            .data = &cpu_group_big,
         },
     [DVFS_ELEMENT_IDX_GPU] =
         {

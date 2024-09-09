@@ -19,9 +19,9 @@
 static const struct fwk_element system_pll_element_table[
     CLOCK_PLL_IDX_COUNT + 1] =
     {
-        [CLOCK_PLL_IDX_CPU_NEVIS] =
+        [CLOCK_PLL_IDX_CPU_GROUP_LITTLE] =
             {
-                .name = "CPU_PLL_NEVIS",
+                .name = "CPU_PLL_GROUP_LITTLE",
                 .data = &((struct mod_system_pll_dev_config){
                     .control_reg = (void *)SCP_PLL_CPU0,
                     .status_reg = (void *)&SCP_PIK_PTR->PLL_STATUS[1],
@@ -32,9 +32,9 @@ static const struct fwk_element system_pll_element_table[
                     .min_step = MOD_SYSTEM_PLL_MIN_INTERVAL,
                 }),
             },
-        [CLOCK_PLL_IDX_CPU_GELAS] =
+        [CLOCK_PLL_IDX_CPU_GROUP_MID] =
             {
-                .name = "CPU_PLL_GELAS",
+                .name = "CPU_PLL_GROUP_MID",
                 .data = &((struct mod_system_pll_dev_config){
                     .control_reg = (void *)SCP_PLL_CPU1,
                     .status_reg = (void *)&SCP_PIK_PTR->PLL_STATUS[1],
@@ -45,9 +45,9 @@ static const struct fwk_element system_pll_element_table[
                     .min_step = MOD_SYSTEM_PLL_MIN_INTERVAL,
                 }),
             },
-        [CLOCK_PLL_IDX_CPU_TRAVIS] =
+        [CLOCK_PLL_IDX_CPU_GROUP_BIG] =
             {
-                .name = "CPU_PLL_TRAVIS",
+                .name = "CPU_PLL_GROUP_BIG",
                 .data = &((struct mod_system_pll_dev_config){
                     .control_reg = (void *)SCP_PLL_CPU2,
                     .status_reg = (void *)&SCP_PIK_PTR->PLL_STATUS[1],

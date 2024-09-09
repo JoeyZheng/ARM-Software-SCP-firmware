@@ -17,7 +17,7 @@ set(CMAKE_TC_DIR "../../")
 # - 'TC4_VARIANT_STD' for TC4 standard build
 # - 'TC4_VAR_EXPERIMENT_POWER' for TC4 with power/performance/thermal additions
 #   used for evaluation purpose:
-#   - TRAFFIC_COP on NEVIS cores
+#   - TRAFFIC_COP on LITTLE cores
 #   - MPMM on all cores
 #   - THERMAL_MANAGEMENT for the entire system, with a simplified/dummy power
 #     model

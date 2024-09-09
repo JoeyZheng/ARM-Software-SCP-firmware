@@ -22,9 +22,9 @@
  * PLL clock indexes.
  */
 enum clock_pll_idx {
-    CLOCK_PLL_IDX_CPU_NEVIS,
-    CLOCK_PLL_IDX_CPU_GELAS,
-    CLOCK_PLL_IDX_CPU_TRAVIS,
+    CLOCK_PLL_IDX_CPU_GROUP_LITTLE,
+    CLOCK_PLL_IDX_CPU_GROUP_MID,
+    CLOCK_PLL_IDX_CPU_GROUP_BIG,
     CLOCK_PLL_IDX_SYS,
     CLOCK_PLL_IDX_DPU,
     CLOCK_PLL_IDX_PIX0,
@@ -58,28 +58,28 @@ enum clock_pik_idx {
  */
 enum mod_clusclock_source_tc4 {
     /*! The clock is gated */
-    MOD_PIK_CLOCK_CLUSCLK_SOURCE_TC4_GATED = 0x0,
+    MOD_PIK_CLOCK_CLUSCLK_SOURCE_TC_GATED = 0x0,
     /*! The clock source is set to the system reference clock */
-    MOD_PIK_CLOCK_CLUSCLK_SOURCE_TC4_SYSREFCLK = 0x1,
+    MOD_PIK_CLOCK_CLUSCLK_SOURCE_TC_SYSREFCLK = 0x1,
     /*! The clock source is set to a private cluster PLL */
-    MOD_PIK_CLOCK_CLUSCLK_SOURCE_TC4_PLL0 = 0x2,
+    MOD_PIK_CLOCK_CLUSCLK_SOURCE_TC_PLL0 = 0x2,
     /*! The clock source is set to a private cluster PLL */
-    MOD_PIK_CLOCK_CLUSCLK_SOURCE_TC4_PLL1 = 0x4,
+    MOD_PIK_CLOCK_CLUSCLK_SOURCE_TC_PLL1 = 0x4,
     /*! The clock source is set to a private cluster PLL */
-    MOD_PIK_CLOCK_CLUSCLK_SOURCE_TC4_PLL2 = 0x8,
+    MOD_PIK_CLOCK_CLUSCLK_SOURCE_TC_PLL2 = 0x8,
     /*! The clock source is set to a private cluster PLL */
-    MOD_PIK_CLOCK_CLUSCLK_SOURCE_TC4_PLL3 = 0x10,
+    MOD_PIK_CLOCK_CLUSCLK_SOURCE_TC_PLL3 = 0x10,
     /*! Number of valid clock sources */
-    MOD_PIK_CLOCK_CLUSCLK_SOURCE_TC4_MAX
+    MOD_PIK_CLOCK_CLUSCLK_SOURCE_TC_MAX
 };
 
 /*
  * CSS clock indexes.
  */
 enum clock_css_idx {
-    CLOCK_CSS_IDX_CPU_GROUP_NEVIS,
-    CLOCK_CSS_IDX_CPU_GROUP_GELAS,
-    CLOCK_CSS_IDX_CPU_GROUP_TRAVIS,
+    CLOCK_CSS_IDX_CPU_GROUP_GROUP_LITTLE,
+    CLOCK_CSS_IDX_CPU_GROUP_GROUP_MID,
+    CLOCK_CSS_IDX_CPU_GROUP_GROUP_BIG,
     CLOCK_CSS_IDX_DPU,
     CLOCK_CSS_IDX_COUNT
 };
@@ -88,9 +88,9 @@ enum clock_css_idx {
  * Clock indexes.
  */
 enum clock_idx {
-    CLOCK_IDX_CPU_GROUP_NEVIS,
-    CLOCK_IDX_CPU_GROUP_GELAS,
-    CLOCK_IDX_CPU_GROUP_TRAVIS,
+    CLOCK_IDX_CPU_GROUP_GROUP_LITTLE,
+    CLOCK_IDX_CPU_GROUP_GROUP_MID,
+    CLOCK_IDX_CPU_GROUP_GROUP_BIG,
     CLOCK_IDX_DPU,
     CLOCK_IDX_PIXEL_0,
     CLOCK_IDX_PIXEL_1,

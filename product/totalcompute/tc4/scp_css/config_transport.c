@@ -128,8 +128,8 @@ static const struct fwk_element transport_element_table[
         }),
     },
 #ifdef BUILD_HAS_MOD_TRANSPORT_FC
-    [TC4_TRANSPORT_SCMI_PERF_FCH_NEVIS_LEVEL_SET] = {
-        .name = "FCH_NEVIS_LEVEL_SET",
+    [TC4_TRANSPORT_SCMI_PERF_FCH_GROUP_LITTLE_LEVEL_SET] = {
+        .name = "FCH_" TC4_GROUP_LITTLE_NAME "_LEVEL_SET",
         .data = &((
             struct mod_transport_channel_config){
             .transport_type =
@@ -138,14 +138,14 @@ static const struct fwk_element transport_element_table[
                 MOD_TRANSPORT_CHANNEL_TYPE_COMPLETER,
             .driver_id = FWK_ID_ELEMENT_INIT(
                 FWK_MODULE_IDX_FCH_POLLED,
-                TC4_PLAT_FCH_NEVIS_LEVEL_SET),
+                TC4_PLAT_FCH_GROUP_LITTLE_LEVEL_SET),
             .driver_api_id = FWK_ID_API_INIT(
                 FWK_MODULE_IDX_FCH_POLLED,
                 MOD_FCH_POLLED_API_IDX_TRANSPORT),
         }),
     },
-    [TC4_TRANSPORT_SCMI_PERF_FCH_NEVIS_LIMIT_SET] = {
-        .name = "FCH_NEVIS_LIMIT_SET",
+    [TC4_TRANSPORT_SCMI_PERF_FCH_GROUP_LITTLE_LIMIT_SET] = {
+        .name = "FCH_" TC4_GROUP_LITTLE_NAME "_LIMIT_SET",
         .data = &((
             struct mod_transport_channel_config){
             .transport_type =
@@ -154,14 +154,14 @@ static const struct fwk_element transport_element_table[
                 MOD_TRANSPORT_CHANNEL_TYPE_COMPLETER,
             .driver_id = FWK_ID_ELEMENT_INIT(
                 FWK_MODULE_IDX_FCH_POLLED,
-                TC4_PLAT_FCH_NEVIS_LIMIT_SET),
+                TC4_PLAT_FCH_GROUP_LITTLE_LIMIT_SET),
             .driver_api_id = FWK_ID_API_INIT(
                 FWK_MODULE_IDX_FCH_POLLED,
                 MOD_FCH_POLLED_API_IDX_TRANSPORT),
         }),
     },
-    [TC4_TRANSPORT_SCMI_PERF_FCH_NEVIS_LEVEL_GET] = {
-        .name = "FCH_NEVIS_LEVEL_GET",
+    [TC4_TRANSPORT_SCMI_PERF_FCH_GROUP_LITTLE_LEVEL_GET] = {
+        .name = "FCH_" TC4_GROUP_LITTLE_NAME "_LEVEL_GET",
         .data = &((
             struct mod_transport_channel_config){
             .transport_type =
@@ -170,14 +170,14 @@ static const struct fwk_element transport_element_table[
                 MOD_TRANSPORT_CHANNEL_TYPE_COMPLETER,
             .driver_id = FWK_ID_ELEMENT_INIT(
                 FWK_MODULE_IDX_FCH_POLLED,
-                TC4_PLAT_FCH_NEVIS_LEVEL_GET),
+                TC4_PLAT_FCH_GROUP_LITTLE_LEVEL_GET),
             .driver_api_id = FWK_ID_API_INIT(
                 FWK_MODULE_IDX_FCH_POLLED,
                 MOD_FCH_POLLED_API_IDX_TRANSPORT),
         }),
     },
-    [TC4_TRANSPORT_SCMI_PERF_FCH_NEVIS_LIMIT_GET] = {
-        .name = "FCH_NEVIS_LIMIT_GET",
+    [TC4_TRANSPORT_SCMI_PERF_FCH_GROUP_LITTLE_LIMIT_GET] = {
+        .name = "FCH_" TC4_GROUP_LITTLE_NAME "_LIMIT_GET",
         .data = &((
             struct mod_transport_channel_config){
             .transport_type =
@@ -186,14 +186,14 @@ static const struct fwk_element transport_element_table[
                 MOD_TRANSPORT_CHANNEL_TYPE_COMPLETER,
             .driver_id = FWK_ID_ELEMENT_INIT(
                 FWK_MODULE_IDX_FCH_POLLED,
-                TC4_PLAT_FCH_NEVIS_LIMIT_GET),
+                TC4_PLAT_FCH_GROUP_LITTLE_LIMIT_GET),
             .driver_api_id = FWK_ID_API_INIT(
                 FWK_MODULE_IDX_FCH_POLLED,
                 MOD_FCH_POLLED_API_IDX_TRANSPORT),
         }),
     },
-    [TC4_TRANSPORT_SCMI_PERF_FCH_GELAS_LEVEL_SET] = {
-        .name = "FCH_GELAS_LEVEL_SET",
+    [TC4_TRANSPORT_SCMI_PERF_FCH_GROUP_MID_LEVEL_SET] = {
+        .name = "FCH_" TC4_GROUP_MID_NAME "_LEVEL_SET",
         .data = &((
             struct mod_transport_channel_config){
             .transport_type =
@@ -202,14 +202,14 @@ static const struct fwk_element transport_element_table[
                 MOD_TRANSPORT_CHANNEL_TYPE_COMPLETER,
             .driver_id = FWK_ID_ELEMENT_INIT(
                 FWK_MODULE_IDX_FCH_POLLED,
-                TC4_PLAT_FCH_GELAS_LEVEL_SET),
+                TC4_PLAT_FCH_GROUP_MID_LEVEL_SET),
             .driver_api_id = FWK_ID_API_INIT(
                 FWK_MODULE_IDX_FCH_POLLED,
                 MOD_FCH_POLLED_API_IDX_TRANSPORT),
         }),
     },
-    [TC4_TRANSPORT_SCMI_PERF_FCH_GELAS_LIMIT_SET] = {
-        .name = "FCH_GELAS_LIMIT_SET",
+    [TC4_TRANSPORT_SCMI_PERF_FCH_GROUP_MID_LIMIT_SET] = {
+        .name = "FCH_" TC4_GROUP_MID_NAME "_LIMIT_SET",
         .data = &((
             struct mod_transport_channel_config){
             .transport_type =
@@ -218,14 +218,14 @@ static const struct fwk_element transport_element_table[
                 MOD_TRANSPORT_CHANNEL_TYPE_COMPLETER,
             .driver_id = FWK_ID_ELEMENT_INIT(
                 FWK_MODULE_IDX_FCH_POLLED,
-                TC4_PLAT_FCH_GELAS_LIMIT_SET),
+                TC4_PLAT_FCH_GROUP_MID_LIMIT_SET),
             .driver_api_id = FWK_ID_API_INIT(
                 FWK_MODULE_IDX_FCH_POLLED,
                 MOD_FCH_POLLED_API_IDX_TRANSPORT),
         }),
     },
-    [TC4_TRANSPORT_SCMI_PERF_FCH_GELAS_LEVEL_GET] = {
-        .name = "FCH_GELAS_LEVEL_GET",
+    [TC4_TRANSPORT_SCMI_PERF_FCH_GROUP_MID_LEVEL_GET] = {
+        .name = "FCH_" TC4_GROUP_MID_NAME "_LEVEL_GET",
         .data = &((
             struct mod_transport_channel_config){
             .transport_type =
@@ -234,14 +234,14 @@ static const struct fwk_element transport_element_table[
                 MOD_TRANSPORT_CHANNEL_TYPE_COMPLETER,
             .driver_id = FWK_ID_ELEMENT_INIT(
                 FWK_MODULE_IDX_FCH_POLLED,
-                TC4_PLAT_FCH_GELAS_LEVEL_GET),
+                TC4_PLAT_FCH_GROUP_MID_LEVEL_GET),
             .driver_api_id = FWK_ID_API_INIT(
                 FWK_MODULE_IDX_FCH_POLLED,
                 MOD_FCH_POLLED_API_IDX_TRANSPORT),
         }),
     },
-    [TC4_TRANSPORT_SCMI_PERF_FCH_GELAS_LIMIT_GET] = {
-        .name = "FCH_GELAS_LIMIT_GET",
+    [TC4_TRANSPORT_SCMI_PERF_FCH_GROUP_MID_LIMIT_GET] = {
+        .name = "FCH_" TC4_GROUP_MID_NAME "_LIMIT_GET",
         .data = &((
             struct mod_transport_channel_config){
             .transport_type =
@@ -250,14 +250,14 @@ static const struct fwk_element transport_element_table[
                 MOD_TRANSPORT_CHANNEL_TYPE_COMPLETER,
             .driver_id = FWK_ID_ELEMENT_INIT(
                 FWK_MODULE_IDX_FCH_POLLED,
-                TC4_PLAT_FCH_GELAS_LIMIT_GET),
+                TC4_PLAT_FCH_GROUP_MID_LIMIT_GET),
             .driver_api_id = FWK_ID_API_INIT(
                 FWK_MODULE_IDX_FCH_POLLED,
                 MOD_FCH_POLLED_API_IDX_TRANSPORT),
         }),
     },
-    [TC4_TRANSPORT_SCMI_PERF_FCH_TRAVIS_LEVEL_SET] = {
-        .name = "FCH_TRAVIS_LEVEL_SET",
+    [TC4_TRANSPORT_SCMI_PERF_FCH_GROUP_BIG_LEVEL_SET] = {
+        .name = "FCH_" TC4_GROUP_BIG_NAME "_LEVEL_SET",
         .data = &((
             struct mod_transport_channel_config){
             .transport_type =
@@ -266,14 +266,14 @@ static const struct fwk_element transport_element_table[
                 MOD_TRANSPORT_CHANNEL_TYPE_COMPLETER,
             .driver_id = FWK_ID_ELEMENT_INIT(
                 FWK_MODULE_IDX_FCH_POLLED,
-                TC4_PLAT_FCH_TRAVIS_LEVEL_SET),
+                TC4_PLAT_FCH_GROUP_BIG_LEVEL_SET),
             .driver_api_id = FWK_ID_API_INIT(
                 FWK_MODULE_IDX_FCH_POLLED,
                 MOD_FCH_POLLED_API_IDX_TRANSPORT),
         }),
     },
-    [TC4_TRANSPORT_SCMI_PERF_FCH_TRAVIS_LIMIT_SET] = {
-        .name = "FCH_TRAVIS_LIMIT_SET",
+    [TC4_TRANSPORT_SCMI_PERF_FCH_GROUP_BIG_LIMIT_SET] = {
+        .name = "FCH_" TC4_GROUP_BIG_NAME "_LIMIT_SET",
         .data = &((
             struct mod_transport_channel_config){
             .transport_type =
@@ -282,14 +282,14 @@ static const struct fwk_element transport_element_table[
                 MOD_TRANSPORT_CHANNEL_TYPE_COMPLETER,
             .driver_id = FWK_ID_ELEMENT_INIT(
                 FWK_MODULE_IDX_FCH_POLLED,
-                TC4_PLAT_FCH_TRAVIS_LIMIT_SET),
+                TC4_PLAT_FCH_GROUP_BIG_LIMIT_SET),
             .driver_api_id = FWK_ID_API_INIT(
                 FWK_MODULE_IDX_FCH_POLLED,
                 MOD_FCH_POLLED_API_IDX_TRANSPORT),
         }),
     },
-    [TC4_TRANSPORT_SCMI_PERF_FCH_TRAVIS_LEVEL_GET] = {
-        .name = "FCH_TRAVIS_LEVEL_GET",
+    [TC4_TRANSPORT_SCMI_PERF_FCH_GROUP_BIG_LEVEL_GET] = {
+        .name = "FCH_" TC4_GROUP_BIG_NAME "_LEVEL_GET",
         .data = &((
             struct mod_transport_channel_config){
             .transport_type =
@@ -298,14 +298,14 @@ static const struct fwk_element transport_element_table[
                 MOD_TRANSPORT_CHANNEL_TYPE_COMPLETER,
             .driver_id = FWK_ID_ELEMENT_INIT(
                 FWK_MODULE_IDX_FCH_POLLED,
-                TC4_PLAT_FCH_TRAVIS_LEVEL_GET),
+                TC4_PLAT_FCH_GROUP_BIG_LEVEL_GET),
             .driver_api_id = FWK_ID_API_INIT(
                 FWK_MODULE_IDX_FCH_POLLED,
                 MOD_FCH_POLLED_API_IDX_TRANSPORT),
         }),
     },
-    [TC4_TRANSPORT_SCMI_PERF_FCH_TRAVIS_LIMIT_GET] = {
-        .name = "FCH_TRAVIS_LIMIT_GET",
+    [TC4_TRANSPORT_SCMI_PERF_FCH_GROUP_BIG_LIMIT_GET] = {
+        .name = "FCH_" TC4_GROUP_BIG_NAME "_LIMIT_GET",
         .data = &((
             struct mod_transport_channel_config){
             .transport_type =
@@ -314,7 +314,7 @@ static const struct fwk_element transport_element_table[
                 MOD_TRANSPORT_CHANNEL_TYPE_COMPLETER,
             .driver_id = FWK_ID_ELEMENT_INIT(
                 FWK_MODULE_IDX_FCH_POLLED,
-                TC4_PLAT_FCH_TRAVIS_LIMIT_GET),
+                TC4_PLAT_FCH_GROUP_BIG_LIMIT_GET),
             .driver_api_id = FWK_ID_API_INIT(
                 FWK_MODULE_IDX_FCH_POLLED,
                 MOD_FCH_POLLED_API_IDX_TRANSPORT),

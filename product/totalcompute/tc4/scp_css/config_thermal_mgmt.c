@@ -22,14 +22,14 @@ static struct mod_thermal_mgmt_actor_config actor_table_domain0[2] = {
         .driver_id = FWK_ID_ELEMENT_INIT(FWK_MODULE_IDX_TC4_POWER_MODEL, 0),
         .dvfs_domain_id =
             FWK_ID_ELEMENT_INIT(
-                FWK_MODULE_IDX_DVFS, DVFS_ELEMENT_IDX_NEVIS),
+                FWK_MODULE_IDX_DVFS, DVFS_ELEMENT_IDX_GROUP_LITTLE),
         .weight = 100,
     },
     [1] = {
         .driver_id = FWK_ID_ELEMENT_INIT(FWK_MODULE_IDX_TC4_POWER_MODEL, 1),
         .dvfs_domain_id =
             FWK_ID_ELEMENT_INIT(
-                FWK_MODULE_IDX_DVFS, DVFS_ELEMENT_IDX_GELAS),
+                FWK_MODULE_IDX_DVFS, DVFS_ELEMENT_IDX_GROUP_MID),
         .weight = 100,
     },
 };

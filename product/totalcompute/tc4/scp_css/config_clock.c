@@ -20,37 +20,37 @@
 #include <fwk_module_idx.h>
 
 static const struct fwk_element clock_dev_desc_table[CLOCK_IDX_COUNT + 1] = {
-    [CLOCK_IDX_CPU_GROUP_NEVIS] =
+    [CLOCK_IDX_CPU_GROUP_GROUP_LITTLE] =
         {
-            .name = "CPU_GROUP_NEVIS",
+            .name = "CPU_GROUP_" TC4_GROUP_LITTLE_NAME,
             .data = &((struct mod_clock_dev_config){
                 .driver_id = FWK_ID_ELEMENT_INIT(
                     FWK_MODULE_IDX_CSS_CLOCK,
-                    CLOCK_CSS_IDX_CPU_GROUP_NEVIS),
+                    CLOCK_CSS_IDX_CPU_GROUP_GROUP_LITTLE),
                 .api_id = FWK_ID_API_INIT(
                     FWK_MODULE_IDX_CSS_CLOCK,
                     MOD_CSS_CLOCK_API_TYPE_CLOCK),
             }),
         },
-    [CLOCK_IDX_CPU_GROUP_GELAS] =
+    [CLOCK_IDX_CPU_GROUP_GROUP_MID] =
         {
-            .name = "CPU_GROUP_GELAS",
+            .name = "CPU_GROUP_" TC4_GROUP_MID_NAME,
             .data = &((struct mod_clock_dev_config){
                 .driver_id = FWK_ID_ELEMENT_INIT(
                     FWK_MODULE_IDX_CSS_CLOCK,
-                    CLOCK_CSS_IDX_CPU_GROUP_GELAS),
+                    CLOCK_CSS_IDX_CPU_GROUP_GROUP_MID),
                 .api_id = FWK_ID_API_INIT(
                     FWK_MODULE_IDX_CSS_CLOCK,
                     MOD_CSS_CLOCK_API_TYPE_CLOCK),
             }),
         },
-    [CLOCK_IDX_CPU_GROUP_TRAVIS] =
+    [CLOCK_IDX_CPU_GROUP_GROUP_BIG] =
         {
-            .name = "CPU_GROUP_TRAVIS",
+            .name = "CPU_GROUP_" TC4_GROUP_BIG_NAME,
             .data = &((struct mod_clock_dev_config){
                 .driver_id = FWK_ID_ELEMENT_INIT(
                     FWK_MODULE_IDX_CSS_CLOCK,
-                    CLOCK_CSS_IDX_CPU_GROUP_TRAVIS),
+                    CLOCK_CSS_IDX_CPU_GROUP_GROUP_BIG),
                 .api_id = FWK_ID_API_INIT(
                     FWK_MODULE_IDX_CSS_CLOCK,
                     MOD_CSS_CLOCK_API_TYPE_CLOCK),

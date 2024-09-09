@@ -17,32 +17,32 @@
 #include <fwk_module_idx.h>
 
 static const struct fwk_element element_table[PSU_ELEMENT_IDX_COUNT + 1] = {
-    [PSU_ELEMENT_IDX_NEVIS] = {
-        .name = "PSU_GROUP_NEVIS",
+    [PSU_ELEMENT_IDX_GROUP_LITTLE] = {
+        .name = "PSU_GROUP_" TC4_GROUP_LITTLE_NAME,
         .data =
             &(const struct mod_psu_element_cfg){
                 .driver_id = FWK_ID_ELEMENT_INIT(FWK_MODULE_IDX_MOCK_PSU,
-                    MOCK_PSU_ELEMENT_IDX_NEVIS),
+                    MOCK_PSU_ELEMENT_IDX_GROUP_LITTLE),
                 .driver_api_id = FWK_ID_API_INIT(
                     FWK_MODULE_IDX_MOCK_PSU,
                     MOD_MOCK_PSU_API_IDX_DRIVER) },
     },
-    [PSU_ELEMENT_IDX_GELAS] = {
-        .name = "PSU_GROUP_GELAS",
+    [PSU_ELEMENT_IDX_GROUP_MID] = {
+        .name = "PSU_GROUP_" TC4_GROUP_MID_NAME,
         .data =
             &(const struct mod_psu_element_cfg){
                 .driver_id = FWK_ID_ELEMENT_INIT(FWK_MODULE_IDX_MOCK_PSU,
-                    MOCK_PSU_ELEMENT_IDX_GELAS),
+                    MOCK_PSU_ELEMENT_IDX_GROUP_MID),
                 .driver_api_id = FWK_ID_API_INIT(
                     FWK_MODULE_IDX_MOCK_PSU,
                     MOD_MOCK_PSU_API_IDX_DRIVER) },
     },
-    [PSU_ELEMENT_IDX_TRAVIS] = {
-        .name = "PSU_GROUP_TRAVIS",
+    [PSU_ELEMENT_IDX_GROUP_BIG] = {
+        .name = "PSU_GROUP_" TC4_GROUP_BIG_NAME,
         .data =
             &(const struct mod_psu_element_cfg){
                 .driver_id = FWK_ID_ELEMENT_INIT(FWK_MODULE_IDX_MOCK_PSU,
-                    MOCK_PSU_ELEMENT_IDX_TRAVIS),
+                    MOCK_PSU_ELEMENT_IDX_GROUP_BIG),
                 .driver_api_id = FWK_ID_API_INIT(
                     FWK_MODULE_IDX_MOCK_PSU,
                     MOD_MOCK_PSU_API_IDX_DRIVER) },

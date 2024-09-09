@@ -21,53 +21,53 @@
 
 static const struct mod_scmi_perf_domain_config
     domains[DVFS_ELEMENT_IDX_COUNT] = {
-        [DVFS_ELEMENT_IDX_NEVIS] = {
-#    ifdef BUILD_HAS_SCMI_PERF_FAST_CHANNELS
+        [DVFS_ELEMENT_IDX_GROUP_LITTLE] = {
+#ifdef BUILD_HAS_SCMI_PERF_FAST_CHANNELS
          .fch_config = (struct scmi_perf_fch_config[]) {
             [MOD_SCMI_PERF_FAST_CHANNEL_LEVEL_SET] =
-                FCH_INIT(TC4_TRANSPORT_SCMI_PERF_FCH_NEVIS_LEVEL_SET),
+                FCH_INIT(TC4_TRANSPORT_SCMI_PERF_FCH_GROUP_LITTLE_LEVEL_SET),
             [MOD_SCMI_PERF_FAST_CHANNEL_LIMIT_SET] =
-                FCH_INIT(TC4_TRANSPORT_SCMI_PERF_FCH_NEVIS_LIMIT_SET),
+                FCH_INIT(TC4_TRANSPORT_SCMI_PERF_FCH_GROUP_LITTLE_LIMIT_SET),
             [MOD_SCMI_PERF_FAST_CHANNEL_LEVEL_GET] =
-                FCH_INIT(TC4_TRANSPORT_SCMI_PERF_FCH_NEVIS_LEVEL_GET),
+                FCH_INIT(TC4_TRANSPORT_SCMI_PERF_FCH_GROUP_LITTLE_LEVEL_GET),
             [MOD_SCMI_PERF_FAST_CHANNEL_LIMIT_GET] =
-                FCH_INIT(TC4_TRANSPORT_SCMI_PERF_FCH_NEVIS_LIMIT_GET),
+                FCH_INIT(TC4_TRANSPORT_SCMI_PERF_FCH_GROUP_LITTLE_LIMIT_GET),
         },
         .supports_fast_channels = true,
-#    endif
+#endif
         },
-        [DVFS_ELEMENT_IDX_GELAS] = {
-#    ifdef BUILD_HAS_SCMI_PERF_FAST_CHANNELS
+        [DVFS_ELEMENT_IDX_GROUP_MID] = {
+#ifdef BUILD_HAS_SCMI_PERF_FAST_CHANNELS
          .fch_config = (struct scmi_perf_fch_config[]) {
             [MOD_SCMI_PERF_FAST_CHANNEL_LEVEL_SET] =
-                FCH_INIT(TC4_TRANSPORT_SCMI_PERF_FCH_GELAS_LEVEL_SET),
+                FCH_INIT(TC4_TRANSPORT_SCMI_PERF_FCH_GROUP_MID_LEVEL_SET),
             [MOD_SCMI_PERF_FAST_CHANNEL_LIMIT_SET] =
-                FCH_INIT(TC4_TRANSPORT_SCMI_PERF_FCH_GELAS_LIMIT_SET),
+                FCH_INIT(TC4_TRANSPORT_SCMI_PERF_FCH_GROUP_MID_LIMIT_SET),
             [MOD_SCMI_PERF_FAST_CHANNEL_LEVEL_GET] =
-                FCH_INIT(TC4_TRANSPORT_SCMI_PERF_FCH_GELAS_LEVEL_GET),
+                FCH_INIT(TC4_TRANSPORT_SCMI_PERF_FCH_GROUP_MID_LEVEL_GET),
             [MOD_SCMI_PERF_FAST_CHANNEL_LIMIT_GET] =
-                FCH_INIT(TC4_TRANSPORT_SCMI_PERF_FCH_GELAS_LIMIT_GET),
+                FCH_INIT(TC4_TRANSPORT_SCMI_PERF_FCH_GROUP_MID_LIMIT_GET),
         },
         .supports_fast_channels = true,
-#    endif
+#endif
         },
-        [DVFS_ELEMENT_IDX_TRAVIS] = {
-#    ifdef BUILD_HAS_SCMI_PERF_FAST_CHANNELS
+        [DVFS_ELEMENT_IDX_GROUP_BIG] = {
+#ifdef BUILD_HAS_SCMI_PERF_FAST_CHANNELS
          .fch_config = (struct scmi_perf_fch_config[]) {
             [MOD_SCMI_PERF_FAST_CHANNEL_LEVEL_SET] =
-                FCH_INIT(TC4_TRANSPORT_SCMI_PERF_FCH_TRAVIS_LEVEL_SET),
+                FCH_INIT(TC4_TRANSPORT_SCMI_PERF_FCH_GROUP_BIG_LEVEL_SET),
             [MOD_SCMI_PERF_FAST_CHANNEL_LIMIT_SET] =
-                FCH_INIT(TC4_TRANSPORT_SCMI_PERF_FCH_TRAVIS_LIMIT_SET),
+                FCH_INIT(TC4_TRANSPORT_SCMI_PERF_FCH_GROUP_BIG_LIMIT_SET),
             [MOD_SCMI_PERF_FAST_CHANNEL_LEVEL_GET] =
-                FCH_INIT(TC4_TRANSPORT_SCMI_PERF_FCH_TRAVIS_LEVEL_GET),
+                FCH_INIT(TC4_TRANSPORT_SCMI_PERF_FCH_GROUP_BIG_LEVEL_GET),
             [MOD_SCMI_PERF_FAST_CHANNEL_LIMIT_GET] =
-                FCH_INIT(TC4_TRANSPORT_SCMI_PERF_FCH_TRAVIS_LIMIT_GET),
+                FCH_INIT(TC4_TRANSPORT_SCMI_PERF_FCH_GROUP_BIG_LIMIT_GET),
         },
         .supports_fast_channels = true,
-#    endif
+#endif
         },
         [DVFS_ELEMENT_IDX_GPU] = {
-#    ifdef BUILD_HAS_SCMI_PERF_FAST_CHANNELS
+#ifdef BUILD_HAS_SCMI_PERF_FAST_CHANNELS
          .fch_config = (struct scmi_perf_fch_config[]) {
             [MOD_SCMI_PERF_FAST_CHANNEL_LEVEL_SET] =
                 FCH_INIT(TC4_TRANSPORT_SCMI_PERF_FCH_GPU_LEVEL_SET),
@@ -79,7 +79,7 @@ static const struct mod_scmi_perf_domain_config
                 FCH_INIT(TC4_TRANSPORT_SCMI_PERF_FCH_GPU_LIMIT_GET),
         },
         .supports_fast_channels = true,
-#    endif
+#endif
         },
     };
 
@@ -106,8 +106,7 @@ static const struct mod_scmi_plugin_config plugins_table[] = {
     },
 };
 #else
-static const struct mod_scmi_plugin_config plugins_table[] = {
-};
+static const struct mod_scmi_plugin_config plugins_table[] = {};
 #endif
 
 const struct fwk_module_config config_scmi_perf = {

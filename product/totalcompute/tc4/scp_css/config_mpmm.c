@@ -28,7 +28,7 @@ enum cpu_idx {
     CORE7_IDX
 };
 
-static struct mod_mpmm_pct_table nevis_pct[] = {
+static struct mod_mpmm_pct_table group_little_pct[] = {
     {
         .cores_online = 2,
         .default_perf_limit = 1844 * 1000000UL,
@@ -57,7 +57,7 @@ static struct mod_mpmm_pct_table nevis_pct[] = {
     },
 };
 
-static struct mod_mpmm_pct_table gelas_pct[] = {
+static struct mod_mpmm_pct_table group_mid_pct[] = {
     {
         .cores_online = 4,
         .default_perf_limit = 1419 * 1000000UL,
@@ -128,7 +128,7 @@ static struct mod_mpmm_pct_table gelas_pct[] = {
     },
 };
 
-static struct mod_mpmm_pct_table travis_pct[] = {
+static struct mod_mpmm_pct_table group_big_pct[] = {
     {
         .cores_online = 2,
         .default_perf_limit = 2176 * 1000000UL,
@@ -161,7 +161,7 @@ static struct mod_mpmm_pct_table travis_pct[] = {
     },
 };
 
-static const struct mod_mpmm_core_config nevis_core_config[] = {
+static const struct mod_mpmm_core_config group_little_core_config[] = {
     [0] = {
         .pd_id = FWK_ID_ELEMENT_INIT(FWK_MODULE_IDX_POWER_DOMAIN, CORE0_IDX),
         .mpmm_reg_base = SCP_MPMM_CORE_BASE(CORE0_IDX),
@@ -178,7 +178,7 @@ static const struct mod_mpmm_core_config nevis_core_config[] = {
     },
 };
 
-static const struct mod_mpmm_core_config gelas_core_config[] = {
+static const struct mod_mpmm_core_config group_mid_core_config[] = {
     [0] = {
         .pd_id = FWK_ID_ELEMENT_INIT(FWK_MODULE_IDX_POWER_DOMAIN, CORE2_IDX),
         .mpmm_reg_base = SCP_MPMM_CORE_BASE(CORE2_IDX),
@@ -209,7 +209,7 @@ static const struct mod_mpmm_core_config gelas_core_config[] = {
     },
 };
 
-static const struct mod_mpmm_core_config travis_core_config[] = {
+static const struct mod_mpmm_core_config group_big_core_config[] = {
     [0] = {
         .pd_id = FWK_ID_ELEMENT_INIT(FWK_MODULE_IDX_POWER_DOMAIN, CORE6_IDX),
         .mpmm_reg_base = SCP_MPMM_CORE_BASE(CORE6_IDX),
@@ -226,60 +226,60 @@ static const struct mod_mpmm_core_config travis_core_config[] = {
     },
 };
 
-static const struct mod_mpmm_domain_config nevis_domain_conf[] = {
+static const struct mod_mpmm_domain_config group_little_domain_conf[] = {
     [0] = {
         .perf_id = FWK_ID_ELEMENT_INIT(
-            FWK_MODULE_IDX_DVFS, DVFS_ELEMENT_IDX_NEVIS),
-        .pct = nevis_pct,
-        .pct_size = FWK_ARRAY_SIZE(nevis_pct),
+            FWK_MODULE_IDX_DVFS, DVFS_ELEMENT_IDX_GROUP_LITTLE),
+        .pct = group_little_pct,
+        .pct_size = FWK_ARRAY_SIZE(group_little_pct),
         .btc = 10,
         .num_threshold_counters = 3,
-        .core_config = nevis_core_config,
+        .core_config = group_little_core_config,
     },
     [1] = {0},
 };
 
-static const struct mod_mpmm_domain_config gelas_domain_conf[] = {
+static const struct mod_mpmm_domain_config group_mid_domain_conf[] = {
     [0] = {
         .perf_id = FWK_ID_ELEMENT_INIT(
-            FWK_MODULE_IDX_DVFS, DVFS_ELEMENT_IDX_GELAS),
-        .pct = gelas_pct,
-        .pct_size = FWK_ARRAY_SIZE(gelas_pct),
+            FWK_MODULE_IDX_DVFS, DVFS_ELEMENT_IDX_GROUP_MID),
+        .pct = group_mid_pct,
+        .pct_size = FWK_ARRAY_SIZE(group_mid_pct),
         .btc = 10,
         .num_threshold_counters = 3,
-        .core_config = gelas_core_config,
+        .core_config = group_mid_core_config,
     },
     [1] = {0},
 };
 
-static const struct mod_mpmm_domain_config travis_domain_conf[] = {
+static const struct mod_mpmm_domain_config group_big_domain_conf[] = {
     [0] = {
         .perf_id = FWK_ID_ELEMENT_INIT(
-            FWK_MODULE_IDX_DVFS, DVFS_ELEMENT_IDX_TRAVIS),
-        .pct = travis_pct,
-        .pct_size = FWK_ARRAY_SIZE(travis_pct),
+            FWK_MODULE_IDX_DVFS, DVFS_ELEMENT_IDX_GROUP_BIG),
+        .pct = group_big_pct,
+        .pct_size = FWK_ARRAY_SIZE(group_big_pct),
         .btc = 10,
         .num_threshold_counters = 3,
-        .core_config = travis_core_config,
+        .core_config = group_big_core_config,
     },
     [1] = {0},
 };
 
 static const struct fwk_element element_table[] = {
     [0] = {
-        .name = "MPMM_NEVIS_ELEM",
-        .sub_element_count = FWK_ARRAY_SIZE(nevis_core_config),
-        .data = nevis_domain_conf,
+        .name = "MPMM_GROUP_LITTLE_ELEM",
+        .sub_element_count = FWK_ARRAY_SIZE(group_little_core_config),
+        .data = group_little_domain_conf,
     },
     [1] = {
-        .name = "MPMM_GELAS_ELEM",
-        .sub_element_count = FWK_ARRAY_SIZE(gelas_core_config),
-        .data = gelas_domain_conf,
+        .name = "MPMM_GROUP_MID_ELEM",
+        .sub_element_count = FWK_ARRAY_SIZE(group_mid_core_config),
+        .data = group_mid_domain_conf,
     },
     [2] = {
-        .name = "MPMM_TRAVIS_ELEM",
-        .sub_element_count = FWK_ARRAY_SIZE(travis_core_config),
-        .data = travis_domain_conf,
+        .name = "MPMM_GROUP_BIG_ELEM",
+        .sub_element_count = FWK_ARRAY_SIZE(group_big_core_config),
+        .data = group_big_domain_conf,
     },
     [3] = { 0 },
 };

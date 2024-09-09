@@ -26,7 +26,7 @@ enum cpu_idx {
     CORE7_PD_IDX
 };
 
-static struct mod_tcop_pct_table nevis_pct[3] = {
+static struct mod_tcop_pct_table group_little_pct[3] = {
     {
         /*
          * Perf limit for 4 cores online.
@@ -47,7 +47,7 @@ static struct mod_tcop_pct_table nevis_pct[3] = {
     },
 };
 
-static const struct mod_tcop_core_config nevis_core_config[4] = {
+static const struct mod_tcop_core_config group_little_core_config[4] = {
     [0] = {
         .pd_id = FWK_ID_ELEMENT_INIT(FWK_MODULE_IDX_POWER_DOMAIN, CORE0_PD_IDX),
         .core_starts_online = true,
@@ -66,23 +66,23 @@ static const struct mod_tcop_core_config nevis_core_config[4] = {
     },
 };
 
-static const struct mod_tcop_domain_config nevis_domain_conf[2] = {
+static const struct mod_tcop_domain_config group_little_domain_conf[2] = {
     [0] = {
         .perf_id = FWK_ID_ELEMENT_INIT(
             FWK_MODULE_IDX_DVFS,
-            DVFS_ELEMENT_IDX_NEVIS),
-        .pct = nevis_pct,
-        .pct_size = FWK_ARRAY_SIZE(nevis_pct),
-        .core_config = nevis_core_config,
+            DVFS_ELEMENT_IDX_GROUP_LITTLE),
+        .pct = group_little_pct,
+        .pct_size = FWK_ARRAY_SIZE(group_little_pct),
+        .core_config = group_little_core_config,
     },
     [1] = { { 0 } },
 };
 
 static const struct fwk_element element_table[2] = {
     [0] = {
-        .name = "TCOP_NEVIS",
+        .name = "TCOP_" TC4_GROUP_LITTLE_NAME,
         .sub_element_count = 4,
-        .data = nevis_domain_conf,
+        .data = group_little_domain_conf,
     },
     [1] = { 0 },
 };

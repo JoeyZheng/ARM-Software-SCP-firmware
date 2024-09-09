@@ -17,12 +17,12 @@
 #include <fwk_module.h>
 #include <fwk_module_idx.h>
 
-static const struct mod_css_clock_rate rate_table_cpu_group_nevis[5] = {
+static const struct mod_css_clock_rate rate_table_cpu_group_little[5] = {
     {
         /* Super Underdrive */
         .rate = 768 * FWK_MHZ,
         .pll_rate = 768 * FWK_MHZ,
-        .clock_source = MOD_PIK_CLOCK_CLUSCLK_SOURCE_TC4_PLL0,
+        .clock_source = MOD_PIK_CLOCK_CLUSCLK_SOURCE_TC_PLL0,
         .clock_div_type = MOD_PIK_CLOCK_MSCLOCK_DIVIDER_DIV_EXT,
         .clock_div = 1,
         .clock_mod_numerator = 1,
@@ -32,7 +32,7 @@ static const struct mod_css_clock_rate rate_table_cpu_group_nevis[5] = {
         /* Underdrive */
         .rate = 1153 * FWK_MHZ,
         .pll_rate = 1153 * FWK_MHZ,
-        .clock_source = MOD_PIK_CLOCK_CLUSCLK_SOURCE_TC4_PLL0,
+        .clock_source = MOD_PIK_CLOCK_CLUSCLK_SOURCE_TC_PLL0,
         .clock_div_type = MOD_PIK_CLOCK_MSCLOCK_DIVIDER_DIV_EXT,
         .clock_div = 1,
         .clock_mod_numerator = 1,
@@ -42,7 +42,7 @@ static const struct mod_css_clock_rate rate_table_cpu_group_nevis[5] = {
         /* Nominal */
         .rate = 1537 * FWK_MHZ,
         .pll_rate = 1537 * FWK_MHZ,
-        .clock_source = MOD_PIK_CLOCK_CLUSCLK_SOURCE_TC4_PLL0,
+        .clock_source = MOD_PIK_CLOCK_CLUSCLK_SOURCE_TC_PLL0,
         .clock_div_type = MOD_PIK_CLOCK_MSCLOCK_DIVIDER_DIV_EXT,
         .clock_div = 1,
         .clock_mod_numerator = 1,
@@ -52,7 +52,7 @@ static const struct mod_css_clock_rate rate_table_cpu_group_nevis[5] = {
         /* Overdrive */
         .rate = 1844 * FWK_MHZ,
         .pll_rate = 1844 * FWK_MHZ,
-        .clock_source = MOD_PIK_CLOCK_CLUSCLK_SOURCE_TC4_PLL0,
+        .clock_source = MOD_PIK_CLOCK_CLUSCLK_SOURCE_TC_PLL0,
         .clock_div_type = MOD_PIK_CLOCK_MSCLOCK_DIVIDER_DIV_EXT,
         .clock_div = 1,
         .clock_mod_numerator = 1,
@@ -62,7 +62,7 @@ static const struct mod_css_clock_rate rate_table_cpu_group_nevis[5] = {
         /* Super Overdrive */
         .rate = 2152 * FWK_MHZ,
         .pll_rate = 2152 * FWK_MHZ,
-        .clock_source = MOD_PIK_CLOCK_CLUSCLK_SOURCE_TC4_PLL0,
+        .clock_source = MOD_PIK_CLOCK_CLUSCLK_SOURCE_TC_PLL0,
         .clock_div_type = MOD_PIK_CLOCK_MSCLOCK_DIVIDER_DIV_EXT,
         .clock_div = 1,
         .clock_mod_numerator = 1,
@@ -70,12 +70,12 @@ static const struct mod_css_clock_rate rate_table_cpu_group_nevis[5] = {
     },
 };
 
-static const struct mod_css_clock_rate rate_table_cpu_group_gelas[5] = {
+static const struct mod_css_clock_rate rate_table_cpu_group_mid[5] = {
     {
         /* Super Underdrive */
         .rate = 946 * FWK_MHZ,
         .pll_rate = 946 * FWK_MHZ,
-        .clock_source = MOD_PIK_CLOCK_CLUSCLK_SOURCE_TC4_PLL1,
+        .clock_source = MOD_PIK_CLOCK_CLUSCLK_SOURCE_TC_PLL1,
         .clock_div_type = MOD_PIK_CLOCK_MSCLOCK_DIVIDER_DIV_EXT,
         .clock_div = 1,
         .clock_mod_numerator = 1,
@@ -85,7 +85,7 @@ static const struct mod_css_clock_rate rate_table_cpu_group_gelas[5] = {
         /* Underdrive */
         .rate = 1419 * FWK_MHZ,
         .pll_rate = 1419 * FWK_MHZ,
-        .clock_source = MOD_PIK_CLOCK_CLUSCLK_SOURCE_TC4_PLL1,
+        .clock_source = MOD_PIK_CLOCK_CLUSCLK_SOURCE_TC_PLL1,
         .clock_div_type = MOD_PIK_CLOCK_MSCLOCK_DIVIDER_DIV_EXT,
         .clock_div = 1,
         .clock_mod_numerator = 1,
@@ -95,7 +95,7 @@ static const struct mod_css_clock_rate rate_table_cpu_group_gelas[5] = {
         /* Nominal */
         .rate = 1893 * FWK_MHZ,
         .pll_rate = 1893 * FWK_MHZ,
-        .clock_source = MOD_PIK_CLOCK_CLUSCLK_SOURCE_TC4_PLL1,
+        .clock_source = MOD_PIK_CLOCK_CLUSCLK_SOURCE_TC_PLL1,
         .clock_div_type = MOD_PIK_CLOCK_MSCLOCK_DIVIDER_DIV_EXT,
         .clock_div = 1,
         .clock_mod_numerator = 1,
@@ -105,7 +105,7 @@ static const struct mod_css_clock_rate rate_table_cpu_group_gelas[5] = {
         /* Overdrive */
         .rate = 2271 * FWK_MHZ,
         .pll_rate = 2271 * FWK_MHZ,
-        .clock_source = MOD_PIK_CLOCK_CLUSCLK_SOURCE_TC4_PLL1,
+        .clock_source = MOD_PIK_CLOCK_CLUSCLK_SOURCE_TC_PLL1,
         .clock_div_type = MOD_PIK_CLOCK_MSCLOCK_DIVIDER_DIV_EXT,
         .clock_div = 1,
         .clock_mod_numerator = 1,
@@ -115,7 +115,7 @@ static const struct mod_css_clock_rate rate_table_cpu_group_gelas[5] = {
         /* Super Overdrive */
         .rate = 2650 * FWK_MHZ,
         .pll_rate = 2650 * FWK_MHZ,
-        .clock_source = MOD_PIK_CLOCK_CLUSCLK_SOURCE_TC4_PLL1,
+        .clock_source = MOD_PIK_CLOCK_CLUSCLK_SOURCE_TC_PLL1,
         .clock_div_type = MOD_PIK_CLOCK_MSCLOCK_DIVIDER_DIV_EXT,
         .clock_div = 1,
         .clock_mod_numerator = 1,
@@ -123,12 +123,12 @@ static const struct mod_css_clock_rate rate_table_cpu_group_gelas[5] = {
     },
 };
 
-static const struct mod_css_clock_rate rate_table_cpu_group_travis[5] = {
+static const struct mod_css_clock_rate rate_table_cpu_group_big[5] = {
     {
         /* Super Underdrive */
         .rate = 1088 * FWK_MHZ,
         .pll_rate = 1088 * FWK_MHZ,
-        .clock_source = MOD_PIK_CLOCK_CLUSCLK_SOURCE_TC4_PLL2,
+        .clock_source = MOD_PIK_CLOCK_CLUSCLK_SOURCE_TC_PLL2,
         .clock_div_type = MOD_PIK_CLOCK_MSCLOCK_DIVIDER_DIV_EXT,
         .clock_div = 1,
         .clock_mod_numerator = 1,
@@ -138,7 +138,7 @@ static const struct mod_css_clock_rate rate_table_cpu_group_travis[5] = {
         /* Underdrive */
         .rate = 1632 * FWK_MHZ,
         .pll_rate = 1632 * FWK_MHZ,
-        .clock_source = MOD_PIK_CLOCK_CLUSCLK_SOURCE_TC4_PLL2,
+        .clock_source = MOD_PIK_CLOCK_CLUSCLK_SOURCE_TC_PLL2,
         .clock_div_type = MOD_PIK_CLOCK_MSCLOCK_DIVIDER_DIV_EXT,
         .clock_div = 1,
         .clock_mod_numerator = 1,
@@ -148,7 +148,7 @@ static const struct mod_css_clock_rate rate_table_cpu_group_travis[5] = {
         /* Nominal */
         .rate = 2176 * FWK_MHZ,
         .pll_rate = 2176 * FWK_MHZ,
-        .clock_source = MOD_PIK_CLOCK_CLUSCLK_SOURCE_TC4_PLL2,
+        .clock_source = MOD_PIK_CLOCK_CLUSCLK_SOURCE_TC_PLL2,
         .clock_div_type = MOD_PIK_CLOCK_MSCLOCK_DIVIDER_DIV_EXT,
         .clock_div = 1,
         .clock_mod_numerator = 1,
@@ -158,7 +158,7 @@ static const struct mod_css_clock_rate rate_table_cpu_group_travis[5] = {
         /* Overdrive */
         .rate = 2612 * FWK_MHZ,
         .pll_rate = 2612 * FWK_MHZ,
-        .clock_source = MOD_PIK_CLOCK_CLUSCLK_SOURCE_TC4_PLL2,
+        .clock_source = MOD_PIK_CLOCK_CLUSCLK_SOURCE_TC_PLL2,
         .clock_div_type = MOD_PIK_CLOCK_MSCLOCK_DIVIDER_DIV_EXT,
         .clock_div = 1,
         .clock_mod_numerator = 1,
@@ -168,7 +168,7 @@ static const struct mod_css_clock_rate rate_table_cpu_group_travis[5] = {
         /* Super Overdrive */
         .rate = 3047 * FWK_MHZ,
         .pll_rate = 3047 * FWK_MHZ,
-        .clock_source = MOD_PIK_CLOCK_CLUSCLK_SOURCE_TC4_PLL2,
+        .clock_source = MOD_PIK_CLOCK_CLUSCLK_SOURCE_TC_PLL2,
         .clock_div_type = MOD_PIK_CLOCK_MSCLOCK_DIVIDER_DIV_EXT,
         .clock_div = 1,
         .clock_mod_numerator = 1,
@@ -176,19 +176,19 @@ static const struct mod_css_clock_rate rate_table_cpu_group_travis[5] = {
     },
 };
 
-static const fwk_id_t member_table_cpu_group_nevis[2] = {
+static const fwk_id_t member_table_cpu_group_little[2] = {
     FWK_ID_ELEMENT_INIT(FWK_MODULE_IDX_PIK_CLOCK, CLOCK_PIK_IDX_CLUS0_CPU0),
     FWK_ID_ELEMENT_INIT(FWK_MODULE_IDX_PIK_CLOCK, CLOCK_PIK_IDX_CLUS0_CPU1),
 };
 
-static const fwk_id_t member_table_cpu_group_gelas[4] = {
+static const fwk_id_t member_table_cpu_group_mid[4] = {
     FWK_ID_ELEMENT_INIT(FWK_MODULE_IDX_PIK_CLOCK, CLOCK_PIK_IDX_CLUS0_CPU2),
     FWK_ID_ELEMENT_INIT(FWK_MODULE_IDX_PIK_CLOCK, CLOCK_PIK_IDX_CLUS0_CPU3),
     FWK_ID_ELEMENT_INIT(FWK_MODULE_IDX_PIK_CLOCK, CLOCK_PIK_IDX_CLUS0_CPU4),
     FWK_ID_ELEMENT_INIT(FWK_MODULE_IDX_PIK_CLOCK, CLOCK_PIK_IDX_CLUS0_CPU5),
 };
 
-static const fwk_id_t member_table_cpu_group_travis[2] = {
+static const fwk_id_t member_table_cpu_group_big[2] = {
     FWK_ID_ELEMENT_INIT(FWK_MODULE_IDX_PIK_CLOCK, CLOCK_PIK_IDX_CLUS0_CPU6),
     FWK_ID_ELEMENT_INIT(FWK_MODULE_IDX_PIK_CLOCK, CLOCK_PIK_IDX_CLUS0_CPU7),
 };
@@ -199,23 +199,23 @@ static const fwk_id_t member_table_dpu[1] = {
 
 static const struct fwk_element css_clock_element_table[
     CLOCK_CSS_IDX_COUNT + 1] = {
-    [CLOCK_CSS_IDX_CPU_GROUP_NEVIS] =
+    [CLOCK_CSS_IDX_CPU_GROUP_GROUP_LITTLE] =
         {
-            .name = "CPU_GROUP_NEVIS",
+            .name = "CPU_GROUP_LITTLE",
             .data = &((struct mod_css_clock_dev_config){
                 .clock_type = MOD_CSS_CLOCK_TYPE_INDEXED,
-                .rate_table = rate_table_cpu_group_nevis,
-                .rate_count = FWK_ARRAY_SIZE(rate_table_cpu_group_nevis),
+                .rate_table = rate_table_cpu_group_little,
+                .rate_count = FWK_ARRAY_SIZE(rate_table_cpu_group_little),
                 .clock_switching_source =
-                    MOD_PIK_CLOCK_CLUSCLK_SOURCE_TC4_PLL0,
+                    MOD_PIK_CLOCK_CLUSCLK_SOURCE_TC_PLL0,
                 .pll_id = FWK_ID_ELEMENT_INIT(
                     FWK_MODULE_IDX_SYSTEM_PLL,
-                    CLOCK_PLL_IDX_CPU_NEVIS),
+                    CLOCK_PLL_IDX_CPU_GROUP_LITTLE),
                 .pll_api_id = FWK_ID_API_INIT(
                     FWK_MODULE_IDX_SYSTEM_PLL,
                     MOD_SYSTEM_PLL_API_TYPE_DEFAULT),
-                .member_table = member_table_cpu_group_nevis,
-                .member_count = FWK_ARRAY_SIZE(member_table_cpu_group_nevis),
+                .member_table = member_table_cpu_group_little,
+                .member_count = FWK_ARRAY_SIZE(member_table_cpu_group_little),
                 .member_api_id = FWK_ID_API_INIT(
                     FWK_MODULE_IDX_PIK_CLOCK,
                     MOD_PIK_CLOCK_API_TYPE_CSS),
@@ -223,23 +223,23 @@ static const struct fwk_element css_clock_element_table[
                 .modulation_supported = true,
             }),
         },
-    [CLOCK_CSS_IDX_CPU_GROUP_GELAS] =
+    [CLOCK_CSS_IDX_CPU_GROUP_GROUP_MID] =
         {
-            .name = "CPU_GROUP_GELAS",
+            .name = "CPU_GROUP_MID",
             .data = &((struct mod_css_clock_dev_config){
                 .clock_type = MOD_CSS_CLOCK_TYPE_INDEXED,
-                .rate_table = rate_table_cpu_group_gelas,
-                .rate_count = FWK_ARRAY_SIZE(rate_table_cpu_group_gelas),
+                .rate_table = rate_table_cpu_group_mid,
+                .rate_count = FWK_ARRAY_SIZE(rate_table_cpu_group_mid),
                 .clock_switching_source =
-                    MOD_PIK_CLOCK_CLUSCLK_SOURCE_TC4_PLL1,
+                    MOD_PIK_CLOCK_CLUSCLK_SOURCE_TC_PLL1,
                 .pll_id = FWK_ID_ELEMENT_INIT(
                     FWK_MODULE_IDX_SYSTEM_PLL,
-                    CLOCK_PLL_IDX_CPU_GELAS),
+                    CLOCK_PLL_IDX_CPU_GROUP_MID),
                 .pll_api_id = FWK_ID_API_INIT(
                     FWK_MODULE_IDX_SYSTEM_PLL,
                     MOD_SYSTEM_PLL_API_TYPE_DEFAULT),
-                .member_table = member_table_cpu_group_gelas,
-                .member_count = FWK_ARRAY_SIZE(member_table_cpu_group_gelas),
+                .member_table = member_table_cpu_group_mid,
+                .member_count = FWK_ARRAY_SIZE(member_table_cpu_group_mid),
                 .member_api_id = FWK_ID_API_INIT(
                     FWK_MODULE_IDX_PIK_CLOCK,
                     MOD_PIK_CLOCK_API_TYPE_CSS),
@@ -247,24 +247,24 @@ static const struct fwk_element css_clock_element_table[
                 .modulation_supported = true,
             }),
         },
-    [CLOCK_CSS_IDX_CPU_GROUP_TRAVIS] =
+    [CLOCK_CSS_IDX_CPU_GROUP_GROUP_BIG] =
         {
-            .name = "CPU_GROUP_TRAVIS",
+            .name = "CPU_GROUP_BIG",
             .data = &((struct mod_css_clock_dev_config){
                 .clock_type = MOD_CSS_CLOCK_TYPE_INDEXED,
-                .rate_table = rate_table_cpu_group_travis,
-                .rate_count = FWK_ARRAY_SIZE(rate_table_cpu_group_travis),
+                .rate_table = rate_table_cpu_group_big,
+                .rate_count = FWK_ARRAY_SIZE(rate_table_cpu_group_big),
                 .clock_switching_source =
-                    MOD_PIK_CLOCK_CLUSCLK_SOURCE_TC4_PLL2,
+                    MOD_PIK_CLOCK_CLUSCLK_SOURCE_TC_PLL2,
                 .pll_id = FWK_ID_ELEMENT_INIT(
                     FWK_MODULE_IDX_SYSTEM_PLL,
-                    CLOCK_PLL_IDX_CPU_TRAVIS),
+                    CLOCK_PLL_IDX_CPU_GROUP_BIG),
                 .pll_api_id = FWK_ID_API_INIT(
                     FWK_MODULE_IDX_SYSTEM_PLL,
                     MOD_SYSTEM_PLL_API_TYPE_DEFAULT),
-                .member_table = member_table_cpu_group_travis,
+                .member_table = member_table_cpu_group_big,
                 .member_count =
-                    FWK_ARRAY_SIZE(member_table_cpu_group_travis),
+                    FWK_ARRAY_SIZE(member_table_cpu_group_big),
                 .member_api_id = FWK_ID_API_INIT(
                     FWK_MODULE_IDX_PIK_CLOCK,
                     MOD_PIK_CLOCK_API_TYPE_CSS),
