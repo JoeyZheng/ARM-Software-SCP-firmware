@@ -82,7 +82,7 @@ static int psam_nhregion_deinit(struct noc_s3_psam_reg *reg, uint64_t region)
         return FWK_E_RANGE;
     }
 
-    FWK_TRACE(MOD_NAME "Removing Region: %lld region at: %p", region, reg);
+    FWK_LOG_LOCAL(MOD_NAME "Removing Region: %lld region at: %p", region, reg);
 
     /* Clear base address */
     reg->nh_region[region].cfg1_cfg0 = 0;
@@ -118,13 +118,13 @@ static int psam_nhregion_init(
         return FWK_E_PARAM;
     }
 
-    FWK_TRACE(
+    FWK_LOG_LOCAL(
         MOD_NAME "Programming Region: %" PRId64 " region at: %p", region, reg);
-    FWK_TRACE(
+    FWK_LOG_LOCAL(
         MOD_NAME "Address: Start: 0x%" PRIx64 ", End: 0x%" PRIx64 "",
         base_addr,
         end_addr);
-    FWK_TRACE(MOD_NAME "Target: 0x%" PRIx64 "", target_id);
+    FWK_LOG_LOCAL(MOD_NAME "Target: 0x%" PRIx64 "", target_id);
 
     NOC_S3_DISABLE_REGION(reg->nh_region[region].cfg1_cfg0);
 

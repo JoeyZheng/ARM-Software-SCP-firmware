@@ -179,7 +179,8 @@ static int fill_discovery_data(
 
     node_type = GET_NODE_TYPE(domain_node->node_type);
     node_id = GET_NODE_ID(domain_node->node_type);
-    FWK_TRACE(MOD_NAME "Found Node Type: %d, Node ID: %d", node_type, node_id);
+    FWK_LOG_LOCAL(
+        MOD_NAME "Found Node Type: %d, Node ID: %d", node_type, node_id);
     switch (stage) {
     /*
      * For each node type, the Node IDs are numbered sequentially. That
