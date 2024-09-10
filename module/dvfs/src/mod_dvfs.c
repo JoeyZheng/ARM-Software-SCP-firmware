@@ -97,6 +97,9 @@ struct mod_dvfs_domain_ctx {
     /* Context Domain ID */
     fwk_id_t domain_id;
 
+    /* Bound ID of requester to this domain */
+    fwk_id_t bound_id;
+
     /* Domain configuration */
     const struct mod_dvfs_domain_config *config;
 
@@ -677,6 +680,28 @@ static int dvfs_complete(
     if ((req_status == FWK_SUCCESS) && (ctx->state != DVFS_DOMAIN_GET_OPP)) {
         dvfs_ctx.scmi_perf_updated_api->notify_level_updated(
             ctx->domain_id, ctx->request.cookie, ctx->current_opp.level);
+
+#ifdef BUILD_HAS_MOD_PERF_CONTROLLER
+        struct fwk_event hal_set_opp_event = {
+            .id = FWK_ID_EVENT_INIT(
+                FWK_MODULE_IDX_PERF_CONTROLLER,
+                MOD_PERF_CONTROLLER_EVENT_IDX_DRIVER_RESPONSE),
+            .target_id = ctx->bound_id,
+        };
+
+        struct mod_perf_controller_event_drv_resp_params *resp_params =
+            (struct mod_perf_controller_event_drv_resp_params *)
+                hal_set_opp_event.params;
+
+        resp_params->performance_level = ctx->current_opp.level;
+        resp_params->cookie = ctx->request.cookie;
+
+        status = fwk_put_event(&hal_set_opp_event);
+
+        if (status != FWK_SUCCESS) {
+            return status;
+        }
+#endif
     }
 
     /*
@@ -1184,6 +1209,9 @@ static int dvfs_process_bind_request(
     fwk_id_t api_id,
     const void **api)
 {
+#ifdef BUILD_HAS_MOD_PERF_CONTROLLER
+    struct mod_dvfs_domain_ctx *domain_ctx;
+#endif
     int status;
     enum mod_dvfs_api_idx api_idx;
 
@@ -1201,6 +1229,8 @@ static int dvfs_process_bind_request(
 #ifdef BUILD_HAS_MOD_PERF_CONTROLLER
     case MOD_DVFS_API_IDX_CNTRL_DRV:
         *api = &dvfs_driver_api;
+        domain_ctx = get_domain_ctx(target_id);
+        domain_ctx->bound_id = source_id;
         status = FWK_SUCCESS;
         break;
 #endif
