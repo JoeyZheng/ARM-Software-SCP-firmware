@@ -53,6 +53,9 @@ struct mod_perf_controller_cluster_ctx {
 
     /*! Number of cores in the cluster. */
     unsigned int core_count;
+
+    /*! Notification count. */
+    unsigned int notification_count;
 };
 
 /*!

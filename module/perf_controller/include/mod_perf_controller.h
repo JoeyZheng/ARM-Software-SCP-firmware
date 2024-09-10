@@ -114,20 +114,58 @@ struct mod_perf_controller_cluster_config {
 };
 
 /*!
- * \brief Performance controller API IDs
+ * \brief Performance controller API IDs.
  */
 enum mod_perf_controller_api_idx {
-    /*! Index for the core performance adjustments API */
+    /*! Index for the cluster performance adjustments API. */
     MOD_PERF_CONTROLLER_CLUSTER_PERF_API = 0U,
 
-    /*! Index for the cluster power adjustments API */
+    /*! Index for the core power adjustments API */
     MOD_PERF_CONTROLLER_CORE_POWER_API,
 
-    /*! Index for the controller apply performance granted API*/
+    /*! Index for the controller apply performance granted API. */
     MOD_PERF_CONTROLLER_APPLY_PERFORMANCE_GRANTED_API,
 
-    /*! Number of APIs */
+    /*! Number of APIs. */
     MOD_PERF_CONTROLLER_API_COUNT
+};
+
+/*!
+ * \brief Performance controller events IDs.
+ */
+enum mod_perf_controller_event_idx {
+    /*! Driver response event. */
+    MOD_PERF_CONTROLLER_EVENT_IDX_DRIVER_RESPONSE,
+
+    /*! Number of events. */
+    MOD_PERF_CONTROLLER_EVENT_IDX_COUNT,
+};
+
+enum mod_perf_controller_notification_idx {
+    /*! Notification for performance set. */
+    MOD_PERF_CONTROLLER_NOTIFICATION_IDX_PERF_SET,
+
+    /*! Number of events. */
+    MOD_PERF_CONTROLLER_NOTIFICATION_IDX_COUNT,
+};
+
+/*!
+ * \brief Performance controller driver response event parameters.
+ */
+struct mod_perf_controller_event_drv_resp_params {
+    /*! Performance level. */
+    uint32_t performance_level;
+
+    /*! HAL request specific cookie. */
+    uint32_t cookie;
+};
+
+/*!
+ * \brief Performance controller core notification.
+ */
+struct mod_perf_controller_notification_params {
+    /*! Performance_level. */
+    uint32_t performance_level;
 };
 
 /*!

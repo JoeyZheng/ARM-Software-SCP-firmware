@@ -10,6 +10,7 @@
 #include "scp_unity.h"
 #include "unity.h"
 
+#include <Mockfwk_module.h>
 #include <Mockmod_perf_controller_extra.h>
 #include <config_mod_perf_controller.h>
 #include <internal/perf_controller.h>
@@ -154,6 +155,7 @@ void test_set_limit_success(void)
          cluster_idx++) {
         cluster_ctx = &perf_controller_ctx.cluster_ctx_table[cluster_idx];
         for (core_idx = 0U; core_idx < cluster_ctx->core_count; core_idx++) {
+            fwk_module_is_valid_sub_element_id_ExpectAnyArgsAndReturn(true);
             core_id = FWK_ID_SUB_ELEMENT(
                 FWK_MODULE_IDX_PERF_CONTROLLER, cluster_idx, core_idx);
             core_ctx = &perf_controller_ctx.cluster_ctx_table[cluster_idx]

@@ -24,6 +24,8 @@ set(MODULE_UT_SRC ${CMAKE_CURRENT_LIST_DIR})
 set(MODULE_UT_INC ${CMAKE_CURRENT_LIST_DIR})
 set(MODULE_UT_MOCK_SRC ${CMAKE_CURRENT_LIST_DIR}/mocks)
 
+list(APPEND MOCK_REPLACEMENTS fwk_module)
+
 list(APPEND OTHER_MODULE_INC ${SCP_ROOT}/interface/power_management)
 
 include(${SCP_ROOT}/unit_test/module_common.cmake)

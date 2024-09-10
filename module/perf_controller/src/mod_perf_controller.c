@@ -12,6 +12,7 @@
 #include <fwk_assert.h>
 #include <fwk_mm.h>
 #include <fwk_module.h>
+#include <fwk_notification.h>
 
 static struct mod_perf_controller_ctx perf_controller_ctx;
 
@@ -106,6 +107,10 @@ static int mod_perf_controller_set_limit(fwk_id_t core_id, uint32_t power_limit)
     unsigned int cluster_idx;
     struct mod_perf_controller_core_ctx *core_ctx;
 
+    if (!fwk_module_is_valid_sub_element_id(core_id)) {
+        return FWK_E_PARAM;
+    }
+
     cluster_idx = fwk_id_get_element_idx(core_id);
     core_idx = fwk_id_get_sub_element_idx(core_id);
 
@@ -191,6 +196,49 @@ static int mod_perf_controller_element_init(
     return FWK_SUCCESS;
 }
 
+#ifdef BUILD_HAS_NOTIFICATION
+static int mod_perf_controller_process_event(
+    const struct fwk_event *event,
+    struct fwk_event *resp_event)
+{
+    fwk_id_t cluster_id;
+    unsigned int event_idx;
+    struct mod_perf_controller_cluster_ctx *cluster_ctx;
+    struct mod_perf_controller_event_drv_resp_params *drv_response_params;
+    struct mod_perf_controller_notification_params *notification_params;
+
+    event_idx = fwk_id_get_event_idx(event->id);
+
+    if (event_idx == MOD_PERF_CONTROLLER_EVENT_IDX_DRIVER_RESPONSE) {
+        cluster_id = event->target_id;
+        cluster_ctx =
+            &perf_controller_ctx
+                 .cluster_ctx_table[fwk_id_get_element_idx(cluster_id)];
+
+        drv_response_params =
+            (struct mod_perf_controller_event_drv_resp_params *)event->params;
+
+        struct fwk_event outbound_notification = {
+            .id = FWK_ID_NOTIFICATION_INIT(
+                FWK_MODULE_IDX_PERF_CONTROLLER,
+                MOD_PERF_CONTROLLER_NOTIFICATION_IDX_PERF_SET),
+            .source_id = cluster_id,
+        };
+
+        notification_params = (struct mod_perf_controller_notification_params *)
+                                  outbound_notification.params;
+
+        notification_params->performance_level =
+            drv_response_params->performance_level;
+
+        return fwk_notification_notify(
+            &outbound_notification, &cluster_ctx->notification_count);
+    }
+
+    return FWK_SUCCESS;
+}
+#endif
+
 static int mod_perf_controller_bind(fwk_id_t id, unsigned int round)
 {
     int status;
@@ -257,8 +305,15 @@ static int mod_perf_controller_process_bind_request(
 const struct fwk_module module_perf_controller = {
     .type = FWK_MODULE_TYPE_HAL,
     .api_count = (uint32_t)MOD_PERF_CONTROLLER_API_COUNT,
+    .event_count = (uint32_t)MOD_PERF_CONTROLLER_EVENT_IDX_COUNT,
+#ifdef BUILD_HAS_NOTIFICATION
+    .notification_count = (uint32_t)MOD_PERF_CONTROLLER_NOTIFICATION_IDX_COUNT,
+#endif
     .init = mod_perf_controller_init,
     .element_init = mod_perf_controller_element_init,
     .bind = mod_perf_controller_bind,
     .process_bind_request = mod_perf_controller_process_bind_request,
+#ifdef BUILD_HAS_NOTIFICATION
+    .process_event = mod_perf_controller_process_event,
+#endif
 };
