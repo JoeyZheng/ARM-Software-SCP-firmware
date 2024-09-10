@@ -1,6 +1,6 @@
 /*
  * Arm SCP/MCP Software
- * Copyright (c) 2023, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2023-2024, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -10,7 +10,7 @@
 #include "fwk_mm.h"
 #include "fwk_module_idx.h"
 #include "internal/scmi_power_capping_protocol.h"
-#include "mod_power_allocator.h"
+#include "mod_power_capping.h"
 #include "mod_power_meter.h"
 
 #ifdef BUILD_HAS_SCMI_POWER_CAPPING_FAST_CHANNELS_COMMANDS
@@ -20,7 +20,7 @@
 
 #include <fwk_module.h>
 
-struct mod_scmi_power_capping_power_apis power_management_apis;
+static struct mod_scmi_power_capping_power_apis power_management_apis;
 
 #ifdef BUILD_HAS_SCMI_POWER_CAPPING_FAST_CHANNELS_COMMANDS
 static const fwk_id_t mod_scmi_power_capping_event_id_fch_callback =
@@ -35,10 +35,9 @@ static int scmi_power_capping_power_api_bind(
     int status;
 
     status = fwk_module_bind(
-        FWK_ID_MODULE(FWK_MODULE_IDX_POWER_ALLOCATOR),
-        FWK_ID_API(
-            FWK_MODULE_IDX_POWER_ALLOCATOR, MOD_POWER_ALLOCATOR_API_IDX_CAP),
-        &(power_apis->power_allocator_api));
+        FWK_ID_MODULE(FWK_MODULE_IDX_POWER_CAPPING),
+        FWK_ID_API(FWK_MODULE_IDX_POWER_CAPPING, MOD_POWER_CAPPING_API_IDX_CAP),
+        &(power_apis->power_capping_api));
 
     if (status != FWK_SUCCESS) {
         return status;

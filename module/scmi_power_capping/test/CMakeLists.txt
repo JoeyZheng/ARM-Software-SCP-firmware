@@ -13,7 +13,7 @@ endif()
 set(MODULE_SRC ${MODULE_ROOT}/${TEST_MODULE}/src)
 set(MODULE_INC ${MODULE_ROOT}/${TEST_MODULE}/include)
 list(APPEND OTHER_MODULE_INC ${MODULE_ROOT}/scmi/include)
-list(APPEND OTHER_MODULE_INC ${MODULE_ROOT}/power_allocator/include)
+list(APPEND OTHER_MODULE_INC ${MODULE_ROOT}/power_capping/include)
 list(APPEND OTHER_MODULE_INC ${MODULE_ROOT}/power_meter/include)
 list(APPEND OTHER_MODULE_INC ${MODULE_ROOT}/power_coordinator/include)
 set(MODULE_UT_SRC ${CMAKE_CURRENT_LIST_DIR})
@@ -72,7 +72,7 @@ target_compile_definitions(${UNIT_TEST_TARGET} PUBLIC "BUILD_HAS_SCMI_POWER_CAPP
 target_sources(${UNIT_TEST_TARGET}
     PRIVATE
         ${MODULE_UT_MOCK_SRC}/Mockmod_scmi_extra.c
-        ${MODULE_UT_MOCK_SRC}/Mockmod_power_allocator_extra.c
+        ${MODULE_UT_MOCK_SRC}/Mockmod_power_capping_extra.c
         ${MODULE_UT_MOCK_SRC}/Mockmod_power_coordinator_extra.c
         ${MODULE_UT_MOCK_SRC}/Mockmod_power_meter_extra.c)
 
@@ -107,7 +107,7 @@ target_compile_definitions(${UNIT_TEST_TARGET} PUBLIC "BUILD_HAS_MOD_RESOURCE_PE
 target_sources(${UNIT_TEST_TARGET}
     PRIVATE
         ${MODULE_UT_MOCK_SRC}/Mockmod_scmi_extra.c
-        ${MODULE_UT_MOCK_SRC}/Mockmod_power_allocator_extra.c
+        ${MODULE_UT_MOCK_SRC}/Mockmod_power_capping_extra.c
         ${MODULE_UT_MOCK_SRC}/Mockmod_power_coordinator_extra.c
         ${MODULE_UT_MOCK_SRC}/Mockmod_power_meter_extra.c
         ${MODULE_UT_MOCK_SRC}/Mockmod_resource_perms_extra.c)
@@ -142,7 +142,7 @@ target_compile_definitions(${UNIT_TEST_TARGET} PUBLIC "BUILD_HAS_SCMI_NOTIFICATI
 target_sources(${UNIT_TEST_TARGET}
     PRIVATE
         ${MODULE_UT_MOCK_SRC}/Mockmod_scmi_extra.c
-        ${MODULE_UT_MOCK_SRC}/Mockmod_power_allocator_extra.c
+        ${MODULE_UT_MOCK_SRC}/Mockmod_power_capping_extra.c
         ${MODULE_UT_MOCK_SRC}/Mockmod_power_coordinator_extra.c
         ${MODULE_UT_MOCK_SRC}/Mockmod_power_meter_extra.c)
 
@@ -176,7 +176,7 @@ target_compile_definitions(${UNIT_TEST_TARGET} PUBLIC "BUILD_HAS_SCMI_POWER_CAPP
 
 target_sources(${UNIT_TEST_TARGET}
     PRIVATE
-        ${MODULE_UT_MOCK_SRC}/Mockmod_power_allocator_extra.c
+        ${MODULE_UT_MOCK_SRC}/Mockmod_power_capping_extra.c
         ${MODULE_UT_MOCK_SRC}/Mockmod_power_coordinator_extra.c
         ${MODULE_UT_MOCK_SRC}/Mockmod_transport_extra.c)
 
@@ -209,6 +209,6 @@ target_compile_definitions(${UNIT_TEST_TARGET} PUBLIC "BUILD_HAS_SCMI_POWER_CAPP
 
 target_sources(${UNIT_TEST_TARGET}
     PRIVATE
-        ${MODULE_UT_MOCK_SRC}/Mockmod_power_allocator_extra.c
+        ${MODULE_UT_MOCK_SRC}/Mockmod_power_capping_extra.c
         ${MODULE_UT_MOCK_SRC}/Mockmod_power_coordinator_extra.c
         ${MODULE_UT_MOCK_SRC}/Mockmod_transport_extra.c)

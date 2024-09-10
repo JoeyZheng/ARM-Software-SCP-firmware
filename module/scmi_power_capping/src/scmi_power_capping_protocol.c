@@ -10,7 +10,6 @@
 #include "internal/scmi_power_capping.h"
 #include "internal/scmi_power_capping_fast_channels.h"
 #include "internal/scmi_power_capping_protocol.h"
-#include "mod_power_allocator.h"
 #include "mod_power_coordinator.h"
 #include "mod_power_meter.h"
 
@@ -112,8 +111,9 @@ static struct {
 
 static const fwk_id_t pcapping_protocol_cap_notification =
     FWK_ID_NOTIFICATION_INIT(
-        FWK_MODULE_IDX_POWER_ALLOCATOR,
-        MOD_POWER_ALLOCATOR_NOTIFICATION_IDX_CAP_CHANGED);
+        FWK_MODULE_IDX_POWER_CAPPING,
+        MOD_POWER_CAPPING_NOTIFICATION_IDX_CAP_CHANGE);
+
 #ifdef BUILD_HAS_SCMI_NOTIFICATIONS
 static const fwk_id_t pcapping_protocol_pai_notification =
     FWK_ID_NOTIFICATION_INIT(
@@ -236,7 +236,7 @@ static bool scmi_power_capping_is_msg_implemented(
 static struct mod_scmi_power_capping_domain_context *get_domain_ctx(
     unsigned int domain_idx)
 {
-    return &pcapping_protocol_ctx.power_capping_domain_ctx_table[domain_idx];
+    return &(pcapping_protocol_ctx.power_capping_domain_ctx_table[domain_idx]);
 }
 
 /*
@@ -544,10 +544,10 @@ static int scmi_power_capping_cap_get_handler(
 
     ctx = get_domain_ctx(parameters->domain_id);
 
-    status = pcapping_protocol_ctx.power_management_apis->power_allocator_api
-                 ->get_cap(
-                     ctx->config->power_allocator_domain_id,
-                     &return_values.power_cap);
+    status =
+        pcapping_protocol_ctx.power_management_apis->power_capping_api
+            ->get_applied_cap(
+                ctx->config->power_capping_domain_id, &return_values.power_cap);
 
     if (status != FWK_SUCCESS) {
         return scmi_power_capping_respond_error(service_id, SCMI_GENERIC_ERROR);
@@ -616,10 +616,10 @@ static int scmi_power_capping_cap_set_handler(
     }
 #endif
 
-    domain_id = ctx->config->power_allocator_domain_id;
+    domain_id = ctx->config->power_capping_domain_id;
 
-    status = pcapping_protocol_ctx.power_management_apis->power_allocator_api
-                 ->set_cap(domain_id, parameters->power_cap);
+    status = pcapping_protocol_ctx.power_management_apis->power_capping_api
+                 ->request_cap(domain_id, parameters->power_cap);
 
     if (status == FWK_PENDING) {
         ctx->cap_pending_service_id = service_id;
@@ -1055,7 +1055,7 @@ int pcapping_protocol_start(fwk_id_t id)
 
     status = fwk_notification_subscribe(
         pcapping_protocol_cap_notification,
-        FWK_ID_MODULE(FWK_MODULE_IDX_POWER_ALLOCATOR),
+        domain_ctx->config->power_capping_domain_id,
         id);
 
 #ifdef BUILD_HAS_SCMI_NOTIFICATIONS
@@ -1167,9 +1167,9 @@ int pcapping_protocol_process_cap_pai_notify_event(
     payload.domain_id = event_params->domain_idx;
     ctx = get_domain_ctx(event_params->domain_idx);
 
-    status =
-        pcapping_protocol_ctx.power_management_apis->power_allocator_api
-            ->get_cap(ctx->config->power_allocator_domain_id, &(payload.cap));
+    status = pcapping_protocol_ctx.power_management_apis->power_capping_api
+                 ->get_applied_cap(
+                     ctx->config->power_capping_domain_id, &(payload.cap));
 
     if (status != FWK_SUCCESS) {
         return status;

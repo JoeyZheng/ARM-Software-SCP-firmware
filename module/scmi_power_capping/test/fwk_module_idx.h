@@ -1,6 +1,6 @@
 /*
  * Arm SCP/MCP Software
- * Copyright (c) 2023, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2023-2024, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -14,7 +14,6 @@ enum fwk_module_idx {
     FWK_MODULE_IDX_SCMI,
     FWK_MODULE_IDX_POWER_CAPPING,
     FWK_MODULE_IDX_SCMI_POWER_CAPPING,
-    FWK_MODULE_IDX_POWER_ALLOCATOR,
     FWK_MODULE_IDX_POWER_COORDINATOR,
     FWK_MODULE_IDX_POWER_METER,
 #ifdef BUILD_HAS_FAST_CHANNELS

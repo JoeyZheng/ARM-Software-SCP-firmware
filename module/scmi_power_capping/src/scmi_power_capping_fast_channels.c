@@ -1,6 +1,6 @@
 /*
  * Arm SCP/MCP Software
- * Copyright (c) 2023, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2023-2024, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -47,12 +47,11 @@ struct {
     enum mod_transport_fch_interrupt_type interrupt_type;
 } pcapping_fast_channel_global_ctx = { .callback_registered = false };
 
-static fwk_id_t pcapping_fast_channel_get_power_allocator_id(
-    uint32_t domain_idx)
+static fwk_id_t pcapping_fast_channel_get_power_capping_id(uint32_t domain_idx)
 {
     return pcapping_fast_channel_global_ctx
         .power_capping_domain_ctx_table[domain_idx]
-        .config->power_allocator_domain_id;
+        .config->power_capping_domain_id;
 }
 
 static fwk_id_t pcapping_fast_channel_get_power_coordinator_id(
@@ -93,8 +92,8 @@ static void pcapping_fast_channel_get_cap(
     int status;
 
     status = pcapping_fast_channel_global_ctx.power_management_apis
-                 ->power_allocator_api->get_cap(
-                     pcapping_fast_channel_get_power_allocator_id(domain_idx),
+                 ->power_capping_api->get_applied_cap(
+                     pcapping_fast_channel_get_power_capping_id(domain_idx),
                      fch_addr);
     if (status != FWK_SUCCESS) {
         FWK_LOG_ERR("[SCMI-Power-Capping-Fast-Channel] Error getting cap.");
@@ -108,8 +107,8 @@ static void pcapping_fast_channel_set_cap(
     int status;
 
     status = pcapping_fast_channel_global_ctx.power_management_apis
-                 ->power_allocator_api->set_cap(
-                     pcapping_fast_channel_get_power_allocator_id(domain_idx),
+                 ->power_capping_api->request_cap(
+                     pcapping_fast_channel_get_power_capping_id(domain_idx),
                      *fch_addr);
     if ((status != FWK_SUCCESS) && (status != FWK_PENDING)) {
         FWK_LOG_ERR("[SCMI-Power-Capping-Fast-Channel] Error setting cap.");

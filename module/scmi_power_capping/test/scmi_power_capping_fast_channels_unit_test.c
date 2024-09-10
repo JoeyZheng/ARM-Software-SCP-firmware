@@ -10,7 +10,7 @@
 
 #include <Mockfwk_mm.h>
 #include <Mockfwk_module.h>
-#include <Mockmod_power_allocator_extra.h>
+#include <Mockmod_power_capping_extra.h>
 #include <Mockmod_power_coordinator_extra.h>
 #include <Mockmod_transport_extra.h>
 #include <internal/Mockfwk_core_internal.h>
@@ -70,8 +70,8 @@ static const struct mod_scmi_power_capping_domain_config
         .power_cap_step = 1,
 #endif
         .fch_config = fch_config,
-        .power_allocator_domain_id =
-            FWK_ID_ELEMENT_INIT(FWK_MODULE_IDX_POWER_ALLOCATOR, __LINE__),
+        .power_capping_domain_id =
+            FWK_ID_ELEMENT_INIT(FWK_MODULE_IDX_POWER_CAPPING, __LINE__),
         .power_coordinator_domain_id =
             FWK_ID_ELEMENT_INIT(FWK_MODULE_IDX_POWER_COORDINATOR, __LINE__),
     };
@@ -84,9 +84,9 @@ static const struct mod_transport_fast_channels_api transport_fch_api = {
     .transport_fch_register_callback = transport_fch_register_callback,
 };
 
-static const struct mod_power_allocator_api power_allocator_api = {
-    .get_cap = get_cap,
-    .set_cap = set_cap,
+static const struct mod_power_capping_api power_capping_api = {
+    .get_applied_cap = get_applied_cap,
+    .request_cap = request_cap,
 };
 
 static const struct mod_power_coordinator_api power_coordinator_api = {
@@ -95,7 +95,7 @@ static const struct mod_power_coordinator_api power_coordinator_api = {
 };
 
 static const struct mod_scmi_power_capping_power_apis power_management_apis = {
-    .power_allocator_api = &power_allocator_api,
+    .power_capping_api = &power_capping_api,
     .power_coordinator_api = &power_coordinator_api,
 };
 
@@ -167,13 +167,13 @@ void utest_pcapping_fast_channel_process_command_cap_get(void)
         (FAKE_POWER_CAPPING_IDX_1 * MOD_SCMI_PCAPPING_FAST_CHANNEL_COUNT) +
         MOD_SCMI_PCAPPING_FAST_CHANNEL_CAP_GET;
 
-    get_cap_ExpectWithArrayAndReturn(
-        scmi_power_capping_default_config.power_allocator_domain_id,
+    get_applied_cap_ExpectWithArrayAndReturn(
+        scmi_power_capping_default_config.power_capping_domain_id,
         &cap,
         sizeof(cap),
         FWK_SUCCESS);
-    get_cap_IgnoreArg_cap();
-    get_cap_ReturnMemThruPtr_cap(&cap, sizeof(cap));
+    get_applied_cap_IgnoreArg_cap();
+    get_applied_cap_ReturnMemThruPtr_cap(&cap, sizeof(cap));
 
     pcapping_fast_channel_process_command(fch_idx);
     TEST_ASSERT_EQUAL(local_fast_channel_memory_emulation, cap);
@@ -189,8 +189,8 @@ void utest_pcapping_fast_channel_process_command_cap_set(void)
 
     local_fast_channel_memory_emulation = __LINE__;
 
-    set_cap_ExpectAndReturn(
-        scmi_power_capping_default_config.power_allocator_domain_id,
+    request_cap_ExpectAndReturn(
+        scmi_power_capping_default_config.power_capping_domain_id,
         local_fast_channel_memory_emulation,
         FWK_SUCCESS);
     pcapping_fast_channel_process_command(fch_idx);
@@ -244,12 +244,12 @@ void utest_pcapping_fast_channel_process_event_hw_interrupt(void)
     pcapping_fast_channel_global_ctx.interrupt_type =
         MOD_TRANSPORT_FCH_INTERRUPT_TYPE_HW;
 
-    get_cap_ExpectWithArrayAndReturn(
-        scmi_power_capping_default_config.power_allocator_domain_id,
+    get_applied_cap_ExpectWithArrayAndReturn(
+        scmi_power_capping_default_config.power_capping_domain_id,
         NULL,
         0,
         FWK_SUCCESS);
-    get_cap_IgnoreArg_cap();
+    get_applied_cap_IgnoreArg_cap();
 
     status = pcapping_fast_channel_process_event(&event);
 
@@ -273,16 +273,16 @@ void utest_pcapping_fast_channel_process_event_timer_interrupt(void)
             fch_idx - (domain_idx * MOD_SCMI_PCAPPING_FAST_CHANNEL_COUNT);
         switch (cmd_handler_index) {
         case MOD_SCMI_PCAPPING_FAST_CHANNEL_CAP_GET:
-            get_cap_ExpectWithArrayAndReturn(
-                scmi_power_capping_default_config.power_allocator_domain_id,
+            get_applied_cap_ExpectWithArrayAndReturn(
+                scmi_power_capping_default_config.power_capping_domain_id,
                 NULL,
                 0,
                 FWK_SUCCESS);
-            get_cap_IgnoreArg_cap();
+            get_applied_cap_IgnoreArg_cap();
             break;
         case MOD_SCMI_PCAPPING_FAST_CHANNEL_CAP_SET:
-            set_cap_ExpectAndReturn(
-                scmi_power_capping_default_config.power_allocator_domain_id,
+            request_cap_ExpectAndReturn(
+                scmi_power_capping_default_config.power_capping_domain_id,
                 local_fast_channel_memory_emulation,
                 FWK_SUCCESS);
             break;

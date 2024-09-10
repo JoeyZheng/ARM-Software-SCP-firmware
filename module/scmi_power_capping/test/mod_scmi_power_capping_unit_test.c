@@ -11,7 +11,7 @@
 #include <Mockfwk_id.h>
 #include <Mockfwk_mm.h>
 #include <Mockfwk_module.h>
-#include <Mockmod_power_allocator_extra.h>
+#include <Mockmod_power_capping_extra.h>
 #include <Mockscmi_power_capping_protocol.h>
 
 #include <stdarg.h>
@@ -120,10 +120,9 @@ void utest_scmi_power_capping_bind_success(void)
     fwk_id_t bind_id = FWK_ID_MODULE_INIT(FWK_MODULE_IDX_SCMI_POWER_CAPPING);
     fwk_id_is_type_ExpectAndReturn(bind_id, FWK_ID_TYPE_ELEMENT, false);
     fwk_module_bind_ExpectAndReturn(
-        FWK_ID_MODULE(FWK_MODULE_IDX_POWER_ALLOCATOR),
-        FWK_ID_API(
-            FWK_MODULE_IDX_POWER_ALLOCATOR, MOD_POWER_ALLOCATOR_API_IDX_CAP),
-        &(power_management_apis.power_allocator_api),
+        FWK_ID_MODULE(FWK_MODULE_IDX_POWER_CAPPING),
+        FWK_ID_API(FWK_MODULE_IDX_POWER_CAPPING, MOD_POWER_CAPPING_API_IDX_CAP),
+        &(power_management_apis.power_capping_api),
         FWK_SUCCESS);
 
     fwk_module_bind_ExpectAndReturn(
@@ -162,10 +161,9 @@ void utest_scmi_power_capping_bind_failure(void)
     fwk_id_t bind_id = FWK_ID_MODULE_INIT(FWK_MODULE_IDX_SCMI_POWER_CAPPING);
     fwk_id_is_type_ExpectAndReturn(bind_id, FWK_ID_TYPE_ELEMENT, false);
     fwk_module_bind_ExpectAndReturn(
-        FWK_ID_MODULE(FWK_MODULE_IDX_POWER_ALLOCATOR),
-        FWK_ID_API(
-            FWK_MODULE_IDX_POWER_ALLOCATOR, MOD_POWER_ALLOCATOR_API_IDX_CAP),
-        &(power_management_apis.power_allocator_api),
+        FWK_ID_MODULE(FWK_MODULE_IDX_POWER_CAPPING),
+        FWK_ID_API(FWK_MODULE_IDX_POWER_CAPPING, MOD_POWER_CAPPING_API_IDX_CAP),
+        &(power_management_apis.power_capping_api),
         FWK_SUCCESS);
 
     fwk_module_bind_ExpectAndReturn(

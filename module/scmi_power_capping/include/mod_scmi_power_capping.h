@@ -1,6 +1,6 @@
 /*
  * Arm SCP/MCP Software
- * Copyright (c) 2023, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2023-2024, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -165,9 +165,9 @@ struct mod_scmi_power_capping_domain_config {
     const struct scmi_pcapping_fch_config *fch_config;
 #endif
     /*!
-     * \brief ID of the corresponding power allocator domain.
+     * \brief ID of the corresponding power capping domain.
      */
-    fwk_id_t power_allocator_domain_id;
+    fwk_id_t power_capping_domain_id;
 
     /*!
      * \brief ID of the corresponding power coordinator domain.

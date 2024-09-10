@@ -1,6 +1,6 @@
 /*
  * Arm SCP/MCP Software
- * Copyright (c) 2023, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2023-2024, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -11,7 +11,7 @@
 #ifndef INTERNAL_SCMI_POWER_CAPPING_H
 #define INTERNAL_SCMI_POWER_CAPPING_H
 
-#include "mod_power_allocator.h"
+#include "mod_power_capping.h"
 #include "mod_power_coordinator.h"
 #include "mod_power_meter.h"
 #include "mod_scmi_power_capping.h"
@@ -49,8 +49,8 @@ enum scmi_power_capping_event_idx {
  * \brief Power management related APIs.
  */
 struct mod_scmi_power_capping_power_apis {
-    /* Power allocator API */
-    const struct mod_power_allocator_api *power_allocator_api;
+    /* Power capping API */
+    const struct mod_power_capping_api *power_capping_api;
 
     /* Power coordinator API */
     const struct mod_power_coordinator_api *power_coordinator_api;
