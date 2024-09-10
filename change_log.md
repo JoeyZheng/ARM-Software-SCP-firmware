@@ -3,6 +3,94 @@ SCP-firmware Change Log
 
 Copyright (c) 2019-2024, Arm Limited and Contributors. All rights reserved.
 
+SCP-firmware - version 2.15
+============================
+
+New features
+------------
+
+- Documentation:
+    - Update the threat model
+
+- Arch:
+    - Support arm Cortex-M23, M33 and M85
+
+- Framework:
+    - Add tracing mechanism
+
+- Interface:
+    - power_management: Add new power management interface
+
+- Modules:
+    - smcf: Allow mode settings for individual MLI and validate the settings
+    - smcf: Add MLI enable and disable API
+    - ppu: Support DSU PPU dynamic mode and core locking
+    - power_domain: Add multiple off states
+    - scmi_sensor: Support scmi v3.0 features
+    - cmn_cyprus: Introduce the driver
+    - scmi_power_domain: Enable agent logical domain view
+    - metrics_analyzer: Introduce new module
+    - perf_controller: Introduce new module
+    - noc_s3: Introduce new module
+
+- Platforms:
+   - neoverse-rd: add io block interface
+   - totalcompute: GPU and DPU ppu enablement
+   - Enable fast channel for multiple platforms
+   - rdfremont/dvfs_handler: Introduce new driver
+
+- Tools:
+    - CI: Enable gitlab CI
+    - cppcheck: Support version v2.8
+
+
+Changed
+-------
+
+- Documentation:
+    - code owners: Update maintainers list
+
+- Framwork:
+    - Rename FWK_TRACE to FWK_LOG_LOCAL
+
+- Modules:
+    - scmi: Combine the common scmi message validation
+    - pl011: Only start printing after initialization
+
+- Platforms:
+    - tc1: Platform removal
+    - rdfremont: Update the LCP memory size to 32KB DTCM and 64KB ITCM
+    - rdv3: Rename rdfremont to rdv3
+
+- tools:
+    - Removal of tools that are no longer in use
+
+Resolved issues
+---------------
+
+- Documentation:
+    - Remove deprecated sections in build_system.md
+
+- Arch:
+    - Fix build problem for arm cortex-M33
+
+- Framework:
+    - Module state updated correctly
+
+- Modules:
+    - gtimer: Corrects the definition of the CNTControlBase register
+    - sc_pll: Fix the lock timeout and error handling
+    - Multiple unit-tests compiler errors
+    - mpmm: Fix MPMMCR register write
+
+
+- Platforms:
+    - optee: Fix build issues
+    - rdfremont: Fix AP-LCP MHU base address
+    - juno: Fix scmi clock permissions
+
+
+
 SCP-firmware - version 2.14
 ============================
 

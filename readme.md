@@ -1,4 +1,4 @@
-SCP-firmware - version 2.14
+SCP-firmware - version 2.15
 ===========================
 
 Copyright (c) 2011-2024, Arm Limited. All rights reserved.
