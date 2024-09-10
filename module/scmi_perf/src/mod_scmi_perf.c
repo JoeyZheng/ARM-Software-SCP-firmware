@@ -456,7 +456,8 @@ static int scmi_perf_bind(fwk_id_t id, unsigned int round)
     status = fwk_module_bind(
         FWK_ID_MODULE(FWK_MODULE_IDX_PERF_CONTROLLER),
         FWK_ID_API(
-            FWK_MODULE_IDX_PERF_CONTROLLER, MOD_PERF_CONTROLLER_PERF_API),
+            FWK_MODULE_IDX_PERF_CONTROLLER,
+            MOD_PERF_CONTROLLER_CLUSTER_PERF_API),
         &scmi_perf_ctx.perf_controller_api);
 
     if (status != FWK_SUCCESS) {
