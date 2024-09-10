@@ -124,7 +124,9 @@ static void mpmm_core_check_enabled(
 /* Set the MPMM threshold for a specific core. */
 static void mpmm_core_set_threshold(struct mod_mpmm_core_ctx *core_ctx)
 {
-    core_ctx->mpmm->MPMMCR |=
+    core_ctx->mpmm->MPMMCR =
+        (core_ctx->mpmm->MPMMCR &
+         ~(MPMM_MPMMCR_GEAR_MASK << MPMM_MPMMCR_GEAR_POS)) |
         ((core_ctx->threshold & MPMM_MPMMCR_GEAR_MASK) << MPMM_MPMMCR_GEAR_POS);
 }
 
