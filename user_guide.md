@@ -12,7 +12,7 @@ Running SCP-firmware on Fixed Virtual Platform (FVP) models requires at least
 12GB of available memory. A multicore CPU is highly recommended to maintain
 smooth operation.
 
-This software has been tested on Ubuntu 20.04 LTS (64-bit).
+This software has been tested on Ubuntu 22.04 LTS (64-bit).
 
 ## Prerequisites
 
@@ -93,6 +93,7 @@ sudo apt install \
     build-essential \
     doxygen \
     git \
+    libssl-dev \
     python3 \
     python3-pip \
     device-tree-compiler \
@@ -106,7 +107,7 @@ the cmake_readme.md file.
 For the FVP prerequisites:
 
 ```sh
-sudo apt install xterm
+sudo apt install xterm telnet
 ```
 
 For code style checks in Python scripts (`pip3` needs to be installed):
@@ -228,26 +229,15 @@ The sysroot path of the GNU Arm Embedded
 Toolchain must be passed under the `SYSROOT` environment variable.
 
 ```sh
-make -f Makefile.cmake PRODUCT=totalcompute/tc2 \
+make -f Makefile.cmake PRODUCT=totalcompute/tc2 TOOLCHAIN=Clang\
     LLVM_SYSROOT_CC=/path/to/sysroot
 ```
 
-The Compiler-RT builtins for baremetal are usually placed in:
+set `LLVM_SYSROOT_CC` to point directly to the `arm-none-eabi-gcc` compiler,
+which acts as a proxy for the necessary toolchain components.
 
 ```sh
-/path/to/clang/resource/dir/lib/baremetal
-```
-
-For a LLVM 13 installation on Ubuntu this could be:
-
-```sh
-/usr/lib/llvm-13/lib/clang/13.0.1/lib/baremetal
-```
-
-You can discover the resource dir of your Clang 13 installation by running:
-
-```sh
-clang-13 -print-resource-dir
+LLVM_SYSROOT_CC=arm-none-eabi-gcc
 ```
 
 ## Running the SCP-firmware on Total Compute (TC) platforms
