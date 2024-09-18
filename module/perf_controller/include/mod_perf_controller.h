@@ -94,31 +94,23 @@ struct mod_perf_controller_power_model_api {
         fwk_id_t model_id,
         uint32_t power,
         uint32_t *performance_level);
+
+    /*!
+     * \brief Converts from performance level to the corresponding
+     *        power limit.
+     *
+     * \param model_id Power model identifier.
+     * \param power Performance level.
+     * \param[out] Power limit.
+     *
+     * \retval ::FWK_SUCCESS If the call is successful.
+     * \return One of the standard framework error codes.
+     */
+    int (*performance_to_power)(
+        fwk_id_t model_id,
+        uint32_t performance_level,
+        uint32_t *power_limit);
 };
-
-#ifdef BUILD_HAS_NOTIFICATION
-/*!
- * \brief Perf controller Notification indices.
- */
-enum mod_perf_controller_notification_index {
-    /* DVFS Complete */
-    MOD_PERF_CONTROLLER_NOTIFICATION_IDX_DVFS_COMPLETE,
-
-    /* Total number of perf controllers notification. */
-    MOD_PERF_CONTROLLER_NOTIFICATION_COUNT,
-};
-
-/*!
- * \brief Perf controller Notification identifiers.
- */
-#    ifdef BUILD_HAS_MOD_PERF_CONTROLLER
-/*! Identifier of the power state transition notification */
-static const fwk_id_t mod_perf_controller_notification_dvfs_complete =
-    FWK_ID_NOTIFICATION_INIT(
-        FWK_MODULE_IDX_PERF_CONTROLLER,
-        MOD_PERF_CONTROLLER_NOTIFICATION_IDX_DVFS_COMPLETE);
-#    endif /* BUILD_HAS_MOD_PERF_CONTROLLER */
-#endif /* BUILD_HAS_NOTIFICATION */
 
 struct mod_perf_controller_cluster_config {
     /*! Module or element identifier of the performance driver. */
@@ -155,25 +147,6 @@ enum mod_perf_controller_api_idx {
 };
 
 /*!
- * \brief Performance controller events IDs.
- */
-enum mod_perf_controller_event_idx {
-    /*! Driver response event. */
-    MOD_PERF_CONTROLLER_EVENT_IDX_DRIVER_RESPONSE,
-
-    /*! Number of events. */
-    MOD_PERF_CONTROLLER_EVENT_IDX_COUNT,
-};
-
-enum mod_perf_controller_notification_idx {
-    /*! Notification for performance set. */
-    MOD_PERF_CONTROLLER_NOTIFICATION_IDX_PERF_SET,
-
-    /*! Number of events. */
-    MOD_PERF_CONTROLLER_NOTIFICATION_IDX_COUNT,
-};
-
-/*!
  * \brief Performance controller driver response event parameters.
  */
 struct mod_perf_controller_event_drv_resp_params {
@@ -185,12 +158,36 @@ struct mod_perf_controller_event_drv_resp_params {
 };
 
 /*!
+ * \brief Performance controller events IDs.
+ */
+enum mod_perf_controller_event_idx {
+    /*! Driver response event. */
+    MOD_PERF_CONTROLLER_EVENT_IDX_DRIVER_RESPONSE,
+
+    /*! Number of events. */
+    MOD_PERF_CONTROLLER_EVENT_IDX_COUNT,
+};
+
+#ifdef BUILD_HAS_NOTIFICATION
+enum mod_perf_controller_notification_idx {
+    /*! Notification for performance set. */
+    MOD_PERF_CONTROLLER_NOTIFICATION_IDX_PERF_SET,
+
+    /*! Number of events. */
+    MOD_PERF_CONTROLLER_NOTIFICATION_IDX_COUNT,
+};
+
+/*!
  * \brief Performance controller core notification.
  */
 struct mod_perf_controller_notification_params {
     /*! Performance_level. */
     uint32_t performance_level;
+
+    /*! Power Limit. */
+    uint32_t power_limit;
 };
+#endif
 
 /*!
  * \}

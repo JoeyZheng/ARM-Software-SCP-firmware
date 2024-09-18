@@ -19,5 +19,5 @@ target_sources(
 
 target_link_libraries(${SCP_MODULE_TARGET} PRIVATE module-clock module-psu
                                                    module-timer
-                                                   module-scmi-perf
-                                                   module-perf-controller)
+                                                   module-perf-controller
+                                                   module-scmi-perf)
