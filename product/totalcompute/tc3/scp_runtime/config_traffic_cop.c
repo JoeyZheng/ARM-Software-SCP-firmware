@@ -8,6 +8,7 @@
 #include "scp_mmap.h"
 #include "tc3_dvfs.h"
 #include "tc3_timer.h"
+#include "tc_core.h"
 
 #include <mod_traffic_cop.h>
 
@@ -70,7 +71,7 @@ static const struct mod_tcop_domain_config hayes_domain_conf[2] = {
     [0] = {
         .perf_id = FWK_ID_ELEMENT_INIT(
             FWK_MODULE_IDX_DVFS,
-            DVFS_ELEMENT_IDX_CORTEX_A520),
+            DVFS_ELEMENT_IDX_GROUP_LITTLE),
         .pct = hayes_pct,
         .pct_size = FWK_ARRAY_SIZE(hayes_pct),
         .core_config = hayes_core_config,
@@ -80,7 +81,7 @@ static const struct mod_tcop_domain_config hayes_domain_conf[2] = {
 
 static const struct fwk_element element_table[2] = {
     [0] = {
-        .name = "TCOP_CORTEX_A520",
+        .name = "TCOP_" TC_GROUP_LITTLE_NAME,
         .sub_element_count = 4,
         .data = hayes_domain_conf,
     },

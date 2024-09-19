@@ -7,6 +7,7 @@
 
 #include "clock_soc.h"
 #include "config_power_domain.h"
+#include "tc_core.h"
 
 #include <mod_clock.h>
 #include <mod_css_clock.h>
@@ -20,13 +21,13 @@
 #include <fwk_module_idx.h>
 
 static const struct fwk_element clock_dev_desc_table[2] = {
-    [CLOCK_IDX_CPU_GROUP_CORTEX_A520] =
+    [CLOCK_IDX_CPU_GROUP_GROUP_LITTLE] =
         {
-            .name = "CPU_GROUP_CORTEX_A520",
+            .name = "CPU_GROUP_" TC_GROUP_LITTLE_NAME,
             .data = &((struct mod_clock_dev_config){
                 .driver_id = FWK_ID_ELEMENT_INIT(
                     FWK_MODULE_IDX_CSS_CLOCK,
-                    CLOCK_CSS_IDX_CPU_GROUP_CORTEX_A520),
+                    CLOCK_CSS_IDX_CPU_GROUP_GROUP_LITTLE),
                 .api_id = FWK_ID_API_INIT(
                     FWK_MODULE_IDX_CSS_CLOCK,
                     MOD_CSS_CLOCK_API_TYPE_CLOCK),

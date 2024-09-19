@@ -6,6 +6,7 @@
  */
 
 #include "clock_soc.h"
+#include "tc_core.h"
 
 #include <mod_css_clock.h>
 #include <mod_pik_clock.h>
@@ -17,7 +18,7 @@
 #include <fwk_module.h>
 #include <fwk_module_idx.h>
 
-static const struct mod_css_clock_rate rate_table_cpu_group_cortex_a520[5] = {
+static const struct mod_css_clock_rate rate_table_cpu_group_group_little[5] = {
     {
         /* Super Underdrive */
         .rate = 768 * FWK_MHZ,
@@ -70,7 +71,7 @@ static const struct mod_css_clock_rate rate_table_cpu_group_cortex_a520[5] = {
     },
 };
 
-static const struct mod_css_clock_rate rate_table_cpu_group_chaberton[5] = {
+static const struct mod_css_clock_rate rate_table_cpu_group_group_mid[5] = {
     {
         /* Super Underdrive */
         .rate = 946 * FWK_MHZ,
@@ -123,7 +124,7 @@ static const struct mod_css_clock_rate rate_table_cpu_group_chaberton[5] = {
     },
 };
 
-static const struct mod_css_clock_rate rate_table_cpu_group_blackhawk[5] = {
+static const struct mod_css_clock_rate rate_table_cpu_group_group_big[5] = {
     {
         /* Super Underdrive */
         .rate = 1088 * FWK_MHZ,
@@ -176,19 +177,19 @@ static const struct mod_css_clock_rate rate_table_cpu_group_blackhawk[5] = {
     },
 };
 
-static const fwk_id_t member_table_cpu_group_cortex_a520[2] = {
+static const fwk_id_t member_table_cpu_group_group_little[2] = {
     FWK_ID_ELEMENT_INIT(FWK_MODULE_IDX_PIK_CLOCK, CLOCK_PIK_IDX_CLUS0_CPU0),
     FWK_ID_ELEMENT_INIT(FWK_MODULE_IDX_PIK_CLOCK, CLOCK_PIK_IDX_CLUS0_CPU1),
 };
 
-static const fwk_id_t member_table_cpu_group_chaberton[4] = {
+static const fwk_id_t member_table_cpu_group_group_mid[4] = {
     FWK_ID_ELEMENT_INIT(FWK_MODULE_IDX_PIK_CLOCK, CLOCK_PIK_IDX_CLUS0_CPU2),
     FWK_ID_ELEMENT_INIT(FWK_MODULE_IDX_PIK_CLOCK, CLOCK_PIK_IDX_CLUS0_CPU3),
     FWK_ID_ELEMENT_INIT(FWK_MODULE_IDX_PIK_CLOCK, CLOCK_PIK_IDX_CLUS0_CPU4),
     FWK_ID_ELEMENT_INIT(FWK_MODULE_IDX_PIK_CLOCK, CLOCK_PIK_IDX_CLUS0_CPU5),
 };
 
-static const fwk_id_t member_table_cpu_group_blackhawk[2] = {
+static const fwk_id_t member_table_cpu_group_group_big[2] = {
     FWK_ID_ELEMENT_INIT(FWK_MODULE_IDX_PIK_CLOCK, CLOCK_PIK_IDX_CLUS0_CPU6),
     FWK_ID_ELEMENT_INIT(FWK_MODULE_IDX_PIK_CLOCK, CLOCK_PIK_IDX_CLUS0_CPU7),
 };
@@ -199,23 +200,23 @@ static const fwk_id_t member_table_dpu[1] = {
 
 static const struct fwk_element css_clock_element_table[
     CLOCK_CSS_IDX_COUNT + 1] = {
-    [CLOCK_CSS_IDX_CPU_GROUP_CORTEX_A520] =
+    [CLOCK_CSS_IDX_CPU_GROUP_GROUP_LITTLE] =
         {
-            .name = "CPU_GROUP_CORTEX_A520",
+            .name = "CPU_GROUP_" TC_GROUP_LITTLE_NAME,
             .data = &((struct mod_css_clock_dev_config){
                 .clock_type = MOD_CSS_CLOCK_TYPE_INDEXED,
-                .rate_table = rate_table_cpu_group_cortex_a520,
-                .rate_count = FWK_ARRAY_SIZE(rate_table_cpu_group_cortex_a520),
+                .rate_table = rate_table_cpu_group_group_little,
+                .rate_count = FWK_ARRAY_SIZE(rate_table_cpu_group_group_little),
                 .clock_switching_source =
                     MOD_PIK_CLOCK_CLUSCLK_SOURCE_TC3_PLL0,
                 .pll_id = FWK_ID_ELEMENT_INIT(
                     FWK_MODULE_IDX_SYSTEM_PLL,
-                    CLOCK_PLL_IDX_CPU_CORTEX_A520),
+                    CLOCK_PLL_IDX_CPU_GROUP_LITTLE),
                 .pll_api_id = FWK_ID_API_INIT(
                     FWK_MODULE_IDX_SYSTEM_PLL,
                     MOD_SYSTEM_PLL_API_TYPE_DEFAULT),
-                .member_table = member_table_cpu_group_cortex_a520,
-                .member_count = FWK_ARRAY_SIZE(member_table_cpu_group_cortex_a520),
+                .member_table = member_table_cpu_group_group_little,
+                .member_count = FWK_ARRAY_SIZE(member_table_cpu_group_group_little),
                 .member_api_id = FWK_ID_API_INIT(
                     FWK_MODULE_IDX_PIK_CLOCK,
                     MOD_PIK_CLOCK_API_TYPE_CSS),
@@ -223,23 +224,23 @@ static const struct fwk_element css_clock_element_table[
                 .modulation_supported = true,
             }),
         },
-    [CLOCK_CSS_IDX_CPU_GROUP_CHABERTON] =
+    [CLOCK_CSS_IDX_CPU_GROUP_GROUP_MID] =
         {
-            .name = "CPU_GROUP_CHABERTON",
+            .name = "CPU_GROUP_" TC_GROUP_MID_NAME,
             .data = &((struct mod_css_clock_dev_config){
                 .clock_type = MOD_CSS_CLOCK_TYPE_INDEXED,
-                .rate_table = rate_table_cpu_group_chaberton,
-                .rate_count = FWK_ARRAY_SIZE(rate_table_cpu_group_chaberton),
+                .rate_table = rate_table_cpu_group_group_mid,
+                .rate_count = FWK_ARRAY_SIZE(rate_table_cpu_group_group_mid),
                 .clock_switching_source =
                     MOD_PIK_CLOCK_CLUSCLK_SOURCE_TC3_PLL1,
                 .pll_id = FWK_ID_ELEMENT_INIT(
                     FWK_MODULE_IDX_SYSTEM_PLL,
-                    CLOCK_PLL_IDX_CPU_CHABERTON),
+                    CLOCK_PLL_IDX_CPU_GROUP_MID),
                 .pll_api_id = FWK_ID_API_INIT(
                     FWK_MODULE_IDX_SYSTEM_PLL,
                     MOD_SYSTEM_PLL_API_TYPE_DEFAULT),
-                .member_table = member_table_cpu_group_chaberton,
-                .member_count = FWK_ARRAY_SIZE(member_table_cpu_group_chaberton),
+                .member_table = member_table_cpu_group_group_mid,
+                .member_count = FWK_ARRAY_SIZE(member_table_cpu_group_group_mid),
                 .member_api_id = FWK_ID_API_INIT(
                     FWK_MODULE_IDX_PIK_CLOCK,
                     MOD_PIK_CLOCK_API_TYPE_CSS),
@@ -247,24 +248,24 @@ static const struct fwk_element css_clock_element_table[
                 .modulation_supported = true,
             }),
         },
-    [CLOCK_CSS_IDX_CPU_GROUP_BLACKHAWK] =
+    [CLOCK_CSS_IDX_CPU_GROUP_GROUP_BIG] =
         {
-            .name = "CPU_GROUP_BLACKHAWK",
+            .name = "CPU_GROUP_" TC_GROUP_BIG_NAME,
             .data = &((struct mod_css_clock_dev_config){
                 .clock_type = MOD_CSS_CLOCK_TYPE_INDEXED,
-                .rate_table = rate_table_cpu_group_blackhawk,
-                .rate_count = FWK_ARRAY_SIZE(rate_table_cpu_group_blackhawk),
+                .rate_table = rate_table_cpu_group_group_big,
+                .rate_count = FWK_ARRAY_SIZE(rate_table_cpu_group_group_big),
                 .clock_switching_source =
                     MOD_PIK_CLOCK_CLUSCLK_SOURCE_TC3_PLL2,
                 .pll_id = FWK_ID_ELEMENT_INIT(
                     FWK_MODULE_IDX_SYSTEM_PLL,
-                    CLOCK_PLL_IDX_CPU_BLACKHAWK),
+                    CLOCK_PLL_IDX_CPU_GROUP_BIG),
                 .pll_api_id = FWK_ID_API_INIT(
                     FWK_MODULE_IDX_SYSTEM_PLL,
                     MOD_SYSTEM_PLL_API_TYPE_DEFAULT),
-                .member_table = member_table_cpu_group_blackhawk,
+                .member_table = member_table_cpu_group_group_big,
                 .member_count =
-                    FWK_ARRAY_SIZE(member_table_cpu_group_blackhawk),
+                    FWK_ARRAY_SIZE(member_table_cpu_group_group_big),
                 .member_api_id = FWK_ID_API_INIT(
                     FWK_MODULE_IDX_PIK_CLOCK,
                     MOD_PIK_CLOCK_API_TYPE_CSS),

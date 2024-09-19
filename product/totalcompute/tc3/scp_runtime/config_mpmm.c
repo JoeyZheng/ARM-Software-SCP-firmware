@@ -9,6 +9,7 @@
 #include "tc3_dvfs.h"
 #include "tc3_timer.h"
 #include "tc_amu.h"
+#include "tc_core.h"
 
 #include <mod_amu_mmap.h>
 #include <mod_mpmm.h>
@@ -28,7 +29,7 @@ enum cpu_idx {
     CORE7_IDX
 };
 
-static struct mod_mpmm_pct_table cortex_a520_pct[] = {
+static struct mod_mpmm_pct_table group_little_pct[] = {
     {
         .cores_online = 2,
         .default_perf_limit = 2152 * 1000000UL,
@@ -57,7 +58,7 @@ static struct mod_mpmm_pct_table cortex_a520_pct[] = {
     },
 };
 
-static struct mod_mpmm_pct_table chaberton_pct[] = {
+static struct mod_mpmm_pct_table group_mid_pct[] = {
     {
         .cores_online = 4,
         .default_perf_limit = 1419 * 1000000UL,
@@ -128,7 +129,7 @@ static struct mod_mpmm_pct_table chaberton_pct[] = {
     },
 };
 
-static struct mod_mpmm_pct_table blackhawk_pct[] = {
+static struct mod_mpmm_pct_table group_big_pct[] = {
     {
         .cores_online = 2,
         .default_perf_limit = 2612 * 1000000UL,
@@ -161,7 +162,7 @@ static struct mod_mpmm_pct_table blackhawk_pct[] = {
     },
 };
 
-static const struct mod_mpmm_core_config cortex_a520_core_config[] = {
+static const struct mod_mpmm_core_config group_little_core_config[] = {
     {
         .pd_id = FWK_ID_ELEMENT_INIT(FWK_MODULE_IDX_POWER_DOMAIN, CORE0_IDX),
         .mpmm_reg_base = SCP_MPMM_CORE_BASE(CORE0_IDX),
@@ -182,7 +183,7 @@ static const struct mod_mpmm_core_config cortex_a520_core_config[] = {
     },
 };
 
-static const struct mod_mpmm_core_config chaberton_core_config[] = {
+static const struct mod_mpmm_core_config group_mid_core_config[] = {
     {
         .pd_id = FWK_ID_ELEMENT_INIT(FWK_MODULE_IDX_POWER_DOMAIN, CORE2_IDX),
         .mpmm_reg_base = SCP_MPMM_CORE_BASE(CORE2_IDX),
@@ -221,7 +222,7 @@ static const struct mod_mpmm_core_config chaberton_core_config[] = {
     },
 };
 
-static const struct mod_mpmm_core_config blackhawk_core_config[] = {
+static const struct mod_mpmm_core_config group_big_core_config[] = {
     {
         .pd_id = FWK_ID_ELEMENT_INIT(FWK_MODULE_IDX_POWER_DOMAIN, CORE6_IDX),
         .mpmm_reg_base = SCP_MPMM_CORE_BASE(CORE6_IDX),
@@ -242,63 +243,63 @@ static const struct mod_mpmm_core_config blackhawk_core_config[] = {
     },
 };
 
-static const struct mod_mpmm_domain_config cortex_a520_domain_conf[] = {
+static const struct mod_mpmm_domain_config group_little_domain_conf[] = {
     {
         .perf_id = FWK_ID_ELEMENT_INIT(
             FWK_MODULE_IDX_DVFS,
-            DVFS_ELEMENT_IDX_CORTEX_A520),
-        .pct = cortex_a520_pct,
-        .pct_size = FWK_ARRAY_SIZE(cortex_a520_pct),
+            DVFS_ELEMENT_IDX_GROUP_LITTLE),
+        .pct = group_little_pct,
+        .pct_size = FWK_ARRAY_SIZE(group_little_pct),
         .btc = 10,
         .num_threshold_counters = 3,
-        .core_config = cortex_a520_core_config,
+        .core_config = group_little_core_config,
     },
     { 0 },
 };
 
-static const struct mod_mpmm_domain_config chaberton_domain_conf[] = {
+static const struct mod_mpmm_domain_config group_mid_domain_conf[] = {
     {
         .perf_id = FWK_ID_ELEMENT_INIT(
             FWK_MODULE_IDX_DVFS,
-            DVFS_ELEMENT_IDX_CHABERTON),
-        .pct = chaberton_pct,
-        .pct_size = FWK_ARRAY_SIZE(chaberton_pct),
+            DVFS_ELEMENT_IDX_GROUP_MID),
+        .pct = group_mid_pct,
+        .pct_size = FWK_ARRAY_SIZE(group_mid_pct),
         .btc = 10,
         .num_threshold_counters = 3,
-        .core_config = chaberton_core_config,
+        .core_config = group_mid_core_config,
     },
     { 0 },
 };
 
-static const struct mod_mpmm_domain_config blackhawk_domain_conf[] = {
+static const struct mod_mpmm_domain_config group_big_domain_conf[] = {
     {
         .perf_id = FWK_ID_ELEMENT_INIT(
             FWK_MODULE_IDX_DVFS,
-            DVFS_ELEMENT_IDX_BLACKHAWK),
-        .pct = blackhawk_pct,
-        .pct_size = FWK_ARRAY_SIZE(blackhawk_pct),
+            DVFS_ELEMENT_IDX_GROUP_BIG),
+        .pct = group_big_pct,
+        .pct_size = FWK_ARRAY_SIZE(group_big_pct),
         .btc = 10,
         .num_threshold_counters = 3,
-        .core_config = blackhawk_core_config,
+        .core_config = group_big_core_config,
     },
     { 0 },
 };
 
 static const struct fwk_element element_table[] = {
     {
-        .name = "MPMM_CORTEX_A520_ELEM",
-        .sub_element_count = FWK_ARRAY_SIZE(cortex_a520_core_config),
-        .data = cortex_a520_domain_conf,
+        .name = "MPMM_" TC_GROUP_LITTLE_NAME "_ELEM",
+        .sub_element_count = FWK_ARRAY_SIZE(group_little_core_config),
+        .data = group_little_domain_conf,
     },
     {
-        .name = "MPMM_CHABERTON_ELEM",
-        .sub_element_count = FWK_ARRAY_SIZE(chaberton_core_config),
-        .data = chaberton_domain_conf,
+        .name = "MPMM_" TC_GROUP_MID_NAME "_ELEM",
+        .sub_element_count = FWK_ARRAY_SIZE(group_mid_core_config),
+        .data = group_mid_domain_conf,
     },
     {
-        .name = "MPMM_BLACKHAWK_ELEM",
-        .sub_element_count = FWK_ARRAY_SIZE(blackhawk_core_config),
-        .data = blackhawk_domain_conf,
+        .name = "MPMM_" TC_GROUP_BIG_NAME "_ELEM",
+        .sub_element_count = FWK_ARRAY_SIZE(group_big_core_config),
+        .data = group_big_domain_conf,
     },
     { 0 },
 };

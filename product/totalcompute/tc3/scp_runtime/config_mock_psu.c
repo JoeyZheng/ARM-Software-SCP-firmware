@@ -6,6 +6,7 @@
  */
 
 #include <tc3_mock_psu.h>
+#include <tc_core.h>
 
 #include <mod_mock_psu.h>
 
@@ -13,8 +14,8 @@
 #include <fwk_module.h>
 
 static const struct fwk_element element_table[MOCK_PSU_ELEMENT_IDX_COUNT + 1] = {
-    [MOCK_PSU_ELEMENT_IDX_CORTEX_A520] = {
-        .name = "DVFS_GROUP_CORTEX_A520",
+    [MOCK_PSU_ELEMENT_IDX_GROUP_LITTLE] = {
+        .name = "DVFS_GROUP_" TC_GROUP_LITTLE_NAME,
         .data =
             &(const struct mod_mock_psu_element_cfg){
                 .async_alarm_id = FWK_ID_NONE_INIT,
@@ -27,8 +28,8 @@ static const struct fwk_element element_table[MOCK_PSU_ELEMENT_IDX_COUNT + 1] = 
                 .default_voltage = 550,
             },
     },
-    [MOCK_PSU_ELEMENT_IDX_CHABERTON] = {
-        .name = "DVFS_GROUP_CHABERTON",
+    [MOCK_PSU_ELEMENT_IDX_GROUP_MID] = {
+        .name = "DVFS_GROUP_" TC_GROUP_MID_NAME,
         .data =
             &(const struct mod_mock_psu_element_cfg){
                 .async_alarm_id = FWK_ID_NONE_INIT,
@@ -41,8 +42,8 @@ static const struct fwk_element element_table[MOCK_PSU_ELEMENT_IDX_COUNT + 1] = 
                 .default_voltage = 550,
             },
     },
-    [MOCK_PSU_ELEMENT_IDX_BLACKHAWK] = {
-        .name = "DVFS_GROUP_BLACKHAWK",
+    [MOCK_PSU_ELEMENT_IDX_GROUP_BIG] = {
+        .name = "DVFS_GROUP_" TC_GROUP_BIG_NAME,
         .data =
             &(const struct mod_mock_psu_element_cfg){
                 .async_alarm_id = FWK_ID_NONE_INIT,

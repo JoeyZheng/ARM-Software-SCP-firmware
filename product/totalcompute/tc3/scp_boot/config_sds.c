@@ -41,7 +41,7 @@ const struct mod_sds_config sds_module_config = {
     .region_count = TC_SDS_REGION_COUNT,
     .clock_id = FWK_ID_ELEMENT_INIT(
         FWK_MODULE_IDX_CLOCK,
-        CLOCK_IDX_CPU_GROUP_CORTEX_A520)
+        CLOCK_IDX_CPU_GROUP_GROUP_LITTLE)
 };
 
 static struct fwk_element sds_element_table[4] = {

@@ -7,8 +7,8 @@
 
 #include "config_power_domain.h"
 #include "scp_mmap.h"
-#include "tc3_core.h"
 #include "tc3_ppu_v1.h"
+#include "tc_core.h"
 
 #include <mod_power_domain.h>
 #include <mod_ppu_v1.h>
@@ -50,8 +50,8 @@ static const struct fwk_element *ppu_v1_get_element_table(fwk_id_t module_id)
     unsigned int cluster_count;
     unsigned int core_element_count = 0;
 
-    core_count = tc3_core_get_core_count();
-    cluster_count = tc3_core_get_cluster_count();
+    core_count = tc_core_get_core_count();
+    cluster_count = tc_core_get_cluster_count();
 
     /*
      * Allocate element descriptors based on:
@@ -73,7 +73,7 @@ static const struct fwk_element *ppu_v1_get_element_table(fwk_id_t module_id)
     }
 
     for (core_idx = 0;
-         core_idx < tc3_core_get_core_per_cluster_count(CLUSTER_ID);
+         core_idx < tc_core_get_core_per_cluster_count(CLUSTER_ID);
          core_idx++) {
         element = &element_table[core_element_count];
         pd_config = &pd_config_table[core_element_count];

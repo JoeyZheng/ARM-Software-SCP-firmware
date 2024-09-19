@@ -8,6 +8,7 @@
 #include "clock_soc.h"
 #include "scp_mmap.h"
 #include "scp_pik.h"
+#include "tc_core.h"
 
 #include <mod_system_pll.h>
 
@@ -17,9 +18,9 @@
 #include <fwk_module.h>
 
 static const struct fwk_element system_pll_element_table[2] = {
-    [CLOCK_PLL_IDX_CPU_CORTEX_A520] =
+    [CLOCK_PLL_IDX_CPU_GROUP_LITTLE] =
         {
-            .name = "CPU_PLL_CORTEX_A520",
+            .name = "CPU_PLL_" TC_GROUP_LITTLE_NAME,
             .data = &((struct mod_system_pll_dev_config){
                 .control_reg = (void *)SCP_PLL_CPU0,
                 .status_reg = (void *)&SCP_PIK_PTR->PLL_STATUS[1],

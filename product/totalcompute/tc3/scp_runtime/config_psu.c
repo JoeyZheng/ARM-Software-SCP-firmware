@@ -7,6 +7,7 @@
 
 #include <tc3_mock_psu.h>
 #include <tc3_psu.h>
+#include <tc_core.h>
 
 #include <mod_mock_psu.h>
 #include <mod_psu.h>
@@ -16,32 +17,32 @@
 #include <fwk_module_idx.h>
 
 static const struct fwk_element element_table[PSU_ELEMENT_IDX_COUNT + 1] = {
-    [PSU_ELEMENT_IDX_CORTEX_A520] = {
-        .name = "PSU_GROUP_CORTEX_A520",
+    [PSU_ELEMENT_IDX_GROUP_LITTLE] = {
+        .name = "PSU_GROUP_" TC_GROUP_LITTLE_NAME,
         .data =
             &(const struct mod_psu_element_cfg){
                 .driver_id = FWK_ID_ELEMENT_INIT(FWK_MODULE_IDX_MOCK_PSU,
-                    MOCK_PSU_ELEMENT_IDX_CORTEX_A520),
+                    MOCK_PSU_ELEMENT_IDX_GROUP_LITTLE),
                 .driver_api_id = FWK_ID_API_INIT(
                     FWK_MODULE_IDX_MOCK_PSU,
                     MOD_MOCK_PSU_API_IDX_DRIVER) },
     },
-    [PSU_ELEMENT_IDX_CHABERTON] = {
-        .name = "PSU_GROUP_CHABERTON",
+    [PSU_ELEMENT_IDX_GROUP_MID] = {
+        .name = "PSU_GROUP_" TC_GROUP_MID_NAME,
         .data =
             &(const struct mod_psu_element_cfg){
                 .driver_id = FWK_ID_ELEMENT_INIT(FWK_MODULE_IDX_MOCK_PSU,
-                    MOCK_PSU_ELEMENT_IDX_CHABERTON),
+                    MOCK_PSU_ELEMENT_IDX_GROUP_MID),
                 .driver_api_id = FWK_ID_API_INIT(
                     FWK_MODULE_IDX_MOCK_PSU,
                     MOD_MOCK_PSU_API_IDX_DRIVER) },
     },
-    [PSU_ELEMENT_IDX_BLACKHAWK] = {
-        .name = "PSU_GROUP_BLACKHAWK",
+    [PSU_ELEMENT_IDX_GROUP_BIG] = {
+        .name = "PSU_GROUP_" TC_GROUP_BIG_NAME,
         .data =
             &(const struct mod_psu_element_cfg){
                 .driver_id = FWK_ID_ELEMENT_INIT(FWK_MODULE_IDX_MOCK_PSU,
-                    MOCK_PSU_ELEMENT_IDX_BLACKHAWK),
+                    MOCK_PSU_ELEMENT_IDX_GROUP_BIG),
                 .driver_api_id = FWK_ID_API_INIT(
                     FWK_MODULE_IDX_MOCK_PSU,
                     MOD_MOCK_PSU_API_IDX_DRIVER) },

@@ -8,6 +8,7 @@
 #include "clock_soc.h"
 #include "scp_mmap.h"
 #include "scp_pik.h"
+#include "tc_core.h"
 
 #include <mod_system_pll.h>
 
@@ -19,9 +20,9 @@
 static const struct fwk_element system_pll_element_table[
     CLOCK_PLL_IDX_COUNT + 1] =
     {
-        [CLOCK_PLL_IDX_CPU_CORTEX_A520] =
+        [CLOCK_PLL_IDX_CPU_GROUP_LITTLE] =
             {
-                .name = "CPU_PLL_CORTEX_A520",
+                .name = "CPU_PLL_" TC_GROUP_LITTLE_NAME,
                 .data = &((struct mod_system_pll_dev_config){
                     .control_reg = (void *)SCP_PLL_CPU0,
                     .status_reg = (void *)&SCP_PIK_PTR->PLL_STATUS[1],
@@ -32,9 +33,9 @@ static const struct fwk_element system_pll_element_table[
                     .min_step = MOD_SYSTEM_PLL_MIN_INTERVAL,
                 }),
             },
-        [CLOCK_PLL_IDX_CPU_CHABERTON] =
+        [CLOCK_PLL_IDX_CPU_GROUP_MID] =
             {
-                .name = "CPU_PLL_CHABERTON",
+                .name = "CPU_PLL_" TC_GROUP_MID_NAME,
                 .data = &((struct mod_system_pll_dev_config){
                     .control_reg = (void *)SCP_PLL_CPU1,
                     .status_reg = (void *)&SCP_PIK_PTR->PLL_STATUS[1],
@@ -45,9 +46,9 @@ static const struct fwk_element system_pll_element_table[
                     .min_step = MOD_SYSTEM_PLL_MIN_INTERVAL,
                 }),
             },
-        [CLOCK_PLL_IDX_CPU_BLACKHAWK] =
+        [CLOCK_PLL_IDX_CPU_GROUP_BIG] =
             {
-                .name = "CPU_PLL_BLACKHAWK",
+                .name = "CPU_PLL_" TC_GROUP_BIG_NAME,
                 .data = &((struct mod_system_pll_dev_config){
                     .control_reg = (void *)SCP_PLL_CPU2,
                     .status_reg = (void *)&SCP_PIK_PTR->PLL_STATUS[1],

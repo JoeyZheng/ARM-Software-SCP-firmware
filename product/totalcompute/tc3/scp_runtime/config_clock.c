@@ -7,7 +7,7 @@
 
 #include "clock_soc.h"
 #include "config_power_domain.h"
-#include "tc3_core.h"
+#include "tc_core.h"
 
 #include <mod_clock.h>
 #include <mod_css_clock.h>
@@ -20,37 +20,37 @@
 #include <fwk_module_idx.h>
 
 static const struct fwk_element clock_dev_desc_table[CLOCK_IDX_COUNT + 1] = {
-    [CLOCK_IDX_CPU_GROUP_CORTEX_A520] =
+    [CLOCK_IDX_CPU_GROUP_GROUP_LITTLE] =
         {
-            .name = "CPU_GROUP_CORTEX_A520",
+            .name = "CPU_GROUP_" TC_GROUP_LITTLE_NAME,
             .data = &((struct mod_clock_dev_config){
                 .driver_id = FWK_ID_ELEMENT_INIT(
                     FWK_MODULE_IDX_CSS_CLOCK,
-                    CLOCK_CSS_IDX_CPU_GROUP_CORTEX_A520),
+                    CLOCK_CSS_IDX_CPU_GROUP_GROUP_LITTLE),
                 .api_id = FWK_ID_API_INIT(
                     FWK_MODULE_IDX_CSS_CLOCK,
                     MOD_CSS_CLOCK_API_TYPE_CLOCK),
             }),
         },
-    [CLOCK_IDX_CPU_GROUP_CHABERTON] =
+    [CLOCK_IDX_CPU_GROUP_GROUP_MID] =
         {
-            .name = "CPU_GROUP_CHABERTON",
+            .name = "CPU_GROUP_" TC_GROUP_MID_NAME,
             .data = &((struct mod_clock_dev_config){
                 .driver_id = FWK_ID_ELEMENT_INIT(
                     FWK_MODULE_IDX_CSS_CLOCK,
-                    CLOCK_CSS_IDX_CPU_GROUP_CHABERTON),
+                    CLOCK_CSS_IDX_CPU_GROUP_GROUP_MID),
                 .api_id = FWK_ID_API_INIT(
                     FWK_MODULE_IDX_CSS_CLOCK,
                     MOD_CSS_CLOCK_API_TYPE_CLOCK),
             }),
         },
-    [CLOCK_IDX_CPU_GROUP_BLACKHAWK] =
+    [CLOCK_IDX_CPU_GROUP_GROUP_BIG] =
         {
-            .name = "CPU_GROUP_BLACKHAWK",
+            .name = "CPU_GROUP_" TC_GROUP_BIG_NAME,
             .data = &((struct mod_clock_dev_config){
                 .driver_id = FWK_ID_ELEMENT_INIT(
                     FWK_MODULE_IDX_CSS_CLOCK,
-                    CLOCK_CSS_IDX_CPU_GROUP_BLACKHAWK),
+                    CLOCK_CSS_IDX_CPU_GROUP_GROUP_BIG),
                 .api_id = FWK_ID_API_INIT(
                     FWK_MODULE_IDX_CSS_CLOCK,
                     MOD_CSS_CLOCK_API_TYPE_CLOCK),
@@ -117,7 +117,7 @@ static const struct fwk_element *clock_get_dev_desc_table(fwk_id_t module_id)
             (struct mod_clock_dev_config *)clock_dev_desc_table[i].data;
         dev_config->pd_source_id = fwk_id_build_element_id(
             fwk_module_id_power_domain,
-            tc3_core_get_core_count() + tc3_core_get_cluster_count() +
+            tc_core_get_core_count() + tc_core_get_cluster_count() +
                 PD_STATIC_DEV_IDX_SYSTOP);
     }
 

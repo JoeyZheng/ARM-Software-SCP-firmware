@@ -17,7 +17,7 @@ set(CMAKE_TC_DIR "../../")
 # - 'TC3_VARIANT_STD' for TC3 standard build
 # - 'TC3_VAR_EXPERIMENT_POWER' for TC3 with power/performance/thermal additions
 #   used for evaluation purpose:
-#   - TRAFFIC_COP on CORTEX_A520 cores
+#   - TRAFFIC_COP on LITTLE cores
 #   - MPMM on all cores
 #   - THERMAL_MANAGEMENT for the entire system, with a simplified/dummy power
 #     model
