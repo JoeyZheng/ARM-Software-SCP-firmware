@@ -131,7 +131,7 @@ PRODUCTS := $(sort $(shell find product -name "product.mk" -printf "%h\n" | cut 
 #
 # Deprecated Products/Platforms
 #
-DEPRECATED_PLATFORMS := none
+DEPRECATED_PLATFORMS := tc2
 
 PRODUCT_INDEPENDENT_GOALS := clean help test doc fwk_test mod_test prod_test
 
