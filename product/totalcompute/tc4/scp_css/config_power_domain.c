@@ -6,16 +6,16 @@
  */
 
 #include "config_power_domain.h"
-#include "tc4_ppu_v1.h"
 #include "tc4_core.h"
 #include "tc4_mock_ppu.h"
+#include "tc4_ppu_v1.h"
 #include "tc_power_domain.h"
 
 #include <power_domain_utils.h>
 
+#include <mod_mock_ppu.h>
 #include <mod_power_domain.h>
 #include <mod_ppu_v1.h>
-#include <mod_mock_ppu.h>
 #include <mod_system_power.h>
 
 #include <fwk_element.h>
@@ -62,10 +62,41 @@ static const uint32_t core_pd_allowed_state_mask_table[2] = {
     [MOD_PD_STATE_ON] = TC_CORE_VALID_STATE_MASK,
 };
 
+#if defined(PLAT_FVP)
+#    define PD_CME_POWER_DOMAIN_INIT(_cme) \
+        [PD_STATIC_DEV_IDX_CME##_cme] = { \
+            .name = "CME" #_cme, \
+            .data = &((struct mod_power_domain_element_config){ \
+                .attributes.pd_type = MOD_PD_TYPE_DEVICE, \
+                .driver_id = FWK_ID_ELEMENT_INIT( \
+                    FWK_MODULE_IDX_MOCK_PPU, MOCK_PPU_ELEMENT_IDX_CME##_cme), \
+                .api_id = FWK_ID_API_INIT(FWK_MODULE_IDX_MOCK_PPU, 0), \
+                .allowed_state_mask_table = core_pd_allowed_state_mask_table, \
+                .allowed_state_mask_table_size = \
+                    FWK_ARRAY_SIZE(core_pd_allowed_state_mask_table) }), \
+        }
+#else
+#    define PD_CME_POWER_DOMAIN_INIT(_cme) \
+        [PD_STATIC_DEV_IDX_CME##_cme] = { \
+            .name = "CME" #_cme, \
+            .data = &((struct mod_power_domain_element_config){ \
+                .attributes.pd_type = MOD_PD_TYPE_DEVICE, \
+                .driver_id = FWK_ID_ELEMENT_INIT( \
+                    FWK_MODULE_IDX_PPU_V1, PPU_V1_ELEMENT_IDX_CME##_cme), \
+                .api_id = FWK_ID_API_INIT( \
+                    FWK_MODULE_IDX_PPU_V1, \
+                    MOD_PPU_V1_API_IDX_POWER_DOMAIN_DRIVER), \
+                .allowed_state_mask_table = core_pd_allowed_state_mask_table, \
+                .allowed_state_mask_table_size = \
+                    FWK_ARRAY_SIZE(core_pd_allowed_state_mask_table) }), \
+        }
+#endif
+
 /* Power module specific configuration data (none) */
 static const struct mod_power_domain_config tc4_power_domain_config = { 0 };
 
 static struct fwk_element tc4_power_domain_static_element_table[] = {
+    TC4_FOR_EACH_CME(PD_CME_POWER_DOMAIN_INIT),
     [PD_STATIC_DEV_IDX_GPUTOP] =
         {
             .name = "GPUCGRP",

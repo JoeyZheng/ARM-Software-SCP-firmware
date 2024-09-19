@@ -6,9 +6,9 @@
  */
 
 #include "config_power_domain.h"
-#include "tc4_ppu_v1.h"
 #include "scp_mmap.h"
 #include "tc4_core.h"
+#include "tc4_ppu_v1.h"
 
 #include <mod_power_domain.h>
 #include <mod_ppu_v1.h>
@@ -33,7 +33,21 @@
             .pd_type = MOD_PD_TYPE_CORE, \
             .ppu.reg_base = SCP_PPU_CORE_BASE(_core_num), \
             .ppu.irq = FWK_INTERRUPT_NONE, \
-            .cluster_id = FWK_ID_ELEMENT_INIT(FWK_MODULE_IDX_PPU_V1, PPU_V1_ELEMENT_IDX_CLUSTER0), \
+            .cluster_id = FWK_ID_ELEMENT_INIT( \
+                FWK_MODULE_IDX_PPU_V1, PPU_V1_ELEMENT_IDX_CLUSTER0), \
+            .observer_id = FWK_ID_NONE_INIT, \
+        }), \
+    }
+
+#define CME_PPU_ELEMENT_INIT(_cme_num) \
+    [PPU_V1_ELEMENT_IDX_CME##_cme_num] = { \
+        .name = "CME" #_cme_num, \
+        .data = &((struct mod_ppu_v1_pd_config){ \
+            .pd_type = MOD_PD_TYPE_DEVICE, \
+            .ppu.reg_base = SCP_PPU_CME_BASE(_cme_num), \
+            .ppu.irq = FWK_INTERRUPT_NONE, \
+            .cluster_id = FWK_ID_ELEMENT_INIT( \
+                FWK_MODULE_IDX_PPU_V1, PPU_V1_ELEMENT_IDX_CLUSTER0), \
             .observer_id = FWK_ID_NONE_INIT, \
         }), \
     }
@@ -68,6 +82,9 @@
 static const struct fwk_element ppu_v1_element_table[] = {
     TC4_FOR_EACH_CORE(CORE_PPU_ELEMENT_INIT),
     TC4_FOR_EACH_CLUSTER(CLUSTER_PPU_ELEMENT_INIT),
+#if !defined(PLAT_FVP)
+    TC4_FOR_EACH_CME(CME_PPU_ELEMENT_INIT),
+#endif
     PPU_V1_FOR_EACH_SYSTOP(SYSTOP_PPU_ELEMENT_INIT),
     { 0 }
 };
