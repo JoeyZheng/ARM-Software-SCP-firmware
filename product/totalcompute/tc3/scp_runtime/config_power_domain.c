@@ -104,8 +104,8 @@ static const struct fwk_element *tc3_power_domain_get_element_table(
     fwk_id_t module_id)
 {
     return create_power_domain_element_table(
-        tc_core_get_core_count(),
-        tc_core_get_cluster_count(),
+        TC_NUMBER_OF_CORES,
+        TC_NUMBER_OF_CLUSTERS,
         FWK_MODULE_IDX_PPU_V1,
         MOD_PPU_V1_API_IDX_POWER_DOMAIN_DRIVER,
         core_pd_allowed_state_mask_table,

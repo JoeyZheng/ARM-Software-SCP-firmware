@@ -8,27 +8,8 @@
 #ifndef TC_CORE_COMMON_H
 #define TC_CORE_COMMON_H
 
-#include <fwk_assert.h>
-
-#define CORES_PER_CLUSTER  8
-#define NUMBER_OF_CLUSTERS 1
-
-static inline unsigned int tc_core_get_cluster_count(void)
-{
-    return NUMBER_OF_CLUSTERS;
-}
-
-static inline unsigned int tc_core_get_core_per_cluster_count(
-    unsigned int cluster_idx)
-{
-    fwk_assert(cluster_idx < tc_core_get_cluster_count());
-
-    return CORES_PER_CLUSTER;
-}
-
-static inline unsigned int tc_core_get_core_count(void)
-{
-    return tc_core_get_core_per_cluster_count(0) * tc_core_get_cluster_count();
-}
+#define TC_CORES_PER_CLUSTER  (8)
+#define TC_NUMBER_OF_CLUSTERS (1)
+#define TC_NUMBER_OF_CORES    (TC_CORES_PER_CLUSTER * TC_NUMBER_OF_CLUSTERS)
 
 #endif /* TC_CORE_COMMON_H */

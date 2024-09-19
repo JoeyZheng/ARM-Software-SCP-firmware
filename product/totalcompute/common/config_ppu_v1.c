@@ -83,8 +83,8 @@ static const struct fwk_element *ppu_v1_get_element_table(fwk_id_t module_id)
     unsigned int cluster_count;
     unsigned int core_element_count = 0;
 
-    core_count = tc_core_get_core_count();
-    cluster_count = tc_core_get_cluster_count();
+    core_count = TC_NUMBER_OF_CORES;
+    cluster_count = TC_NUMBER_OF_CLUSTERS;
 
     /*
      * Allocate element descriptors based on:
@@ -107,9 +107,7 @@ static const struct fwk_element *ppu_v1_get_element_table(fwk_id_t module_id)
         return NULL;
     }
 
-    for (core_idx = 0;
-         core_idx < tc_core_get_core_per_cluster_count(CLUSTER_ID);
-         core_idx++) {
+    for (core_idx = 0; core_idx < TC_CORES_PER_CLUSTER; core_idx++) {
         element = &element_table[core_element_count];
         pd_config = &pd_config_table[core_element_count];
 

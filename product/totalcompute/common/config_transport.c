@@ -379,7 +379,7 @@ static const struct fwk_element *transport_get_element_table(fwk_id_t module_id)
                                                         .data);
         config->pd_source_id = FWK_ID_ELEMENT(
             FWK_MODULE_IDX_POWER_DOMAIN,
-            tc_core_get_core_count() + tc_core_get_cluster_count() +
+            TC_NUMBER_OF_CORES + TC_NUMBER_OF_CLUSTERS +
                 PD_STATIC_DEV_IDX_SYSTOP);
     }
 

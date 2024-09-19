@@ -1,6 +1,6 @@
 /*
  * Arm SCP/MCP Software
- * Copyright (c) 2022-2023, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2022-2024, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -61,8 +61,7 @@ static const struct fwk_element *tc_system_get_element_table(fwk_id_t unused)
     unsigned int i;
 
     /* The system PPUs are placed after the core and cluster PPUs */
-    unsigned int ppu_idx_base =
-        tc_core_get_core_count() + tc_core_get_cluster_count();
+    unsigned int ppu_idx_base = TC_NUMBER_OF_CORES + TC_NUMBER_OF_CLUSTERS;
 
     for (i = 0; i < (FWK_ARRAY_SIZE(system_power_element_table) - 1); i++) {
         dev_config_table =
