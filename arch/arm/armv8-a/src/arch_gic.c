@@ -1,18 +1,18 @@
 /*
  * Renesas SCP/MCP Software
- * Copyright (c) 2020-2022, Renesas Electronics Corporation. All rights
+ * Copyright (c) 2020-2024, Renesas Electronics Corporation. All rights
  * reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include <mmio.h>
 #include <rcar_irq.h>
 
 #include <fwk_arch.h>
 #include <fwk_interrupt.h>
 #include <fwk_macros.h>
 #include <fwk_mm.h>
+#include <fwk_mmio.h>
 #include <fwk_status.h>
 
 #include <arch_gic.h>
@@ -176,7 +176,7 @@ static unsigned int gicd_read_isenabler(uintptr_t base, unsigned int id)
 {
     unsigned int n = id >> ISENABLER_SHIFT;
 
-    return mmio_read_32(base + GICD_ISENABLER + (n << 2));
+    return fwk_mmio_read_32(base + GICD_ISENABLER + (n << 2));
 }
 
 /*
@@ -187,7 +187,7 @@ static unsigned int gicd_read_ispendr(uintptr_t base, unsigned int id)
 {
     unsigned int n = id >> ISPENDR_SHIFT;
 
-    return mmio_read_32(base + GICD_ISPENDR + (n << 2));
+    return fwk_mmio_read_32(base + GICD_ISPENDR + (n << 2));
 }
 
 /*******************************************************************************
@@ -204,7 +204,7 @@ static void gicd_write_isenabler(
 {
     unsigned int n = id >> ISENABLER_SHIFT;
 
-    mmio_write_32(base + GICD_ISENABLER + (n << 2), val);
+    fwk_mmio_write_32(base + GICD_ISENABLER + (n << 2), val);
 }
 
 /*
@@ -218,7 +218,7 @@ static void gicd_write_icenabler(
 {
     unsigned int n = id >> ICENABLER_SHIFT;
 
-    mmio_write_32(base + GICD_ICENABLER + (n << 2), val);
+    fwk_mmio_write_32(base + GICD_ICENABLER + (n << 2), val);
 }
 
 /*
@@ -232,7 +232,7 @@ static void gicd_write_ispendr(
 {
     unsigned int n = id >> ISPENDR_SHIFT;
 
-    mmio_write_32(base + GICD_ISPENDR + (n << 2), val);
+    fwk_mmio_write_32(base + GICD_ISPENDR + (n << 2), val);
 }
 
 /*
@@ -246,7 +246,7 @@ static void gicd_write_icpendr(
 {
     unsigned int n = id >> ICPENDR_SHIFT;
 
-    mmio_write_32(base + GICD_ICPENDR + (n << 2), val);
+    fwk_mmio_write_32(base + GICD_ICPENDR + (n << 2), val);
 }
 
 /*******************************************************************************
@@ -276,7 +276,7 @@ static void gicd_set_ipriorityr(
 {
     uint8_t val = (uint8_t)(pri & GIC_PRI_MASK);
 
-    mmio_write_8(base + GICD_IPRIORITYR + id, val);
+    fwk_mmio_write_8(base + GICD_IPRIORITYR + id, val);
 }
 
 static unsigned int gicd_get_isenabler(uintptr_t base, unsigned int id)
@@ -291,17 +291,17 @@ static unsigned int gicd_get_isenabler(uintptr_t base, unsigned int id)
  ******************************************************************************/
 static inline unsigned int gicc_read_ctlr(uintptr_t base)
 {
-    return mmio_read_32(base + GICC_CTLR);
+    return fwk_mmio_read_32(base + GICC_CTLR);
 }
 
 static void gicc_write_ctlr(uintptr_t base, unsigned int val)
 {
-    mmio_write_32(base + GICC_CTLR, val);
+    fwk_mmio_write_32(base + GICC_CTLR, val);
 }
 
 static void gicc_write_pmr(uintptr_t base, unsigned int val)
 {
-    mmio_write_32(base + GICC_PMR, val);
+    fwk_mmio_write_32(base + GICC_PMR, val);
 }
 
 /*******************************************************************************
