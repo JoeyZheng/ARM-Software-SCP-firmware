@@ -1,13 +1,12 @@
 /*
  * Renesas SCP/MCP Software
- * Copyright (c) 2020-2021, Renesas Electronics Corporation. All rights
+ * Copyright (c) 2020-2024, Renesas Electronics Corporation. All rights
  * reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
 #include <clock_sd_devices.h>
-#include <mmio.h>
 
 #include <mod_clock.h>
 #include <mod_rcar_sd_clock.h>
@@ -16,6 +15,7 @@
 #include <fwk_assert.h>
 #include <fwk_element.h>
 #include <fwk_mm.h>
+#include <fwk_mmio.h>
 #include <fwk_module.h>
 #include <fwk_module_idx.h>
 #include <fwk_status.h>
@@ -78,15 +78,15 @@ static int do_sd_clock_set_rate(fwk_id_t dev_id, uint64_t rate)
         return FWK_E_SUPPORT;
     case MOD_RCAR_CLOCK_TYPE_MULTI_SOURCE:
         if (ctx->config->rate_type == MOD_CLOCK_RATE_TYPE_DISCRETE) {
-            value = mmio_read_32(ctx->config->control_reg);
+            value = fwk_mmio_read_32(ctx->config->control_reg);
             value &= (~rate_entry->divider_mask);
             value |= rate_entry->divider;
-            mmio_write_32(ctx->config->control_reg, value);
+            fwk_mmio_write_32(ctx->config->control_reg, value);
         } else {
-            value = mmio_read_32(ctx->config->control_reg);
+            value = fwk_mmio_read_32(ctx->config->control_reg);
             value &= (~CPG_CON_MASK);
             value |= (CPG_CON_MAX - (rate / ctx->rate_table[2])) & CPG_CON_MASK;
-            mmio_write_32(ctx->config->control_reg, value);
+            fwk_mmio_write_32(ctx->config->control_reg, value);
         }
         break;
     default:
@@ -165,13 +165,13 @@ static int sd_clock_set_state(
     if (!ctx->config->stop_clk)
         return FWK_SUCCESS;
 
-    value = mmio_read_32(ctx->config->control_reg);
+    value = fwk_mmio_read_32(ctx->config->control_reg);
     if (MOD_CLOCK_STATE_RUNNING == target_state)
         value &= ~(BIT(ctx->config->stop_clk_bit));
     else
         value |= BIT(ctx->config->stop_clk_bit);
 
-    mmio_write_32(ctx->config->control_reg, value);
+    fwk_mmio_write_32(ctx->config->control_reg, value);
 
     ctx->current_state = target_state;
 
@@ -231,13 +231,13 @@ static int sd_clock_hw_initial_set_state(
         /* Maintain clock supply at startup. */
         ctx->current_state = MOD_CLOCK_STATE_RUNNING;
         if (ctx->config->stop_clk) {
-            if (mmio_read_32(ctx->config->control_reg) &
+            if (fwk_mmio_read_32(ctx->config->control_reg) &
                 BIT(ctx->config->stop_clk_bit))
                 ctx->current_state = MOD_CLOCK_STATE_STOPPED;
         }
         /* Holds clock frequency at startup. */
         if (ctx->config->rate_type == MOD_CLOCK_RATE_TYPE_DISCRETE) {
-            value = mmio_read_32(ctx->config->control_reg);
+            value = fwk_mmio_read_32(ctx->config->control_reg);
             value &= ctx->config->rate_table[0].divider_mask;
             for (i = 0; i < ctx->config->rate_count; i++) {
                 if (value == ctx->config->rate_table[i].divider) {
@@ -246,7 +246,7 @@ static int sd_clock_hw_initial_set_state(
                 }
             }
         } else {
-            value = mmio_read_32(ctx->config->control_reg);
+            value = fwk_mmio_read_32(ctx->config->control_reg);
             value &= (CPG_CON_MASK);
             div_value = (value + 1);
         }
@@ -304,7 +304,7 @@ static int r8a7795_cpg_pll1_init(uint32_t ext_rate)
 {
     const struct rcar_gen3_cpg_pll_config *cpg_pll_config;
     uint32_t saved_mode;
-    saved_mode = mmio_read_32(RCAR_MODEMR);
+    saved_mode = fwk_mmio_read_32(RCAR_MODEMR);
     cpg_pll_config = &cpg_pll_configs[CPG_PLL_CONFIG_INDEX(saved_mode)];
     return (ext_rate * cpg_pll_config->pll1_mult / cpg_pll_config->pll1_div);
 }
@@ -313,7 +313,7 @@ static int r8a7795_cpg_init(uint32_t ext_rate)
 {
     const struct rcar_gen3_cpg_pll_config *cpg_pll_config;
     uint32_t saved_mode;
-    saved_mode = mmio_read_32(RCAR_MODEMR);
+    saved_mode = fwk_mmio_read_32(RCAR_MODEMR);
     cpg_pll_config = &cpg_pll_configs[CPG_PLL_CONFIG_INDEX(saved_mode)];
     return (ext_rate / cpg_pll_config->osc_prediv);
 }

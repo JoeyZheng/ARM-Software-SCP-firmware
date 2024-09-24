@@ -6,16 +6,16 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include <mmio.h>
 #include <system_mmap.h>
 
+#include <mod_rcar_system.h>
 #include <mod_reg_sensor.h>
 #include <mod_sensor.h>
-#include <mod_rcar_system.h>
 
 #include <fwk_assert.h>
 #include <fwk_id.h>
 #include <fwk_mm.h>
+#include <fwk_mmio.h>
 #include <fwk_module.h>
 #include <fwk_status.h>
 
@@ -38,7 +38,7 @@ static inline uint32_t rcar_gen3_thermal_read(
     struct rcar_gen3_thermal_tsc *tsc,
     uint32_t reg)
 {
-    return mmio_read_32(tsc->base + reg);
+    return fwk_mmio_read_32(tsc->base + reg);
 }
 
 static inline void rcar_gen3_thermal_write(
@@ -46,7 +46,7 @@ static inline void rcar_gen3_thermal_write(
     uint32_t reg,
     uint32_t data)
 {
-    mmio_write_32(tsc->base + reg, data);
+    fwk_mmio_write_32(tsc->base + reg, data);
 }
 
 static void rcar_gen3_thermal_calc_coefs(

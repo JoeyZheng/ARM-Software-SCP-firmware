@@ -1,32 +1,32 @@
 /*
  * Renesas SCP/MCP Software
- * Copyright (c) 2020-2021, Renesas Electronics Corporation. All rights
+ * Copyright (c) 2020-2024, Renesas Electronics Corporation. All rights
  * reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include <mmio.h>
 #include <rcar_common.h>
 #include <rcar_mmap.h>
 
 #include <fwk_attributes.h>
+#include <fwk_mmio.h>
 
 void FWK_SECTION(".system_ram") cpg_write(uintptr_t regadr, uint32_t regval)
 {
     uint32_t value = (regval);
-    mmio_write_32((uintptr_t)RCAR_CPGWPR, ~value);
-    mmio_write_32(regadr, value);
+    fwk_mmio_write_32((uintptr_t)RCAR_CPGWPR, ~value);
+    fwk_mmio_write_32(regadr, value);
 }
 
 void FWK_SECTION(".system_ram")
     mstpcr_write(uint32_t mstpcr, uint32_t mstpsr, uint32_t target_bit)
 {
     uint32_t reg;
-    reg = mmio_read_32(mstpcr);
+    reg = fwk_mmio_read_32(mstpcr);
     reg &= ~target_bit;
     cpg_write(mstpcr, reg);
-    while ((mmio_read_32(mstpsr) & target_bit) != 0U)
+    while ((fwk_mmio_read_32(mstpsr) & target_bit) != 0U)
         continue;
 }
 

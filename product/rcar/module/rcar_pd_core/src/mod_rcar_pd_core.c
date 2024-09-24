@@ -1,12 +1,11 @@
 /*
  * Renesas SCP/MCP Software
- * Copyright (c) 2020-2021, Renesas Electronics Corporation. All rights
+ * Copyright (c) 2020-2024, Renesas Electronics Corporation. All rights
  * reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include <mmio.h>
 #include <rcar_mmap.h>
 #include <rcar_pd_core.h>
 
@@ -19,6 +18,7 @@
 #include <fwk_log.h>
 #include <fwk_macros.h>
 #include <fwk_mm.h>
+#include <fwk_mmio.h>
 #include <fwk_module.h>
 #include <fwk_module_idx.h>
 #include <fwk_notification.h>
@@ -135,10 +135,10 @@ static int rcar_core_pd_reset(fwk_id_t core_pd_id)
 
 static int rcar_core_pd_prepare_for_system_suspend(fwk_id_t core_pd_id)
 {
-    mmio_write_32(RCAR_CPGWPR, ~CPU_PWR_OFF);
-    mmio_write_32(RCAR_CA57CPU0CR, CPU_PWR_OFF);
+    fwk_mmio_write_32(RCAR_CPGWPR, ~CPU_PWR_OFF);
+    fwk_mmio_write_32(RCAR_CA57CPU0CR, CPU_PWR_OFF);
 
-    mmio_write_32(RCAR_CA57CPUCMCR, MODE_L2_DOWN);
+    fwk_mmio_write_32(RCAR_CA57CPUCMCR, MODE_L2_DOWN);
     _shutdown_request = R_SUSPEND;
 
     return FWK_SUCCESS;

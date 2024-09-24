@@ -1,6 +1,6 @@
 /*
  * Renesas SCP/MCP Software
- * Copyright (c) 2020-2022, Renesas Electronics Corporation. All rights
+ * Copyright (c) 2020-2024, Renesas Electronics Corporation. All rights
  * reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -8,13 +8,12 @@
 
 /* The use of "subordinate" may not be in sync with platform documentation */
 
-#include <mmio.h>
-
 #include <mod_clock.h>
 #include <mod_rcar_clock.h>
 
 #include <fwk_element.h>
 #include <fwk_mm.h>
+#include <fwk_mmio.h>
 #include <fwk_module.h>
 #include <fwk_module_idx.h>
 #include <fwk_status.h>
@@ -512,7 +511,7 @@ static unsigned long pll_clk_parent_rate(void)
     unsigned long rate;
     int idx;
 
-    idx = (mmio_read_32(RCAR_MODEMR) & MODEMR_BOOT_PLL_MASK) >>
+    idx = (fwk_mmio_read_32(RCAR_MODEMR) & MODEMR_BOOT_PLL_MASK) >>
         MODEMR_BOOT_PLL_SHIFT;
 
     rate = extal_freq[idx];
@@ -548,8 +547,8 @@ static unsigned long pll0_clk_recalc_rate(void)
     unsigned int val;
     unsigned long rate;
 
-    val =
-        (mmio_read_32(CPG_PLL0CR) & CPG_PLLCR_STC_MASK) >> CPG_PLLCR_STC_SHIFT;
+    val = (fwk_mmio_read_32(CPG_PLL0CR) & CPG_PLLCR_STC_MASK) >>
+        CPG_PLLCR_STC_SHIFT;
 
     rate = parent_rate * (val + 1);
     /* Round to closest value at 100MHz unit */
@@ -569,12 +568,12 @@ static int pll0_clk_set_rate(unsigned long rate)
     stc_val = min(stc_val, 108U);
 
     stc_val -= 1;
-    val = mmio_read_32(CPG_PLL0CR);
+    val = fwk_mmio_read_32(CPG_PLL0CR);
     val &= ~CPG_PLLCR_STC_MASK;
     val |= stc_val << CPG_PLLCR_STC_SHIFT;
-    mmio_write_32(CPG_PLL0CR, val);
+    fwk_mmio_write_32(CPG_PLL0CR, val);
 
-    while (!(mmio_read_32(CPG_BASE + CPG_PLLECR) & CPG_PLLECR_PLL0ST))
+    while (!(fwk_mmio_read_32(CPG_BASE + CPG_PLLECR) & CPG_PLLECR_PLL0ST))
         continue;
 
     return 0;
@@ -605,8 +604,8 @@ static unsigned long pll2_clk_recalc_rate(void)
     unsigned int val;
     unsigned long rate;
 
-    val =
-        (mmio_read_32(CPG_PLL2CR) & CPG_PLLCR_STC_MASK) >> CPG_PLLCR_STC_SHIFT;
+    val = (fwk_mmio_read_32(CPG_PLL2CR) & CPG_PLLCR_STC_MASK) >>
+        CPG_PLLCR_STC_SHIFT;
 
     rate = parent_rate * (val + 1);
     /* Round to closest value at 100MHz unit */
@@ -626,12 +625,12 @@ static int pll2_clk_set_rate(unsigned long rate)
     stc_val = min(stc_val, 78U);
 
     stc_val -= 1;
-    val = mmio_read_32(CPG_PLL2CR);
+    val = fwk_mmio_read_32(CPG_PLL2CR);
     val &= ~CPG_PLLCR_STC_MASK;
     val |= stc_val << CPG_PLLCR_STC_SHIFT;
-    mmio_write_32(CPG_PLL2CR, val);
+    fwk_mmio_write_32(CPG_PLL2CR, val);
 
-    while (!(mmio_read_32(CPG_BASE + CPG_PLLECR) & CPG_PLLECR_PLL2ST))
+    while (!(fwk_mmio_read_32(CPG_BASE + CPG_PLLECR) & CPG_PLLECR_PLL2ST))
         continue;
 
     return 0;
@@ -672,7 +671,7 @@ static unsigned long z_clk_recalc_rate(unsigned long parent_rate)
     unsigned int val;
     unsigned long rate;
 
-    val = (mmio_read_32(CPG_FRQCRC) & CPG_FRQCRC_ZFC_MASK) >>
+    val = (fwk_mmio_read_32(CPG_FRQCRC) & CPG_FRQCRC_ZFC_MASK) >>
         CPG_FRQCRC_ZFC_SHIFT;
     mult = 32 - val;
 
@@ -698,21 +697,21 @@ static int z_clk_set_rate(unsigned long rate, unsigned long parent_rate)
     mult = max(mult, 1U);
     mult = min(mult, 32U);
 
-    if (mmio_read_32(CPG_FRQCRB) & CPG_FRQCRB_KICK)
+    if (fwk_mmio_read_32(CPG_FRQCRB) & CPG_FRQCRB_KICK)
         return -1;
 
-    val = mmio_read_32(CPG_FRQCRC);
+    val = fwk_mmio_read_32(CPG_FRQCRC);
     val &= ~CPG_FRQCRC_ZFC_MASK;
     val |= (32 - mult) << CPG_FRQCRC_ZFC_SHIFT;
-    mmio_write_32(CPG_FRQCRC, val);
+    fwk_mmio_write_32(CPG_FRQCRC, val);
 
     /*
      * Set KICK bit in FRQCRB to update hardware setting and wait for
      * clock change completion.
      */
-    kick = mmio_read_32(CPG_FRQCRB);
+    kick = fwk_mmio_read_32(CPG_FRQCRB);
     kick |= CPG_FRQCRB_KICK;
-    mmio_write_32(CPG_FRQCRB, kick);
+    fwk_mmio_write_32(CPG_FRQCRB, kick);
 
     /*
      * Note: There is no HW information about the worst case latency.
@@ -724,7 +723,7 @@ static int z_clk_set_rate(unsigned long rate, unsigned long parent_rate)
      * "super" safe value.
      */
     for (i = 1000; i; i--) {
-        if (!(mmio_read_32(CPG_FRQCRB) & CPG_FRQCRB_KICK)) {
+        if (!(fwk_mmio_read_32(CPG_FRQCRB) & CPG_FRQCRB_KICK)) {
             return 0;
         }
 
@@ -769,7 +768,7 @@ static unsigned long z2_clk_recalc_rate(unsigned long parent_rate)
     unsigned int val;
     unsigned long rate;
 
-    val = mmio_read_32(CPG_FRQCRC) & CPG_FRQCRC_Z2FC_MASK;
+    val = fwk_mmio_read_32(CPG_FRQCRC) & CPG_FRQCRC_Z2FC_MASK;
     mult = 32 - val;
 
     rate = DIV_ROUND(parent_rate * mult, 32);
@@ -794,21 +793,21 @@ static int z2_clk_set_rate(unsigned long rate, unsigned long parent_rate)
     mult = max(mult, 1U);
     mult = min(mult, 32U);
 
-    if (mmio_read_32(CPG_FRQCRB) & CPG_FRQCRB_KICK)
+    if (fwk_mmio_read_32(CPG_FRQCRB) & CPG_FRQCRB_KICK)
         return -1;
 
-    val = mmio_read_32(CPG_FRQCRC);
+    val = fwk_mmio_read_32(CPG_FRQCRC);
     val &= ~CPG_FRQCRC_Z2FC_MASK;
     val |= 32 - mult;
-    mmio_write_32(CPG_FRQCRC, val);
+    fwk_mmio_write_32(CPG_FRQCRC, val);
 
     /*
      * Set KICK bit in FRQCRB to update hardware setting and wait for
      * clock change completion.
      */
-    kick = mmio_read_32(CPG_FRQCRB);
+    kick = fwk_mmio_read_32(CPG_FRQCRB);
     kick |= CPG_FRQCRB_KICK;
-    mmio_write_32(CPG_FRQCRB, kick);
+    fwk_mmio_write_32(CPG_FRQCRB, kick);
 
     /*
      * Note: There is no HW information about the worst case latency.
@@ -820,7 +819,7 @@ static int z2_clk_set_rate(unsigned long rate, unsigned long parent_rate)
      * "super" safe value.
      */
     for (i = 1000; i; i--) {
-        if (!(mmio_read_32(CPG_FRQCRB) & CPG_FRQCRB_KICK)) {
+        if (!(fwk_mmio_read_32(CPG_FRQCRB) & CPG_FRQCRB_KICK)) {
             return 0;
         }
 
@@ -975,7 +974,7 @@ int rcar_dvfs_opp_init(void)
     if (dvfs_inited)
         return 0;
 
-    product = mmio_read_32(RCAR_PRR) & RCAR_PRODUCT_MASK;
+    product = fwk_mmio_read_32(RCAR_PRR) & RCAR_PRODUCT_MASK;
 
     if (product == RCAR_PRODUCT_H3) {
         current_a57_opp_limit = ARRAY_SIZE(rcar_h3_a57_op_points[efuse_avs]);

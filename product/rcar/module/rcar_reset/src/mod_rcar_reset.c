@@ -1,25 +1,26 @@
 /*
  * Renesas SCP/MCP Software
- * Copyright (c) 2020-2021, Renesas Electronics Corporation. All rights
+ * Copyright (c) 2020-2024, Renesas Electronics Corporation. All rights
  * reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include <mod_reset_domain.h>
+#include <lib/utils_def.h>
+
 #include <mod_rcar_reset.h>
-#include <mmio.h>
+#include <mod_reset_domain.h>
 
 #include <fwk_assert.h>
 #include <fwk_element.h>
-#include <fwk_status.h>
 #include <fwk_mm.h>
+#include <fwk_mmio.h>
 #include <fwk_module.h>
 #include <fwk_module_idx.h>
+#include <fwk_status.h>
 
 #include <stdint.h>
 #include <stdlib.h>
-#include <lib/utils_def.h>
 
 static struct rcar_reset_ctx module_ctx;
 
@@ -40,15 +41,15 @@ static int rcar_auto_domain(fwk_id_t dev_id, uint32_t state)
 
     ctx = module_ctx.dev_ctx_table + fwk_id_get_element_idx(dev_id);
 
-    mmio_write_32((CPG_BASE + srcr[ctx->config->control_reg]),
-                   BIT(ctx->config->bit));
+    fwk_mmio_write_32(
+        (CPG_BASE + srcr[ctx->config->control_reg]), BIT(ctx->config->bit));
 
     /* Wait for at least one cycle of the RCLK clock (@ ca. 32 kHz) */
     udelay(SCSR_DELAY_US);
 
     /* Release module from reset state */
-    mmio_write_32((CPG_BASE + SRSTCLR(ctx->config->control_reg)),
-                   BIT(ctx->config->bit));
+    fwk_mmio_write_32(
+        (CPG_BASE + SRSTCLR(ctx->config->control_reg)), BIT(ctx->config->bit));
 
     return FWK_SUCCESS;
 }
@@ -59,8 +60,8 @@ static int rcar_assert_domain(fwk_id_t dev_id)
 
     ctx = module_ctx.dev_ctx_table + fwk_id_get_element_idx(dev_id);
 
-    mmio_write_32((CPG_BASE + srcr[ctx->config->control_reg]),
-                   BIT(ctx->config->bit));
+    fwk_mmio_write_32(
+        (CPG_BASE + srcr[ctx->config->control_reg]), BIT(ctx->config->bit));
 
     return FWK_SUCCESS;
 }
@@ -71,8 +72,8 @@ static int rcar_deassert_domain(fwk_id_t dev_id)
 
     ctx = module_ctx.dev_ctx_table + fwk_id_get_element_idx(dev_id);
 
-    mmio_write_32((CPG_BASE + SRSTCLR(ctx->config->control_reg)),
-                   BIT(ctx->config->bit));
+    fwk_mmio_write_32(
+        (CPG_BASE + SRSTCLR(ctx->config->control_reg)), BIT(ctx->config->bit));
 
     return FWK_SUCCESS;
 }

@@ -1,6 +1,6 @@
 /*
  * Renesas SCP/MCP Software
- * Copyright (c) 2020-2023, Renesas Electronics Corporation. All rights
+ * Copyright (c) 2020-2024, Renesas Electronics Corporation. All rights
  * reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -8,13 +8,13 @@
 
 #include "scif.h"
 
-#include <mmio.h>
 #include <system_mmap.h>
 
 #include <mod_rcar_scif.h>
 #include <mod_rcar_system.h>
 
 #include <fwk_mm.h>
+#include <fwk_mmio.h>
 #include <fwk_module.h>
 #include <fwk_module_idx.h>
 #include <fwk_notification.h>
@@ -79,21 +79,21 @@ static int mod_rcar_scif_set_baud_rate(
 
     if (reg == (void *)BOARD_UART1_BASE) {
         /* SCSI-1 */
-        status = mmio_read_32(CPG_SMSTPCR2);
+        status = fwk_mmio_read_32(CPG_SMSTPCR2);
         status = (status & ~MSTP26);
-        mmio_write_32(CPG_CPGWPR, ~status);
-        mmio_write_32(CPG_SMSTPCR2, status);
+        fwk_mmio_write_32(CPG_CPGWPR, ~status);
+        fwk_mmio_write_32(CPG_SMSTPCR2, status);
 
-        while (mmio_read_32(CPG_MSTPSR2) & MSTP26)
+        while (fwk_mmio_read_32(CPG_MSTPSR2) & MSTP26)
             continue;
     } else if (reg == (void *)BOARD_UART2_BASE) {
         /* SCSI-2 */
-        status = mmio_read_32(CPG_SMSTPCR3);
+        status = fwk_mmio_read_32(CPG_SMSTPCR3);
         status = (status & ~MSTP310);
-        mmio_write_32(CPG_CPGWPR, ~status);
-        mmio_write_32(CPG_SMSTPCR3, status);
+        fwk_mmio_write_32(CPG_CPGWPR, ~status);
+        fwk_mmio_write_32(CPG_SMSTPCR3, status);
 
-        while (mmio_read_32(CPG_MSTPSR3) & MSTP310)
+        while (fwk_mmio_read_32(CPG_MSTPSR3) & MSTP310)
             continue;
     } else {
         return FWK_E_PARAM;
@@ -112,7 +112,7 @@ static int mod_rcar_scif_set_baud_rate(
     reg->SCSMR = SCSMR_INIT_DATA;
     /* Set value in SCBRR */
 #if SCIF_CLK == SCIF_INTERNAL_CLK
-    if ((mmio_read_32(PRR) & (PRR_PRODUCT_MASK | PRR_CUT_MASK)) ==
+    if ((fwk_mmio_read_32(PRR) & (PRR_PRODUCT_MASK | PRR_CUT_MASK)) ==
         PRR_PRODUCT_H3_VER_10) {
         /* H3 Ver.1.0 sets clock to doubling */
         reg->SCBRR = SCBRR_230400BPS;

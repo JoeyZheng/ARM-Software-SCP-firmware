@@ -1,12 +1,11 @@
 /*
  * Renesas SCP/MCP Software
- * Copyright (c) 2020-2021, Renesas Electronics Corporation. All rights
+ * Copyright (c) 2020-2024, Renesas Electronics Corporation. All rights
  * reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include <mmio.h>
 #include <rcar_common.h>
 #include <rcar_mmap.h>
 #include <rcar_pd_core.h>
@@ -14,6 +13,7 @@
 #include <mod_rcar_pd_core.h>
 
 #include <fwk_assert.h>
+#include <fwk_mmio.h>
 #include <fwk_status.h>
 
 #include <stddef.h>
@@ -32,8 +32,8 @@ void rcar_pwrc_cpuoff(unsigned int core)
         off_reg = (uintptr_t)RCAR_CA57CPU0CR;
         cpu_no = core;
     }
-    mmio_write_32(RCAR_CPGWPR, ~((uint32_t)CPU_PWR_OFF));
-    mmio_write_32(off_reg + (cpu_no * 0x0010U), (uint32_t)CPU_PWR_OFF);
+    fwk_mmio_write_32(RCAR_CPGWPR, ~((uint32_t)CPU_PWR_OFF));
+    fwk_mmio_write_32(off_reg + (cpu_no * 0x0010U), (uint32_t)CPU_PWR_OFF);
 }
 
 void rcar_pwrc_cpuon(uint32_t core)
@@ -60,13 +60,13 @@ void rcar_pwrc_cpuon(uint32_t core)
         cpu_no = core;
     }
 
-    res_data = mmio_read_32(res_reg) | upper_value;
+    res_data = fwk_mmio_read_32(res_reg) | upper_value;
     SCU_power_up(core);
     wup_data = (uint32_t)((uint32_t)1U << cpu_no);
-    mmio_write_32(RCAR_CPGWPR, ~wup_data);
-    mmio_write_32(on_reg, wup_data);
+    fwk_mmio_write_32(RCAR_CPGWPR, ~wup_data);
+    fwk_mmio_write_32(on_reg, wup_data);
     /* Dessert to CPU reset    */
-    mmio_write_32(res_reg, (res_data & (~((uint32_t)1U << (3U - cpu_no)))));
+    fwk_mmio_write_32(res_reg, (res_data & (~((uint32_t)1U << (3U - cpu_no)))));
 }
 
 void SCU_power_up(uint32_t core)
@@ -97,31 +97,34 @@ void SCU_power_up(uint32_t core)
         reg_PWRSR = (uintptr_t)RCAR_PWRSR3;
         reg_CPUCMCR = (uintptr_t)RCAR_CA53CPUCMCR;
     }
-    if ((mmio_read_32(reg_PWRSR) & (uint32_t)STATUS_PWRDOWN) != 0x0000U) {
-        if (mmio_read_32(reg_CPUCMCR) != 0U) {
-            mmio_write_32(reg_CPUCMCR, (uint32_t)0x00000000U);
+    if ((fwk_mmio_read_32(reg_PWRSR) & (uint32_t)STATUS_PWRDOWN) != 0x0000U) {
+        if (fwk_mmio_read_32(reg_CPUCMCR) != 0U) {
+            fwk_mmio_write_32(reg_CPUCMCR, (uint32_t)0x00000000U);
         }
         /* set SYSCIER and SYSCIMR        */
-        mmio_write_32(reg_SYSCIER, (mmio_read_32(reg_SYSCIER) | reg_SYSC_bit));
-        mmio_write_32(reg_SYSCIMR, (mmio_read_32(reg_SYSCIMR) | reg_SYSC_bit));
+        fwk_mmio_write_32(
+            reg_SYSCIER, (fwk_mmio_read_32(reg_SYSCIER) | reg_SYSC_bit));
+        fwk_mmio_write_32(
+            reg_SYSCIMR, (fwk_mmio_read_32(reg_SYSCIMR) | reg_SYSC_bit));
         do {
             /* SYSCSR[1]=1?                */
-            while ((mmio_read_32(reg_SYSCSR) & (uint32_t)REQ_RESUME) == 0U)
+            while ((fwk_mmio_read_32(reg_SYSCSR) & (uint32_t)REQ_RESUME) == 0U)
                 continue;
 
             /* If SYSCSR[1]=1 then set bit in PWRONCRn to 1    */
-            mmio_write_32(reg_PWRONCR, 0x0001U);
-        } while ((mmio_read_32(reg_PWRER) & 0x0001U) != 0U);
+            fwk_mmio_write_32(reg_PWRONCR, 0x0001U);
+        } while ((fwk_mmio_read_32(reg_PWRER) & 0x0001U) != 0U);
 
         /* bit in SYSCISR=1 ?                */
-        while ((mmio_read_32(reg_SYSCISR) & reg_SYSC_bit) == 0U)
+        while ((fwk_mmio_read_32(reg_SYSCISR) & reg_SYSC_bit) == 0U)
             continue;
 
         /* clear bit in SYSCISR                */
-        mmio_write_32(reg_SYSCISCR, reg_SYSC_bit);
+        fwk_mmio_write_32(reg_SYSCISCR, reg_SYSC_bit);
 
         /* Check the SCU power-up            */
-        while ((mmio_read_32(reg_PWRSR) & (uint32_t)STATUS_PWRUP) == 0x0000U)
+        while ((fwk_mmio_read_32(reg_PWRSR) & (uint32_t)STATUS_PWRUP) ==
+               0x0000U)
             continue;
     }
 }

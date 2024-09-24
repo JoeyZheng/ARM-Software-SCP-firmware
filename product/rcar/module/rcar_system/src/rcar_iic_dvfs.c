@@ -1,6 +1,6 @@
 /*
  * Renesas SCP/MCP Software
- * Copyright (c) 2020-2022, Renesas Electronics Corporation. All rights
+ * Copyright (c) 2020-2024, Renesas Electronics Corporation. All rights
  * reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -12,9 +12,8 @@
 #include "rcar_iic_dvfs.h"
 #include "rcar_mmap.h"
 
-#include <mmio.h>
-
 #include <fwk_attributes.h>
+#include <fwk_mmio.h>
 
 #define DVFS_RETRY_MAX (2U)
 
@@ -98,7 +97,7 @@ IIC_DVFS_FUNC(check_error, DVFS_STATE_T *state, uint32_t *err, uint8_t mode)
     stop = mode == DVFS_READ_MODE ? IIC_DVFS_SET_ICCR_STOP_READ :
                                     IIC_DVFS_SET_ICCR_STOP;
 
-    reg = mmio_read_8(IIC_DVFS_REG_ICSR);
+    reg = fwk_mmio_read_8(IIC_DVFS_REG_ICSR);
     icsr_al = (reg & IIC_DVFS_BIT_ICSR_AL) == IIC_DVFS_BIT_ICSR_AL;
     icsr_tack = (reg & IIC_DVFS_BIT_ICSR_TACK) == IIC_DVFS_BIT_ICSR_TACK;
 
@@ -106,24 +105,24 @@ IIC_DVFS_FUNC(check_error, DVFS_STATE_T *state, uint32_t *err, uint8_t mode)
         return DVFS_PROCESS;
 
     if (icsr_al) {
-        reg = mmio_read_8(IIC_DVFS_REG_ICSR) & ~IIC_DVFS_BIT_ICSR_AL;
-        mmio_write_8(IIC_DVFS_REG_ICSR, reg);
+        reg = fwk_mmio_read_8(IIC_DVFS_REG_ICSR) & ~IIC_DVFS_BIT_ICSR_AL;
+        fwk_mmio_write_8(IIC_DVFS_REG_ICSR, reg);
 
         if (*state == DVFS_SET_SUBORDINATE)
-            mmio_write_8(IIC_DVFS_REG_ICDR, IIC_DVFS_SET_DUMMY);
+            fwk_mmio_write_8(IIC_DVFS_REG_ICDR, IIC_DVFS_SET_DUMMY);
 
         do {
-            reg = mmio_read_8(IIC_DVFS_REG_ICSR) & IIC_DVFS_BIT_ICSR_WAIT;
+            reg = fwk_mmio_read_8(IIC_DVFS_REG_ICSR) & IIC_DVFS_BIT_ICSR_WAIT;
         } while (reg == 0);
 
-        mmio_write_8(IIC_DVFS_REG_ICCR, stop);
+        fwk_mmio_write_8(IIC_DVFS_REG_ICCR, stop);
 
-        reg = mmio_read_8(IIC_DVFS_REG_ICSR) & ~IIC_DVFS_BIT_ICSR_WAIT;
-        mmio_write_8(IIC_DVFS_REG_ICSR, reg);
+        reg = fwk_mmio_read_8(IIC_DVFS_REG_ICSR) & ~IIC_DVFS_BIT_ICSR_WAIT;
+        fwk_mmio_write_8(IIC_DVFS_REG_ICSR, reg);
 
         i = 0;
         do {
-            reg = mmio_read_8(IIC_DVFS_REG_ICSR) & IIC_DVFS_BIT_ICSR_BUSY;
+            reg = fwk_mmio_read_8(IIC_DVFS_REG_ICSR) & IIC_DVFS_BIT_ICSR_BUSY;
             if (reg == 0)
                 break;
 
@@ -132,7 +131,7 @@ IIC_DVFS_FUNC(check_error, DVFS_STATE_T *state, uint32_t *err, uint8_t mode)
 
         } while (1);
 
-        mmio_write_8(IIC_DVFS_REG_ICCR, 0x00U);
+        fwk_mmio_write_8(IIC_DVFS_REG_ICCR, 0x00U);
 
         (*err)++;
         if (*err > DVFS_RETRY_MAX)
@@ -144,22 +143,22 @@ IIC_DVFS_FUNC(check_error, DVFS_STATE_T *state, uint32_t *err, uint8_t mode)
     }
 
     /* icsr_tack */
-    mmio_write_8(IIC_DVFS_REG_ICCR, stop);
+    fwk_mmio_write_8(IIC_DVFS_REG_ICCR, stop);
 
-    reg = mmio_read_8(IIC_DVFS_REG_ICIC);
+    reg = fwk_mmio_read_8(IIC_DVFS_REG_ICIC);
     reg &= ~(IIC_DVFS_BIT_ICIC_WAITE | IIC_DVFS_BIT_ICIC_DTEE);
-    mmio_write_8(IIC_DVFS_REG_ICIC, reg);
+    fwk_mmio_write_8(IIC_DVFS_REG_ICIC, reg);
 
-    reg = mmio_read_8(IIC_DVFS_REG_ICSR) & ~IIC_DVFS_BIT_ICSR_TACK;
-    mmio_write_8(IIC_DVFS_REG_ICSR, reg);
+    reg = fwk_mmio_read_8(IIC_DVFS_REG_ICSR) & ~IIC_DVFS_BIT_ICSR_TACK;
+    fwk_mmio_write_8(IIC_DVFS_REG_ICSR, reg);
 
     i = 0;
-    while ((mmio_read_8(IIC_DVFS_REG_ICSR) & IIC_DVFS_BIT_ICSR_BUSY) != 0) {
+    while ((fwk_mmio_read_8(IIC_DVFS_REG_ICSR) & IIC_DVFS_BIT_ICSR_BUSY) != 0) {
         if (i++ > IIC_DVFS_SET_BUSY_LOOP)
             panic();
     }
 
-    mmio_write_8(IIC_DVFS_REG_ICCR, 0);
+    fwk_mmio_write_8(IIC_DVFS_REG_ICCR, 0);
     (*err)++;
 
     if (*err > DVFS_RETRY_MAX)
@@ -178,12 +177,12 @@ IIC_DVFS_FUNC(start, DVFS_STATE_T *state)
     uint32_t reg, lsi_product;
     uint8_t mode;
 
-    mode = mmio_read_8(IIC_DVFS_REG_ICCR) | IIC_DVFS_BIT_ICCR_ENABLE;
-    mmio_write_8(IIC_DVFS_REG_ICCR, mode);
+    mode = fwk_mmio_read_8(IIC_DVFS_REG_ICCR) | IIC_DVFS_BIT_ICCR_ENABLE;
+    fwk_mmio_write_8(IIC_DVFS_REG_ICCR, mode);
 
-    lsi_product = mmio_read_32(RCAR_PRR) & RCAR_PRODUCT_MASK;
+    lsi_product = fwk_mmio_read_32(RCAR_PRR) & RCAR_PRODUCT_MASK;
     if (lsi_product != RCAR_PRODUCT_E3) {
-        reg = mmio_read_32(RCAR_MODEMR) & CHECK_MD13_MD14;
+        reg = fwk_mmio_read_32(RCAR_MODEMR) & CHECK_MD13_MD14;
         switch (reg) {
         case MD14_MD13_TYPE_0:
             iccl = IIC_DVFS_SET_ICCL_EXTAL_TYPE_0;
@@ -204,14 +203,14 @@ IIC_DVFS_FUNC(start, DVFS_STATE_T *state)
         }
     }
 
-    mmio_write_8(IIC_DVFS_REG_ICCL, iccl);
-    mmio_write_8(IIC_DVFS_REG_ICCH, icch);
+    fwk_mmio_write_8(IIC_DVFS_REG_ICCL, iccl);
+    fwk_mmio_write_8(IIC_DVFS_REG_ICCH, icch);
 
-    mode = mmio_read_8(IIC_DVFS_REG_ICIC) | IIC_DVFS_BIT_ICIC_TACKE |
+    mode = fwk_mmio_read_8(IIC_DVFS_REG_ICIC) | IIC_DVFS_BIT_ICIC_TACKE |
         IIC_DVFS_BIT_ICIC_WAITE | IIC_DVFS_BIT_ICIC_DTEE;
 
-    mmio_write_8(IIC_DVFS_REG_ICIC, mode);
-    mmio_write_8(IIC_DVFS_REG_ICCR, IIC_DVFS_SET_ICCR_START);
+    fwk_mmio_write_8(IIC_DVFS_REG_ICIC, mode);
+    fwk_mmio_write_8(IIC_DVFS_REG_ICCR, IIC_DVFS_SET_ICCR_START);
 
     *state = DVFS_SET_SUBORDINATE;
 
@@ -232,15 +231,15 @@ IIC_DVFS_FUNC(
     if (result == DVFS_ERROR)
         return result;
 
-    mode = mmio_read_8(IIC_DVFS_REG_ICSR) & IIC_DVFS_BIT_ICSR_DTE;
+    mode = fwk_mmio_read_8(IIC_DVFS_REG_ICSR) & IIC_DVFS_BIT_ICSR_DTE;
     if (mode != IIC_DVFS_BIT_ICSR_DTE)
         return result;
 
-    mode = mmio_read_8(IIC_DVFS_REG_ICIC) & ~IIC_DVFS_BIT_ICIC_DTEE;
-    mmio_write_8(IIC_DVFS_REG_ICIC, mode);
+    mode = fwk_mmio_read_8(IIC_DVFS_REG_ICIC) & ~IIC_DVFS_BIT_ICIC_DTEE;
+    fwk_mmio_write_8(IIC_DVFS_REG_ICIC, mode);
 
     address = subordinate << 1;
-    mmio_write_8(IIC_DVFS_REG_ICDR, address);
+    fwk_mmio_write_8(IIC_DVFS_REG_ICDR, address);
 
     *state = DVFS_WRITE_ADDR;
 
@@ -256,14 +255,14 @@ IIC_DVFS_FUNC(write_addr, DVFS_STATE_T *state, uint32_t *err, uint8_t reg_addr)
     if (result == DVFS_ERROR)
         return result;
 
-    mode = mmio_read_8(IIC_DVFS_REG_ICSR) & IIC_DVFS_BIT_ICSR_WAIT;
+    mode = fwk_mmio_read_8(IIC_DVFS_REG_ICSR) & IIC_DVFS_BIT_ICSR_WAIT;
     if (mode != IIC_DVFS_BIT_ICSR_WAIT)
         return result;
 
-    mmio_write_8(IIC_DVFS_REG_ICDR, reg_addr);
+    fwk_mmio_write_8(IIC_DVFS_REG_ICDR, reg_addr);
 
-    mode = mmio_read_8(IIC_DVFS_REG_ICSR) & ~IIC_DVFS_BIT_ICSR_WAIT;
-    mmio_write_8(IIC_DVFS_REG_ICSR, mode);
+    mode = fwk_mmio_read_8(IIC_DVFS_REG_ICSR) & ~IIC_DVFS_BIT_ICSR_WAIT;
+    fwk_mmio_write_8(IIC_DVFS_REG_ICSR, mode);
 
     *state = DVFS_WRITE_DATA;
 
@@ -279,14 +278,14 @@ IIC_DVFS_FUNC(write_data, DVFS_STATE_T *state, uint32_t *err, uint8_t reg_data)
     if (result == DVFS_ERROR)
         return result;
 
-    mode = mmio_read_8(IIC_DVFS_REG_ICSR) & IIC_DVFS_BIT_ICSR_WAIT;
+    mode = fwk_mmio_read_8(IIC_DVFS_REG_ICSR) & IIC_DVFS_BIT_ICSR_WAIT;
     if (mode != IIC_DVFS_BIT_ICSR_WAIT)
         return result;
 
-    mmio_write_8(IIC_DVFS_REG_ICDR, reg_data);
+    fwk_mmio_write_8(IIC_DVFS_REG_ICDR, reg_data);
 
-    mode = mmio_read_8(IIC_DVFS_REG_ICSR) & ~IIC_DVFS_BIT_ICSR_WAIT;
-    mmio_write_8(IIC_DVFS_REG_ICSR, mode);
+    mode = fwk_mmio_read_8(IIC_DVFS_REG_ICSR) & ~IIC_DVFS_BIT_ICSR_WAIT;
+    fwk_mmio_write_8(IIC_DVFS_REG_ICSR, mode);
 
     *state = DVFS_STOP;
 
@@ -302,14 +301,14 @@ IIC_DVFS_FUNC(stop, DVFS_STATE_T *state, uint32_t *err)
     if (result == DVFS_ERROR)
         return result;
 
-    mode = mmio_read_8(IIC_DVFS_REG_ICSR) & IIC_DVFS_BIT_ICSR_WAIT;
+    mode = fwk_mmio_read_8(IIC_DVFS_REG_ICSR) & IIC_DVFS_BIT_ICSR_WAIT;
     if (mode != IIC_DVFS_BIT_ICSR_WAIT)
         return result;
 
-    mmio_write_8(IIC_DVFS_REG_ICCR, IIC_DVFS_SET_ICCR_STOP);
+    fwk_mmio_write_8(IIC_DVFS_REG_ICCR, IIC_DVFS_SET_ICCR_STOP);
 
-    mode = mmio_read_8(IIC_DVFS_REG_ICSR) & ~IIC_DVFS_BIT_ICSR_WAIT;
-    mmio_write_8(IIC_DVFS_REG_ICSR, mode);
+    mode = fwk_mmio_read_8(IIC_DVFS_REG_ICSR) & ~IIC_DVFS_BIT_ICSR_WAIT;
+    fwk_mmio_write_8(IIC_DVFS_REG_ICSR, mode);
 
     *state = DVFS_DONE;
 
@@ -321,14 +320,14 @@ IIC_DVFS_FUNC(done, void)
     uint32_t i;
 
     for (i = 0; i < IIC_DVFS_SET_BUSY_LOOP; i++) {
-        if (mmio_read_8(IIC_DVFS_REG_ICSR) & IIC_DVFS_BIT_ICSR_BUSY)
+        if (fwk_mmio_read_8(IIC_DVFS_REG_ICSR) & IIC_DVFS_BIT_ICSR_BUSY)
             continue;
         goto done;
     }
 
     panic();
 done:
-    mmio_write_8(IIC_DVFS_REG_ICCR, 0);
+    fwk_mmio_write_8(IIC_DVFS_REG_ICCR, 0);
 
     return DVFS_COMPLETE;
 }
@@ -346,14 +345,14 @@ IIC_DVFS_FUNC(
     if (result == DVFS_ERROR)
         return result;
 
-    mode = mmio_read_8(IIC_DVFS_REG_ICSR) & IIC_DVFS_BIT_ICSR_WAIT;
+    mode = fwk_mmio_read_8(IIC_DVFS_REG_ICSR) & IIC_DVFS_BIT_ICSR_WAIT;
     if (mode != IIC_DVFS_BIT_ICSR_WAIT)
         return result;
 
-    mmio_write_8(IIC_DVFS_REG_ICDR, reg_addr);
+    fwk_mmio_write_8(IIC_DVFS_REG_ICDR, reg_addr);
 
-    mode = mmio_read_8(IIC_DVFS_REG_ICSR) & ~IIC_DVFS_BIT_ICSR_WAIT;
-    mmio_write_8(IIC_DVFS_REG_ICSR, mode);
+    mode = fwk_mmio_read_8(IIC_DVFS_REG_ICSR) & ~IIC_DVFS_BIT_ICSR_WAIT;
+    fwk_mmio_write_8(IIC_DVFS_REG_ICSR, mode);
 
     *state = DVFS_RETRANSMIT;
 
@@ -369,17 +368,17 @@ IIC_DVFS_FUNC(retransmit, DVFS_STATE_T *state, uint32_t *err)
     if (result == DVFS_ERROR)
         return result;
 
-    mode = mmio_read_8(IIC_DVFS_REG_ICSR) & IIC_DVFS_BIT_ICSR_WAIT;
+    mode = fwk_mmio_read_8(IIC_DVFS_REG_ICSR) & IIC_DVFS_BIT_ICSR_WAIT;
     if (mode != IIC_DVFS_BIT_ICSR_WAIT)
         return result;
 
-    mmio_write_8(IIC_DVFS_REG_ICCR, IIC_DVFS_SET_ICCR_RETRANSMISSION);
+    fwk_mmio_write_8(IIC_DVFS_REG_ICCR, IIC_DVFS_SET_ICCR_RETRANSMISSION);
 
-    mode = mmio_read_8(IIC_DVFS_REG_ICSR) & ~IIC_DVFS_BIT_ICSR_WAIT;
-    mmio_write_8(IIC_DVFS_REG_ICSR, mode);
+    mode = fwk_mmio_read_8(IIC_DVFS_REG_ICSR) & ~IIC_DVFS_BIT_ICSR_WAIT;
+    fwk_mmio_write_8(IIC_DVFS_REG_ICSR, mode);
 
-    mode = mmio_read_8(IIC_DVFS_REG_ICIC) | IIC_DVFS_BIT_ICIC_DTEE;
-    mmio_write_8(IIC_DVFS_REG_ICIC, mode);
+    mode = fwk_mmio_read_8(IIC_DVFS_REG_ICIC) | IIC_DVFS_BIT_ICIC_DTEE;
+    fwk_mmio_write_8(IIC_DVFS_REG_ICIC, mode);
 
     *state = DVFS_SET_SUBORDINATE_READ;
 
@@ -400,15 +399,15 @@ IIC_DVFS_FUNC(
     if (result == DVFS_ERROR)
         return result;
 
-    mode = mmio_read_8(IIC_DVFS_REG_ICSR) & IIC_DVFS_BIT_ICSR_DTE;
+    mode = fwk_mmio_read_8(IIC_DVFS_REG_ICSR) & IIC_DVFS_BIT_ICSR_DTE;
     if (mode != IIC_DVFS_BIT_ICSR_DTE)
         return result;
 
-    mode = mmio_read_8(IIC_DVFS_REG_ICIC) & ~IIC_DVFS_BIT_ICIC_DTEE;
-    mmio_write_8(IIC_DVFS_REG_ICIC, mode);
+    mode = fwk_mmio_read_8(IIC_DVFS_REG_ICIC) & ~IIC_DVFS_BIT_ICIC_DTEE;
+    fwk_mmio_write_8(IIC_DVFS_REG_ICIC, mode);
 
     address = ((uint8_t)(subordinate << 1) + DVFS_READ_MODE);
-    mmio_write_8(IIC_DVFS_REG_ICDR, address);
+    fwk_mmio_write_8(IIC_DVFS_REG_ICDR, address);
 
     *state = DVFS_CHANGE_SEND_TO_RECIEVE;
 
@@ -424,14 +423,14 @@ IIC_DVFS_FUNC(change_send_to_recieve, DVFS_STATE_T *state, uint32_t *err)
     if (result == DVFS_ERROR)
         return result;
 
-    mode = mmio_read_8(IIC_DVFS_REG_ICSR) & IIC_DVFS_BIT_ICSR_WAIT;
+    mode = fwk_mmio_read_8(IIC_DVFS_REG_ICSR) & IIC_DVFS_BIT_ICSR_WAIT;
     if (mode != IIC_DVFS_BIT_ICSR_WAIT)
         return result;
 
-    mmio_write_8(IIC_DVFS_REG_ICCR, IIC_DVFS_SET_ICCR_CHANGE);
+    fwk_mmio_write_8(IIC_DVFS_REG_ICCR, IIC_DVFS_SET_ICCR_CHANGE);
 
-    mode = mmio_read_8(IIC_DVFS_REG_ICSR) & ~IIC_DVFS_BIT_ICSR_WAIT;
-    mmio_write_8(IIC_DVFS_REG_ICSR, mode);
+    mode = fwk_mmio_read_8(IIC_DVFS_REG_ICSR) & ~IIC_DVFS_BIT_ICSR_WAIT;
+    fwk_mmio_write_8(IIC_DVFS_REG_ICSR, mode);
 
     *state = DVFS_STOP_READ;
 
@@ -447,17 +446,17 @@ IIC_DVFS_FUNC(stop_read, DVFS_STATE_T *state, uint32_t *err)
     if (result == DVFS_ERROR)
         return result;
 
-    mode = mmio_read_8(IIC_DVFS_REG_ICSR) & IIC_DVFS_BIT_ICSR_WAIT;
+    mode = fwk_mmio_read_8(IIC_DVFS_REG_ICSR) & IIC_DVFS_BIT_ICSR_WAIT;
     if (mode != IIC_DVFS_BIT_ICSR_WAIT)
         return result;
 
-    mmio_write_8(IIC_DVFS_REG_ICCR, IIC_DVFS_SET_ICCR_STOP_READ);
+    fwk_mmio_write_8(IIC_DVFS_REG_ICCR, IIC_DVFS_SET_ICCR_STOP_READ);
 
-    mode = mmio_read_8(IIC_DVFS_REG_ICSR) & ~IIC_DVFS_BIT_ICSR_WAIT;
-    mmio_write_8(IIC_DVFS_REG_ICSR, mode);
+    mode = fwk_mmio_read_8(IIC_DVFS_REG_ICSR) & ~IIC_DVFS_BIT_ICSR_WAIT;
+    fwk_mmio_write_8(IIC_DVFS_REG_ICSR, mode);
 
-    mode = mmio_read_8(IIC_DVFS_REG_ICIC) | IIC_DVFS_BIT_ICIC_DTEE;
-    mmio_write_8(IIC_DVFS_REG_ICIC, mode);
+    mode = fwk_mmio_read_8(IIC_DVFS_REG_ICIC) | IIC_DVFS_BIT_ICIC_DTEE;
+    fwk_mmio_write_8(IIC_DVFS_REG_ICIC, mode);
 
     *state = DVFS_READ;
 
@@ -468,14 +467,14 @@ IIC_DVFS_FUNC(read, DVFS_STATE_T *state, uint8_t *reg_data)
 {
     uint8_t mode;
 
-    mode = mmio_read_8(IIC_DVFS_REG_ICSR) & IIC_DVFS_BIT_ICSR_DTE;
+    mode = fwk_mmio_read_8(IIC_DVFS_REG_ICSR) & IIC_DVFS_BIT_ICSR_DTE;
     if (mode != IIC_DVFS_BIT_ICSR_DTE)
         return DVFS_PROCESS;
 
-    mode = mmio_read_8(IIC_DVFS_REG_ICIC) & ~IIC_DVFS_BIT_ICIC_DTEE;
-    mmio_write_8(IIC_DVFS_REG_ICIC, mode);
+    mode = fwk_mmio_read_8(IIC_DVFS_REG_ICIC) & ~IIC_DVFS_BIT_ICIC_DTEE;
+    fwk_mmio_write_8(IIC_DVFS_REG_ICIC, mode);
 
-    *reg_data = mmio_read_8(IIC_DVFS_REG_ICDR);
+    *reg_data = fwk_mmio_read_8(IIC_DVFS_REG_ICDR);
     *state = DVFS_DONE;
 
     return DVFS_PROCESS;
@@ -488,7 +487,7 @@ RCAR_DVFS_API(send, uint8_t subordinate, uint8_t reg_addr, uint8_t reg_data)
     uint32_t err = 0;
 
     mstpcr_write(SCMSTPCR9, CPG_MSTPSR9, CPG_BIT_SMSTPCR9_DVFS);
-    mmio_write_8(IIC_DVFS_REG_ICCR, 0);
+    fwk_mmio_write_8(IIC_DVFS_REG_ICCR, 0);
 
     do {
         switch (state) {
@@ -526,7 +525,7 @@ RCAR_DVFS_API(receive, uint8_t subordinate, uint8_t reg, uint8_t *data)
     uint32_t err = 0;
 
     mstpcr_write(SCMSTPCR9, CPG_MSTPSR9, CPG_BIT_SMSTPCR9_DVFS);
-    mmio_write_8(IIC_DVFS_REG_ICCR, 0);
+    fwk_mmio_write_8(IIC_DVFS_REG_ICCR, 0);
 
     do {
         switch (state) {

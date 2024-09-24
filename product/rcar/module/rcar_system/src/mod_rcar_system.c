@@ -1,12 +1,11 @@
 /*
  * Renesas SCP/MCP Software
- * Copyright (c) 2020-2022, Renesas Electronics Corporation. All rights
+ * Copyright (c) 2020-2024, Renesas Electronics Corporation. All rights
  * reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include <mmio.h>
 #include <rcar_mmap.h>
 #include <rcar_pwc.h>
 #include <rcar_scmi.h>
@@ -27,6 +26,7 @@
 #include <fwk_interrupt.h>
 #include <fwk_macros.h>
 #include <fwk_mm.h>
+#include <fwk_mmio.h>
 #include <fwk_module.h>
 #include <fwk_module_idx.h>
 #include <fwk_notification.h>
@@ -139,7 +139,7 @@ void vApplicationIdleHook(void)
         switch (req) {
         case R_SUSPEND:
             _boot_flag = R_WARMBOOT;
-            while (!(mmio_read_32(RCAR_CA57PSTR) & 0x0f))
+            while (!(fwk_mmio_read_32(RCAR_CA57PSTR) & 0x0f))
                 continue;
 
             _save_system();

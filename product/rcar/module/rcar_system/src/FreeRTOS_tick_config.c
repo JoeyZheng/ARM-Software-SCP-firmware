@@ -8,10 +8,11 @@
 
 #include "FreeRTOS.h"
 #include "arch_gic.h"
-#include "mmio.h"
 #include "rcar_irq.h"
 #include "rcar_mmap.h"
 #include "task.h"
+
+#include <fwk_mmio.h>
 
 uint32_t c_interrupt;
 
@@ -34,12 +35,12 @@ static void init_generic_timer(void)
         EXTAL_MD14_MD13_TYPE_3 /* MD14/MD13 : 0b11 */
     };
 
-    modemr = mmio_read_32(RCAR_MODEMR);
+    modemr = fwk_mmio_read_32(RCAR_MODEMR);
     modemr_pll = (modemr & MODEMR_BOOT_PLL_MASK);
 
     /* Set frequency data in CNTFID0 */
     reg_cntfid = pll_table[modemr_pll >> MODEMR_BOOT_PLL_SHIFT];
-    reg = mmio_read_32(RCAR_PRR) & (RCAR_PRODUCT_MASK | RCAR_CUT_MASK);
+    reg = fwk_mmio_read_32(RCAR_PRR) & (RCAR_PRODUCT_MASK | RCAR_CUT_MASK);
     switch (modemr_pll) {
     case MD14_MD13_TYPE_0:
 #ifdef SALVATORE_XS
@@ -143,8 +144,8 @@ void vApplicationIRQHandler(void)
 {
     uint32_t ulInterruptID;
 
-    c_interrupt = mmio_read_32(RCAR_GICC_BASE + GICC_IAR);
-    mmio_write_32(RCAR_GICC_BASE + GICC_EOIR, c_interrupt);
+    c_interrupt = fwk_mmio_read_32(RCAR_GICC_BASE + GICC_IAR);
+    fwk_mmio_write_32(RCAR_GICC_BASE + GICC_EOIR, c_interrupt);
     ulInterruptID = c_interrupt & 0x00000FFFUL;
 
     /* call handler function */

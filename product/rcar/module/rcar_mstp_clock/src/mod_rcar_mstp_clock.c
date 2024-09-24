@@ -1,13 +1,12 @@
 /*
  * Renesas SCP/MCP Software
- * Copyright (c) 2020-2021, Renesas Electronics Corporation. All rights
+ * Copyright (c) 2020-2024, Renesas Electronics Corporation. All rights
  * reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
 #include <clock_mstp_devices.h>
-#include <mmio.h>
 #include <utils_def.h>
 
 #include <mod_clock.h>
@@ -18,6 +17,7 @@
 #include <fwk_assert.h>
 #include <fwk_element.h>
 #include <fwk_mm.h>
+#include <fwk_mmio.h>
 #include <fwk_module.h>
 #include <fwk_module_idx.h>
 #include <fwk_status.h>
@@ -39,17 +39,18 @@ static int mstp_clock_set_state(
 
     ctx = module_ctx.dev_ctx_table + fwk_id_get_element_idx(dev_id);
 
-    value = mmio_read_32(CPG_BASE + smstpcr[ctx->config->control_reg]);
+    value = fwk_mmio_read_32(CPG_BASE + smstpcr[ctx->config->control_reg]);
     if (MOD_CLOCK_STATE_RUNNING == target_state)
         value &= ~(BIT(ctx->config->bit));
     else
         value |= BIT(ctx->config->bit);
 
-    mmio_write_32((CPG_BASE + smstpcr[ctx->config->control_reg]), value);
+    fwk_mmio_write_32((CPG_BASE + smstpcr[ctx->config->control_reg]), value);
 
     if (MOD_CLOCK_STATE_RUNNING == target_state) {
         for (i = 1000; i > 0; --i) {
-            if (!(mmio_read_32(CPG_BASE + mstpsr[ctx->config->control_reg]) &
+            if (!(fwk_mmio_read_32(
+                      CPG_BASE + mstpsr[ctx->config->control_reg]) &
                   BIT(ctx->config->bit)))
                 break;
         }
@@ -94,18 +95,18 @@ static int mstp_clock_resume(void)
     uint32_t mstp_id;
     struct rcar_mstp_clock_dev_ctx *ctx;
 
-    mmio_write_32(SMSTPCR0, SMSTPCR0_VALUE);
-    mmio_write_32(SMSTPCR1, SMSTPCR1_VALUE);
-    mmio_write_32(SMSTPCR2, SMSTPCR2_VALUE);
-    mmio_write_32(SMSTPCR3, SMSTPCR3_VALUE);
-    mmio_write_32(SMSTPCR4, SMSTPCR4_VALUE);
-    mmio_write_32(SMSTPCR5, SMSTPCR5_VALUE);
-    mmio_write_32(SMSTPCR6, SMSTPCR6_VALUE);
-    mmio_write_32(SMSTPCR7, SMSTPCR7_VALUE);
-    mmio_write_32(SMSTPCR8, SMSTPCR8_VALUE);
-    mmio_write_32(SMSTPCR9, SMSTPCR9_VALUE);
-    mmio_write_32(SMSTPCR10, SMSTPCR10_VALUE);
-    mmio_write_32(SMSTPCR11, SMSTPCR11_VALUE);
+    fwk_mmio_write_32(SMSTPCR0, SMSTPCR0_VALUE);
+    fwk_mmio_write_32(SMSTPCR1, SMSTPCR1_VALUE);
+    fwk_mmio_write_32(SMSTPCR2, SMSTPCR2_VALUE);
+    fwk_mmio_write_32(SMSTPCR3, SMSTPCR3_VALUE);
+    fwk_mmio_write_32(SMSTPCR4, SMSTPCR4_VALUE);
+    fwk_mmio_write_32(SMSTPCR5, SMSTPCR5_VALUE);
+    fwk_mmio_write_32(SMSTPCR6, SMSTPCR6_VALUE);
+    fwk_mmio_write_32(SMSTPCR7, SMSTPCR7_VALUE);
+    fwk_mmio_write_32(SMSTPCR8, SMSTPCR8_VALUE);
+    fwk_mmio_write_32(SMSTPCR9, SMSTPCR9_VALUE);
+    fwk_mmio_write_32(SMSTPCR10, SMSTPCR10_VALUE);
+    fwk_mmio_write_32(SMSTPCR11, SMSTPCR11_VALUE);
 
     for (mstp_id = CLK_ID_MSTP_START; mstp_id < CLK_ID_MSTP_END; mstp_id++) {
         element_id.element.element_idx = mstp_id;

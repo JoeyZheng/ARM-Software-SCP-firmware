@@ -1,11 +1,11 @@
 /*
  * Renesas SCP/MCP Software
- * Copyright (c) 2021, Renesas Electronics Corporation. All rights reserved.
+ * Copyright (c) 2021-2024, Renesas Electronics Corporation. All rights
+ * reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include <mmio.h>
 #include <clock_ext_devices.h>
 
 #include <mod_clock.h>
@@ -14,10 +14,11 @@
 
 #include <fwk_assert.h>
 #include <fwk_element.h>
-#include <fwk_status.h>
 #include <fwk_mm.h>
+#include <fwk_mmio.h>
 #include <fwk_module.h>
 #include <fwk_module_idx.h>
+#include <fwk_status.h>
 
 #include <stdint.h>
 
