@@ -707,6 +707,8 @@ static int transport_message_handler(struct transport_channel_ctx *channel_ctx)
                 channel_ctx->transport_signal.firmware_signal_api->signal_error(
                     channel_ctx->service_id);
         }
+
+        return status;
     }
 
 #if defined(BUILD_HAS_OUTBAND_MSG_SUPPORT)
