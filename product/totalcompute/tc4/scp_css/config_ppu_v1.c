@@ -60,6 +60,7 @@
             .ppu.reg_base = SCP_PPU_CLUSTER_BASE, \
             .ppu.irq = FWK_INTERRUPT_NONE, \
             .observer_id = FWK_ID_NONE_INIT, \
+            .opmode = 7, \
         }), \
     }
 
