@@ -426,7 +426,7 @@ static int scmi_message_validation(
 
     if ((payload_size_table == NULL) ||
         (protocol_id < MOD_SCMI_PROTOCOL_ID_BASE) ||
-        (protocol_id > MOD_SCMI_PROTOCOL_ID_POWER_CAPPING)) {
+        (protocol_id > MOD_SCMI_PROTOCOL_ID_PIN_CONTROL)) {
         return (int)SCMI_INVALID_PARAMETERS;
     }
 
