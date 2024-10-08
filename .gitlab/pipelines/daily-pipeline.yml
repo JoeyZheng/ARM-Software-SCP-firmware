@@ -10,6 +10,7 @@ stages:
   - static-analysis
   - unit-testing
   - build
+  - beetle-security-test
   - scmi-test
   - platform-test
   - coverage-report
@@ -19,6 +20,7 @@ include:
   - local: .gitlab/templates/static-analysis.yml
   - local: .gitlab/templates/unit-test.yml
   - local: .gitlab/templates/build-test.yml
+  - local: .gitlab/templates/beetle-security-test.yml
   - local: .gitlab/templates/scmi-test.yml
   - local: .gitlab/templates/platform-test.yml
   - local: .gitlab/templates/merge-report.yml
@@ -48,6 +50,10 @@ build-optee:
   extends: .build-optee
   stage: build
   allow_failure: true
+
+beetle-security-test:
+  extends: .beetle-security-test
+  stage: beetle-security-test
 
 scmi-test:
   extends: .scmi-test
