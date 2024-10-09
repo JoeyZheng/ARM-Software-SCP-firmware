@@ -22,7 +22,8 @@ else()
 endif()
 
 target_include_directories(arch-arm-m
-                           PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include")
+                           PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include"
+                                  "${CMAKE_CURRENT_SOURCE_DIR}/../common/include")
 
 # cmake-lint: disable=E1122
 
@@ -32,7 +33,7 @@ target_sources(
             "${CMAKE_CURRENT_SOURCE_DIR}/src/arch_handlers.c"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/arch_main.c"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/arch_nvic.c"
-    PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../src/arch_mm.c")
+    PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../common/src/arch_mm.c")
 
 target_link_libraries(arch-arm-m PUBLIC cmsis::core-m)
 
@@ -100,7 +101,7 @@ include(SCPTargetLinkerScript)
 if(CMAKE_C_COMPILER_ID STREQUAL "ARMClang")
     set(scp_lds "${CMAKE_CURRENT_SOURCE_DIR}/src/arch.scatter.S")
 else()
-    set(scp_lds "${CMAKE_CURRENT_SOURCE_DIR}/src/arch.ld.S")
+    set(scp_lds "${CMAKE_CURRENT_SOURCE_DIR}/../common/src/arch.ld.S")
 endif()
 
 scp_target_linker_script(arch-arm-m "${scp_lds}")

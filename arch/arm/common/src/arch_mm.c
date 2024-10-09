@@ -1,6 +1,6 @@
 /*
  * Arm SCP/MCP Software
- * Copyright (c) 2015-2022, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2015-2024, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -13,9 +13,11 @@
 #include <stddef.h>
 #include <stdint.h>
 
+/* clang-format off */
 #if FWK_HAS_INCLUDE(<sys/features.h>)
 #    include <sys/features.h>
 #endif
+/* clang-format on */
 
 #ifdef __NEWLIB__
 #    include <errno.h>

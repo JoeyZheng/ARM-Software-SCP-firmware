@@ -1,6 +1,6 @@
 /*
  * Arm SCP/MCP Software
- * Copyright (c) 2015-2022, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2015-2024, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -31,8 +31,8 @@
  *      bus.
  */
 
-#ifndef ARCH_SCATTER_H
-#define ARCH_SCATTER_H
+#ifndef ARCH_MEM_MODE_H
+#define ARCH_MEM_MODE_H
 
 #define ARCH_MEM_MODE_SINGLE_REGION             0
 #define ARCH_MEM_MODE_DUAL_REGION_RELOCATION    1
@@ -72,4 +72,4 @@
 #    define ARCH_MEM1_LIMIT (FMW_MEM1_BASE + FMW_MEM1_SIZE)
 #endif
 
-#endif /* ARCH_SCATTER_H */
+#endif /* ARCH_MEM_MODE_H */
