@@ -90,11 +90,11 @@ SECTIONS {
 
 #ifdef __clang__
     .eh_frame : {
-        (.eh_frame)
+        *(.eh_frame)
     } > x
 
     .ARM.exidx : {
-        (.ARM.exidx)
+        *(.ARM.exidx)
     } > x
 #endif
 
