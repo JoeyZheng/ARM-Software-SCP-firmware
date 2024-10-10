@@ -39,6 +39,10 @@ foreach(language IN ITEMS ASM C CXX)
                "-mstrict-align -fno-builtin -DAARCH64 -D__ASSEMBLY__ ")
         string(APPEND CMAKE_${language}_FLAGS_INIT
                "-I\"${LLVM_SYSROOT_PATH}/include\" ")
+        if(DEFINED SCP_AARCH64_PROCESSOR_TARGET)
+            string(APPEND CMAKE_${language}_FLAGS_INIT
+                "-mcpu=${SCP_AARCH64_PROCESSOR_TARGET} ")
+        endif()
     endif()
 
     if(CMAKE_SYSTEM_PROCESSOR MATCHES "cortex-m(3|7|33|55|85)")
