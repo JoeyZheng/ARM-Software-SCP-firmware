@@ -26,6 +26,9 @@
 #include <stdio.h>
 #include <string.h>
 
+#define SCP_PPU_SYS0_OPMODE (0)
+#define SCP_PPU_SYS1_OPMODE (4)
+
 #define CORE_PPU_ELEMENT_INIT(_core_num) \
     [PPU_V1_ELEMENT_IDX_CORE##_core_num] = { \
         .name = "CORE" #_core_num, \
@@ -77,6 +80,7 @@
             /* before accessing any registers external to */ \
             /* the SCP */ \
             .default_power_on = true, \
+            .opmode = SCP_PPU_SYS##_systop_num##_OPMODE, \
         }), \
     }
 
