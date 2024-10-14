@@ -84,6 +84,7 @@ SECTIONS {
     } > x
 
     .text : {
+        *(.entrypoint)
         *(.text .text.*)
     } > x
 
