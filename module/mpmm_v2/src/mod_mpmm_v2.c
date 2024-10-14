@@ -64,8 +64,7 @@ static inline bool mpmm_v2_core_check_enabled(
 }
 
 /* Set the MPMM gear for a specific core. */
-static void mpmm_v2_core_set_selected_gear(
-    struct mod_mpmm_v2_core_ctx *core_ctx)
+static void mpmm_v2_core_set_gear(struct mod_mpmm_v2_core_ctx *core_ctx)
 {
     core_ctx->mpmm_v2->MPMMCR |=
         ((core_ctx->selected_gear & MPMM_MPMMCR_GEAR_MASK)
@@ -98,7 +97,7 @@ static void mpmm_v2_core_counters_delta(
     fwk_str_memset(counter_buff, 0, sizeof(counter_buff));
 
     status = mpmm_v2_ctx.amu_driver_api->get_counters(
-        core_ctx->base_aux_counter_id, counter_buff, num_gears);
+        core_ctx->base_aux_counter_id, counter_buff, gear_cnt);
     if (status != FWK_SUCCESS) {
         FWK_LOG_DEBUG(
             "[MPMM_V2] %s @%d: AMU counter read fail, error=%d",
@@ -387,7 +386,7 @@ static int handle_pd_notification(
              * After core transition to ON the gear is set to zero as
              * defined by the hardware.
              */
-            domain_ctx->core_ctx[core_idx].gear = 0;
+            domain_ctx->core_ctx[core_idx].selected_gear = 0;
             domain_ctx->power_limit = mpmm_v2_evaluate_power_limit(domain_ctx);
 
             /*
@@ -475,7 +474,7 @@ static int mpmm_v2_get_limit(fwk_id_t domain_id, uint32_t *power_limit)
         return FWK_SUCCESS;
     }
 
-    mpmm_v2_domain_set_gear(domain_ctx);
+    mpmm_v2_domain_set_gears(domain_ctx);
     return FWK_SUCCESS;
 }
 
