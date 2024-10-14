@@ -106,6 +106,7 @@ list(APPEND FWK_SRC ${UNITY_SRC_ROOT}/unity.c)
 list(APPEND SCP_UNITY_SRC ${TEST_ROOT}/unity_mocks/scp_unity.c)
 
 #Append common unit tests below here (alphabetical order)
+list(APPEND UNIT_MODULE armv8r_mpu)
 list(APPEND UNIT_MODULE amu_mmap)
 list(APPEND UNIT_MODULE amu_smcf_drv)
 list(APPEND UNIT_MODULE atu)
