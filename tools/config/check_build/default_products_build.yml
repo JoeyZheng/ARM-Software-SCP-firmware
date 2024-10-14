@@ -5,6 +5,12 @@
 # SPDX-License-Identifier: BSD-3-Clause
 #
 
+- product: fvp-baser-aemv8r
+  toolchains:
+    - name: GNU
+    - name: Clang
+      extra_config_args: ["-DSCP_LLVM_SYSROOT_CC=aarch64-none-elf-gcc"]
+
 - product: host
   toolchains:
     - name: GNU
