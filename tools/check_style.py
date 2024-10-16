@@ -13,7 +13,11 @@
 import argparse
 import subprocess
 import sys
-from utils import banner, get_previous_commit
+from utils import (
+    banner,
+    get_previous_commit,
+    get_changed_files
+)
 
 #
 # Default output file
@@ -24,9 +28,17 @@ DEFAULT_OUTPUT_FILE = 'code-style.patch'
 def run(output_file=DEFAULT_OUTPUT_FILE, commit_hash=get_previous_commit()):
     print(banner(f'Run coding style checks against {commit_hash[:8]}'))
 
+    files = get_changed_files(commit_hash)
+    if files == -1:
+        return False
+    elif not files:
+        print('No added/modified files were found.')
+        print('')
+        return True
+
     # Run git clang-format with the previous commit hash and capture the patch
     result = subprocess.run(
-        ['git', 'clang-format', '--quiet', '--diff', commit_hash],
+        ['git', 'clang-format', '--quiet', '--diff', commit_hash] + files,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         text=True
