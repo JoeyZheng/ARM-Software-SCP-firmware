@@ -144,3 +144,38 @@ def get_filtered_files(exclude_dir_patterns, file_types):
                                        files)))
 
     return filtered_files
+
+
+def get_changed_files(commit_range):
+    """
+    Get a list of changed files for the given commit range.
+    """
+    #
+    # git command using diff-filter to include Added (A), Copied (C),
+    # Modified (M), Renamed (R), type changed (T), Unmerged (U), Unknown (X)
+    # files Deleted files (D) are not included
+    #
+    diff_cmd = f'git diff --name-status {commit_range} --diff-filter=ACMRTUX'
+
+    try:
+        result = subprocess.Popen(
+            diff_cmd,
+            shell=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE)
+    except subprocess.CalledProcessError as e:
+        print('ERROR ' + e.returncode + ': Failed to get changed files')
+        return -1
+
+    result_out, _ = result.communicate()
+    result_out = result_out.decode('utf-8').strip().split('\n')
+    result_out = list(map(lambda diff: diff.split('\t'), result_out))
+
+    # Remove files renamed with 100% similarity. R100 denotes this.
+    result_out = list(filter(lambda diff: diff[0] != 'R100', result_out))
+
+    # Get modified file and convert to absolute path
+    current_directory = os.getcwd()
+    return list(map(
+        lambda diff: os.path.abspath(os.path.join(current_directory,
+                                                  diff[-1])), result_out))
