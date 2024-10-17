@@ -51,3 +51,7 @@ unknownEvaluationOrder:*framework/src/fwk_io.c:61
 unknownEvaluationOrder:*framework/src/fwk_io.c:63
 unknownEvaluationOrder:*framework/src/fwk_log.c:54
 unknownEvaluationOrder:*framework/src/fwk_log.c:56
+
+// Cppcheck is unable to fully parse newlib on AArch64 (when included explicitly with Clang)
+preprocessorErrorDirective:*machine/*
+preprocessorErrorDirective:*sys/*
