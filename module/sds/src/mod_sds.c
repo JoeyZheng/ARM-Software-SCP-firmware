@@ -212,38 +212,39 @@ static int get_structure_info(uint32_t structure_id,
     config = fwk_module_get_data(fwk_module_id_sds);
     fwk_assert(config != NULL);
 
-   for (region_idx = 0; region_idx < config->region_count; region_idx++) {
-       region_base = (volatile char *)config->regions[region_idx].base;
-       region_desc = (volatile struct region_descriptor *)region_base;
-       region_size = region_desc->region_size;
-       struct_count = region_desc->structure_count;
+    for (region_idx = 0; region_idx < config->region_count; region_idx++) {
+        region_base = (volatile char *)config->regions[region_idx].base;
+        region_desc = (volatile struct region_descriptor *)region_base;
+        region_size = region_desc->region_size;
+        struct_count = region_desc->structure_count;
 
-       offset = sizeof(struct region_descriptor);
-       /* Iterate over structure headers to find one with a matching ID */
-       for (struct_idx = 0; struct_idx < struct_count; struct_idx++) {
-           current_header = (volatile struct structure_header *)(
-                region_base + offset);
-           if (!header_is_valid(region_desc, current_header)) {
-               return FWK_E_DATA;
-           }
+        offset = sizeof(struct region_descriptor);
+        /* Iterate over structure headers to find one with a matching ID */
+        for (struct_idx = 0; struct_idx < struct_count; struct_idx++) {
+            current_header =
+                (volatile struct structure_header *)(region_base + offset);
+            if (!header_is_valid(region_desc, current_header)) {
+                return FWK_E_DATA;
+            }
 
-           if (current_header->id == structure_id) {
-               if (structure_base != NULL) {
-                   *structure_base = ((volatile char *)current_header
-                                      + sizeof(struct structure_header));
-               }
+            if (current_header->id == structure_id) {
+                if (structure_base != NULL) {
+                    *structure_base =
+                        ((volatile char *)current_header +
+                         sizeof(struct structure_header));
+                }
 
-               *header = *current_header;
-               return FWK_SUCCESS;
-           }
+                *header = *current_header;
+                return FWK_SUCCESS;
+            }
 
-           offset += current_header->size;
-           offset += sizeof(struct structure_header);
-           if (offset >= region_size) {
-               return FWK_E_RANGE;
-           }
-       }
-   }
+            offset += current_header->size;
+            offset += sizeof(struct structure_header);
+            if (offset >= region_size) {
+                return FWK_E_RANGE;
+            }
+        }
+    }
 
    return FWK_E_PARAM;
 }
