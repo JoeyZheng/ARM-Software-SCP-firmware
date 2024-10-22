@@ -50,17 +50,17 @@ void utest_scmi_power_capping_init_success(void)
     struct mod_scmi_power_capping_domain_context *domain_table =
         (struct mod_scmi_power_capping_domain_context *)__LINE__;
 
-    struct mod_scmi_power_capping_context expected_ctx = { 0 };
-
-    expected_ctx.power_capping_domain_ctx_table = domain_table,
-    expected_ctx.domain_count = domain_count,
-
     fwk_mm_calloc_ExpectAndReturn(
         domain_count,
         sizeof(struct mod_scmi_power_capping_domain_context),
         domain_table);
 
 #ifdef BUILD_HAS_SCMI_POWER_CAPPING_STD_COMMANDS
+    struct mod_scmi_power_capping_context expected_ctx = { 0 };
+
+    expected_ctx.power_capping_domain_ctx_table = domain_table,
+    expected_ctx.domain_count = domain_count,
+
     pcapping_protocol_init_ExpectWithArray(&expected_ctx, 1);
 #endif
 

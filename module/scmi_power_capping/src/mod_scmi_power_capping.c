@@ -81,7 +81,7 @@ static int scmi_power_capping_init(
         return FWK_E_SUPPORT;
     }
 
-    struct mod_scmi_power_capping_context ctx;
+    struct mod_scmi_power_capping_context ctx = { 0 };
 
     ctx.power_capping_domain_ctx_table = fwk_mm_calloc(
         element_count, sizeof(struct mod_scmi_power_capping_domain_context));

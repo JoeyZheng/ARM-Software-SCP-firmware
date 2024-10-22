@@ -217,7 +217,7 @@ void utest_pcapping_domain_init_success(void)
     int status;
     fwk_id_t element_id;
 
-    for (unsigned int index; index < TEST_DOMAIN_COUNT; index++) {
+    for (unsigned int index = 0U; index < TEST_DOMAIN_COUNT; index++) {
         element_id = FWK_ID_ELEMENT(FWK_MODULE_IDX_POWER_CAPPING, index);
         void *data = (void *)(uintptr_t)(345 + index);
 
