@@ -14,6 +14,9 @@ static void test_fwk_macros_align_next(void);
 static void test_fwk_macros_align_previous(void);
 static void test_fwk_macros_power_of_two_check(void);
 static void test_fwk_macros_align_check(void);
+static void test_fwk_macros_bit(void);
+static void test_fwk_macros_bit_mask(void);
+static void test_fwk_macros_gen_mask(void);
 
 static const struct fwk_test_case_desc test_case_table[] = {
     FWK_TEST_CASE(test_fwk_macros_array_size),
@@ -21,6 +24,9 @@ static const struct fwk_test_case_desc test_case_table[] = {
     FWK_TEST_CASE(test_fwk_macros_align_previous),
     FWK_TEST_CASE(test_fwk_macros_power_of_two_check),
     FWK_TEST_CASE(test_fwk_macros_align_check),
+    FWK_TEST_CASE(test_fwk_macros_bit),
+    FWK_TEST_CASE(test_fwk_macros_bit_mask),
+    FWK_TEST_CASE(test_fwk_macros_gen_mask),
 };
 
 struct fwk_test_suite_desc test_suite = {
@@ -174,4 +180,45 @@ static void test_fwk_macros_align_check(void)
         result = FWK_IS_ALIGNED(test_data[i].value, test_data[i].alignment);
         assert(result == test_data[i].verdict);
     }
+}
+
+static void test_fwk_macros_bit(void)
+{
+    assert(FWK_BIT(0) == 0x1);
+    assert(FWK_BIT(1) == 0x2);
+    assert(FWK_BIT(30) == 0x40000000);
+    assert(FWK_BIT(31) == 0x80000000);
+
+    assert(FWK_BIT_64(0) == 0x1);
+    assert(FWK_BIT_64(1) == 0x2);
+    assert(FWK_BIT_64(62) == 0x4000000000000000);
+    assert(FWK_BIT_64(63) == 0x8000000000000000);
+}
+
+static void test_fwk_macros_bit_mask(void)
+{
+    assert(FWK_BIT_MASK(0) == 0x0);
+    assert(FWK_BIT_MASK(1) == 0x1);
+    assert(FWK_BIT_MASK(31) == 0x7FFFFFFF);
+
+    assert(FWK_BIT_MASK_64(0) == 0x0);
+    assert(FWK_BIT_MASK_64(1) == 0x1);
+    assert(FWK_BIT_MASK_64(63) == 0x7FFFFFFFFFFFFFFF);
+}
+
+static void test_fwk_macros_gen_mask(void)
+{
+    assert(FWK_GEN_MASK(0, 0) == 0x1);
+    assert(FWK_GEN_MASK(1, 0) == 0x3);
+    assert(FWK_GEN_MASK(2, 1) == 0x6);
+    assert(FWK_GEN_MASK(30, 1) == 0x7FFFFFFE);
+    assert(FWK_GEN_MASK(31, 0) == 0xFFFFFFFF);
+    assert(FWK_GEN_MASK(31, 31) == 0x80000000);
+
+    assert(FWK_GEN_MASK_64(0, 0) == 0x1);
+    assert(FWK_GEN_MASK_64(1, 0) == 0x3);
+    assert(FWK_GEN_MASK_64(2, 1) == 0x6);
+    assert(FWK_GEN_MASK_64(62, 1) == 0x7FFFFFFFFFFFFFFE);
+    assert(FWK_GEN_MASK_64(63, 0) == 0xFFFFFFFFFFFFFFFF);
+    assert(FWK_GEN_MASK_64(63, 63) == 0x8000000000000000);
 }

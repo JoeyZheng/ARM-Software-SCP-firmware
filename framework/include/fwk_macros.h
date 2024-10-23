@@ -49,8 +49,8 @@
  *
  * \return The nearest multiple which is greater than or equal to VALUE.
  */
-#define FWK_ALIGN_NEXT(VALUE, INTERVAL) ((\
-    ((VALUE) + (INTERVAL) - 1) / (INTERVAL)) * (INTERVAL))
+#define FWK_ALIGN_NEXT(VALUE, INTERVAL) \
+    ((((VALUE) + (INTERVAL)-1) / (INTERVAL)) * (INTERVAL))
 
 /*!
  * \brief Aligns a value to the previous multiple.
@@ -60,8 +60,8 @@
  *
  * \return The nearest multiple which is smaller than or equal to VALUE.
  */
-#define FWK_ALIGN_PREVIOUS(VALUE, INTERVAL) ( \
-    ((VALUE) / (INTERVAL)) * (INTERVAL))
+#define FWK_ALIGN_PREVIOUS(VALUE, INTERVAL) \
+    (((VALUE) / (INTERVAL)) * (INTERVAL))
 
 /*!
  * \brief Check the alignment of a value.
@@ -79,7 +79,7 @@
 /*!
  * \brief Hertz unit.
  */
-#define FWK_HZ  (1UL)
+#define FWK_HZ (1UL)
 
 /*!
  * \brief Kilohertz unit.
@@ -332,7 +332,7 @@
  * \param[in] ... Remaining values.
  */
 
-#define __FWK_MAP_1(MACRO, X) MACRO(X)
+#define __FWK_MAP_1(MACRO, X)      MACRO(X)
 #define __FWK_MAP_2(MACRO, X, ...) __FWK_MAP_1(MACRO, __VA_ARGS__) MACRO(X)
 #define __FWK_MAP_3(MACRO, X, ...) __FWK_MAP_2(MACRO, __VA_ARGS__) MACRO(X)
 #define __FWK_MAP_4(MACRO, X, ...) __FWK_MAP_3(MACRO, __VA_ARGS__) MACRO(X)
@@ -392,6 +392,82 @@
 #    define FWK_HAS_INCLUDE(HEADER) __has_include(HEADER)
 #else
 #    define FWK_HAS_INCLUDE(HEADER) 1
+#endif
+
+#ifdef __ASSEMBLER__
+
+#    define FWK_BIT(N)   (1 << (N))
+#    define FWK_BIT64(N) (1 << (N))
+
+#    define FWK_BIT_MASK(N)    (FWK_BIT(N) - 1)
+#    define FWK_BIT_MASK_64(N) (FWK_BIT_64(N) - 1)
+
+#    define FWK_GEN_MASK(H, L) \
+        (((~0) - (1 << (L)) + 1) & (~0 >> (32 - 1 - (H))))
+
+#    define FWK_GEN_MASK_64(H, L) \
+        (((~0) - (1 << (L)) + 1) & (~0 >> (64 - 1 - (H))))
+
+#else
+
+/*!
+ * \brief Define a bitmask with a single set bit
+ *
+ * \param[in] N The bit to set
+ *
+ * \return A bitmask with the Nth bit set
+ */
+#    define FWK_BIT(N)         (1U << (N))
+
+/*!
+ * \brief Define a 64-bit bitmask with a single set bit
+ *
+ * \param[in] N The bit to set
+ *
+ * \return A 64-bit bitmask with the Nth bit set
+ */
+#    define FWK_BIT_64(N)      (1ULL << (N))
+
+/*!
+ * \brief Define a bitmask with the first bits set
+ *
+ * \param[in] N The last bit to set
+ *
+ * \return A bitmask with the first N bits set
+ */
+#    define FWK_BIT_MASK(N)    (FWK_BIT(N) - 1U)
+
+/*!
+ * \brief Define a bitmask with the first bits set
+ *
+ * \param[in] N The last bit to set
+ *
+ * \return A 64-bit bitmask with the first N bits set
+ */
+#    define FWK_BIT_MASK_64(N) (FWK_BIT_64(N) - 1ULL)
+
+/*!
+ * \brief Define a bitmask with a range of bits set
+ *
+ * \param[in] H The last bit to set
+ * \param[in] L The first bit to set
+ *
+ * \return A bitmask with bits L through H set
+ */
+#    define FWK_GEN_MASK(H, L) \
+        (((~0U) - (1U << (L)) + 1) & (~0U >> (32U - 1 - (H))))
+
+/*!
+ * \brief Define a 64-bit bitmask with a range of bits set
+ *
+ * \param[in] H The last bit to set
+ * \param[in] L The first bit to set
+ *
+ * \return A 64-bit bitmask with bits L through H set
+ */
+#    define FWK_GEN_MASK_64(H, L) \
+        (((~0ULL) - (1ULL << (L)) + 1) & (~0ULL >> (64ULL - 1 - (H))))
+
 #endif
 
 /*!
