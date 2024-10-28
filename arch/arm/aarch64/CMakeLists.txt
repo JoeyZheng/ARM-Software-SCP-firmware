@@ -27,7 +27,7 @@ target_sources(
 if(SCP_HAVE_NEWLIB)
     target_compile_definitions(arch-aarch64 PUBLIC -DUSE_NEWLIB)
     target_sources(arch-aarch64
-                   PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src/arch_libc_hooks.c")
+                   PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../common/src/arch_libc_hooks.c")
     target_link_options(arch-aarch64 PUBLIC
         "LINKER:--undefined=_sbrk"
         "LINKER:--undefined=_kill")
