@@ -1,6 +1,6 @@
 #
 # Arm SCP/MCP Software
-# Copyright (c) 2021, Arm Limited and Contributors. All rights reserved.
+# Copyright (c) 2021-2024, Arm Limited and Contributors. All rights reserved.
 #
 # SPDX-License-Identifier: BSD-3-Clause
 #
@@ -30,7 +30,11 @@ target_sources(
 
 if(SCP_HAVE_NEWLIB)
     target_compile_definitions(arch-armv8a PUBLIC -DUSE_NEWLIB)
-    target_link_options(arch-armv8a PUBLIC "LINKER:--undefined=_sbrk")
+    target_sources(arch-armv8a
+                   PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../common/src/arch_libc_hooks.c")
+    target_link_options(arch-armv8a PUBLIC
+        "LINKER:--undefined=_sbrk"
+        "LINKER:--undefined=_kill")
 endif()
 
 #
