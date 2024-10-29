@@ -11,9 +11,8 @@ tool_dir=$1
 version=$2
 hostarch=$(uname -m)
 
-toolchain="gcc-arm-${version}-${hostarch}-aarch64-none-elf"
-url="https://developer.arm.com/-/media/Files/downloads/gnu-a/${version}/binrel/${toolchain}.tar.xz"
-
+toolchain="arm-gnu-toolchain-${version}-${hostarch}-aarch64-none-elf"
+url="https://developer.arm.com/-/media/Files/downloads/gnu/${version}/binrel/${toolchain}.tar.xz"
 echo -e "Installing ${toolchain}\n"
 
 # Create target folder
