@@ -17,4 +17,5 @@ set(SCP_ARCHITECTURE "aarch64")
 list(APPEND SCP_MODULES
     "armv8r-mpu"
     "pl011"
+    "gicx00"
 )

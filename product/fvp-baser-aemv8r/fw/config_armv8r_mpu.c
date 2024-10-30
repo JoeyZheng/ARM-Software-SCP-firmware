@@ -42,6 +42,16 @@ static struct mod_armv8r_mpu_region mem_regions[] = {
           MPU_ATTR_0,
           PRLAR_EN_ENABLED) },
     { .prbar = PRBAR_VALUE(
+          FVP_GIC_BASE,
+          PRBAR_SH_NON_SHAREABLE,
+          PRBAR_AP_RW_EL2,
+          PRBAR_XN_NOT_PERMITTED),
+      .prlar = PRLAR_VALUE(
+          FVP_GIC_BASE + FVP_GIC_SIZE - 1,
+          PRLAR_NS_SECURE,
+          MPU_ATTR_1,
+          PRLAR_EN_ENABLED) },
+    { .prbar = PRBAR_VALUE(
           FVP_UART_BASE,
           PRBAR_SH_NON_SHAREABLE,
           PRBAR_AP_RW_EL2,
