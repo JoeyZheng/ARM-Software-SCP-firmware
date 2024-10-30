@@ -86,7 +86,10 @@
  * HCR_EL2 values
  */
 #define HCR_EL2_SWIO  FWK_BIT(1)
-#define HCR_EL2_RESET HCR_EL2_SWIO
+#define HCR_EL2_FMO   FWK_BIT(3)
+#define HCR_EL2_IMO   FWK_BIT(4)
+#define HCR_EL2_AMO   FWK_BIT(5)
+#define HCR_EL2_RESET (HCR_EL2_SWIO | HCR_EL2_FMO | HCR_EL2_IMO | HCR_EL2_AMO)
 
 /*
  * ID_AA64MMFR0_EL1 values
