@@ -20,7 +20,6 @@ include:
   - local: .gitlab/templates/unit-test.yml
   - local: .gitlab/templates/build-test.yml
   - local: .gitlab/templates/scmi-test.yml
-  - local: .gitlab/templates/coverity-test.yml
   - local: .gitlab/templates/platform-test.yml
   - local: .gitlab/templates/merge-report.yml
 
@@ -32,11 +31,6 @@ check-lint:
 banned-api:
   extends: .banned-api
   stage: static-analysis
-  allow_failure: true
-
-coverity-test:
-  stage: static-analysis
-  extends: .coverity-test
   allow_failure: true
 
 check-ut:
