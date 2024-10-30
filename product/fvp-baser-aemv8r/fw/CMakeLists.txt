@@ -12,4 +12,5 @@ target_sources(fvp-baser-aemv8r PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/config_pl011.c"
     "${CMAKE_CURRENT_SOURCE_DIR}/config_armv8r_mpu.c"
     "${CMAKE_CURRENT_SOURCE_DIR}/config_gicx00.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/config_sp805.c"
     )
