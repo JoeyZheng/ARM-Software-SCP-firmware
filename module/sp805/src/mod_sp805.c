@@ -1,11 +1,14 @@
 /*
  * Arm SCP/MCP Software
- * Copyright (c) 2022-2023, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2022-2024, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include <mod_clock.h>
+#ifdef BUILD_HAS_MOD_CLOCK
+#    include <mod_clock.h>
+#endif
+
 #include <mod_sp805.h>
 
 #include <fwk_interrupt.h>
@@ -89,6 +92,7 @@ static int mod_sp805_init(
 
 static int mod_sp805_start(fwk_id_t id)
 {
+#ifdef BUILD_HAS_MOD_CLOCK
     if (!fwk_id_is_type(ctx.config->driver_id, FWK_ID_TYPE_NONE)) {
         /* Register for clock state notifications */
         return fwk_notification_subscribe(
@@ -96,6 +100,9 @@ static int mod_sp805_start(fwk_id_t id)
     } else {
         enable_sp805_interrupt();
     }
+#else
+    enable_sp805_interrupt();
+#endif
 
     return FWK_SUCCESS;
 }
@@ -104,6 +111,7 @@ static int mod_sp805_process_notification(
     const struct fwk_event *event,
     struct fwk_event *resp_event)
 {
+#ifdef BUILD_HAS_MOD_CLOCK
     struct clock_notification_params *params;
 
     fwk_assert(
@@ -114,6 +122,7 @@ static int mod_sp805_process_notification(
         enable_sp805_interrupt();
     }
 
+#endif
     return FWK_SUCCESS;
 }
 
