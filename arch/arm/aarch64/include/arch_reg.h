@@ -29,10 +29,12 @@
 
 #define BARRIER_ISYNC_FENCE_FULL() ({ __asm__ volatile("isb" ::: "memory"); })
 
-#define mpuir_el2  S3_4_c0_c0_4
-#define prselr_el2 S3_4_c6_c2_1
-#define prbar_el2  S3_4_c6_c8_0
-#define prlar_el2  S3_4_c6_c8_1
+#define icc_iar_el1   S3_0_c12_c8_0
+#define icc_eoir0_el1 S3_0_c12_c8_1
+#define mpuir_el2     S3_4_c0_c0_4
+#define prselr_el2    S3_4_c6_c2_1
+#define prbar_el2     S3_4_c6_c8_0
+#define prlar_el2     S3_4_c6_c8_1
 
 /*
  * PRBAR values
@@ -96,5 +98,25 @@
  */
 #define ID_AA64MMFR0_EL1_MSA_MASK      FWK_GEN_MASK_64(51, 48)
 #define ID_AA64MMFR0_EL1_MSA_FRAC_MASK FWK_GEN_MASK_64(55, 52)
+
+/*
+ * DAIF bits
+ */
+#define DAIF_FIQ FWK_BIT(0)
+
+/*
+ * GIC registers
+ */
+#define GICR_SGI_BASE 0x10000u
+
+#define GICR_ISENABLER0 0x0100u
+#define GICR_ICENABLER0 0x0180u
+#define GICR_ISPENDR0   0x0200u
+#define GICR_ICPENDR0   0x0280u
+
+#define GICD_ISENABLER(N) (0x0100u + (4 * (N)))
+#define GICD_ICENABLER(N) (0x0180u + (4 * (N)))
+#define GICD_ISPENDR(N)   (0x0200u + (4 * (N)))
+#define GICD_ICPENDR(N)   (0x0280u + (4 * (N)))
 
 #endif /* ARCH_REG_H */
