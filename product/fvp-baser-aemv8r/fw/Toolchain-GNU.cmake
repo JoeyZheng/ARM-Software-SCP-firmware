@@ -9,8 +9,7 @@ include_guard()
 
 set(CMAKE_SYSTEM_PROCESSOR "aarch64")
 
-# TODO: Change to cortex-r82 once available in the supported toolchain
-set(SCP_AARCH64_PROCESSOR_TARGET "generic")
+set(SCP_AARCH64_PROCESSOR_TARGET "cortex-r82")
 
 set(CMAKE_TOOLCHAIN_PREFIX "aarch64-none-elf-")
 
