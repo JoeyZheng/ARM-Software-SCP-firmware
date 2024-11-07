@@ -201,11 +201,13 @@ static int mod_perf_controller_process_event(
     const struct fwk_event *event,
     struct fwk_event *resp_event)
 {
+    int status;
     fwk_id_t cluster_id;
     unsigned int event_idx;
     struct mod_perf_controller_cluster_ctx *cluster_ctx;
     struct mod_perf_controller_event_drv_resp_params *drv_response_params;
     struct mod_perf_controller_notification_params *notification_params;
+    uint32_t power_limit;
 
     event_idx = fwk_id_get_event_idx(event->id);
 
@@ -228,8 +230,17 @@ static int mod_perf_controller_process_event(
         notification_params = (struct mod_perf_controller_notification_params *)
                                   outbound_notification.params;
 
+        status = cluster_ctx->power_model_api->performance_to_power(
+            cluster_ctx->config->power_model_id,
+            drv_response_params->performance_level,
+            &power_limit);
+        if (status != FWK_SUCCESS) {
+            return status;
+        }
+
         notification_params->performance_level =
             drv_response_params->performance_level;
+        notification_params->power_limit = power_limit;
 
         return fwk_notification_notify(
             &outbound_notification, &cluster_ctx->notification_count);
