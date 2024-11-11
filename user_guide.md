@@ -180,11 +180,11 @@ invoking `make` (from within the source directory) is:
 make -f Makefile.cmake PRODUCT=<PRODUCT> [OPTIONS] [TARGET]
 ```
 
-For example, to build the RAM firmware for TC2 in debug mode, use the
+For example, to build the RAM firmware for Juno in debug mode, use the
 following:
 
 ```sh
-make -f Makefile.cmake PRODUCT=totalcompute/tc2 MODE=debug firmware-scp_ramfw
+make -f Makefile.cmake PRODUCT=juno MODE=debug firmware-scp_ramfw
 ```
 
 The `all` target will be used if `[TARGET]` is omitted, which will build all the
@@ -229,7 +229,7 @@ The sysroot path of the GNU Arm Embedded
 Toolchain must be passed under the `SYSROOT` environment variable.
 
 ```sh
-make -f Makefile.cmake PRODUCT=totalcompute/tc2 TOOLCHAIN=Clang\
+make -f Makefile.cmake PRODUCT=juno TOOLCHAIN=Clang\
     LLVM_SYSROOT_CC=/path/to/sysroot
 ```
 
@@ -239,103 +239,6 @@ which acts as a proxy for the necessary toolchain components.
 ```sh
 LLVM_SYSROOT_CC=arm-none-eabi-gcc
 ```
-
-## Running the SCP-firmware on Total Compute (TC) platforms
-
-For setting up the environment, installing all dependencies, configuration,
-building the system and running it on an FVP, please refer to, and follow, the
-[TC2 User Guide]. Bear in mind that the installation process might require root
-privileges.
-
-[TC2 User guide]:
-https://totalcompute.docs.arm.com/en/tc2-2024.02.22-lsc/totalcompute/tc2/user-guide.html
-
-The instructions within this section use TC2 BSP only without Android
-(buildroot) as an example platform, but they are relevant for all TC platforms.
-
-After setting up the environment it would be desirable to set a SCP-firmware
-version, to do that please run:
-
-```sh
-cd <tc2_workspace>/src/SCP-firmware
-git fetch <remote name/url> <branch/tag/hash commit id>
-git checkout FETCH_HEAD
-```
-
-#### Patch build-scripts
-The current TC2 release is not using the latest SCP-firmware. Hence, In order to build the latest a few modification need to be applied on `build-scp.sh`
-
-To do so, please apply the following patch in `<tc2_workspace>/build-scripts`
-<details open>
-  <summary>tc2-scp-build-script-modification</summary>
-
-```diff
-diff --git a/build-scp.sh b/build-scp.sh
-index 4b4118d..c5fbe65 100755
---- a/build-scp.sh
-+++ b/build-scp.sh
-@@ -59,8 +59,8 @@ do_build() {
-             (*) die "Unsupported value for SCP_BUILD_MODE: $SCP_BUILD_MODE"
-             esac
- 
--            if [ ! -d  "$SCP_OUTDIR/$scp_fw/product/$PLATFORM/${scp_fw}_${scp_type}" ]; then
--                makeopts+=("-DSCP_FIRMWARE_SOURCE_DIR:PATH="$PLATFORM/${scp_fw}_${scp_type}"")
-+            if [ ! -d  "$SCP_OUTDIR/$scp_fw/product/totalcompute/$PLATFORM/${scp_fw}_${scp_type}" ]; then
-+                makeopts+=("-DSCP_FIRMWARE_SOURCE_DIR:PATH=totalcompute/"$PLATFORM/${scp_fw}_${scp_type}"")
-                 $CMAKE -GNinja "${makeopts[@]}"
-             fi
-```
-
-</details>
-
-Please run
-```sh
-cd <tc2_workspace>/build-scripts
-git apply <tc2-scp-build-script-modification>
-```
-__Note:__ This patch is required only with SCP-firmware from this [Version]
-
-[Version]:https://gitlab.arm.com/firmware/SCP-firmware/-/commit/09d41f6db3d7551516d7a1b0a6a998ae8ba83761
-
-### Build all components
-
-```sh
-export PLATFORM=tc2
-export FILESYSTEM=buildroot
-<tc2_workspace>/build-scripts/run_docker.sh <tc2_workspace>/build-scripts/build-all.sh -p $PLATFORM -f $FILESYSTEM build
-```
-### Re-build SCP only
-To re build SCP without rebuilding all the components please run the following:
-```sh
-set -e
-
-export PLATFORM=tc2
-export FILESYSTEM=buildroot
-export TC_TARGET_FLAVOR=fvp
-
-components=("build-scp.sh" "build-tfa.sh" "build-rss.sh" "build-flash-image.sh")
-
-for component in "${components[@]}"
-do
-    ./run_docker.sh $component clean
-    ./run_docker.sh $component build
-    ./run_docker.sh $component deploy
-done
-```
-
-### Running Buildroot
-
-When all build images are created and deployed you can run the following command
-to test the system in a FVP.
-
-```sh
-<tc2_workspace>/run-scripts/tc2/run_model.sh -m <model binary path> -d buildroot
-```
-
-### Obtaining the TC2 FVP
-The TC2 FVP is available to partners for build and run on Linux host
-environments. Please contact Arm to have access (support@arm.com).
-
 
 ## Running the SCP firmware on SGI and Neoverse Reference Design platforms
 
