@@ -344,9 +344,8 @@ int noc_s3_get_subfeature_offset(
     }
 
     FWK_LOG_ERR(
-        MOD_NAME
-        "Subfeature(%d) not supported by the Node[Type: %lu"
-        "][ID: %lu]",
+        MOD_NAME "Subfeature(%d) not supported by the Node[Type: %" PRIu32
+                 "][ID: %" PRIu32 "]",
         subfeature_type,
         GET_NODE_TYPE(component_hdr->node_type),
         GET_NODE_ID(component_hdr->node_type));

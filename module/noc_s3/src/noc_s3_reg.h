@@ -86,10 +86,10 @@ struct noc_s3_domain_cfg_hdr {
 /*!  Field definitions for node_type register. */
 #define NOC_S3_DOMAIN_NODE_TYPE_POS (0U)
 #define NOC_S3_DOMAIN_NODE_TYPE_MSK \
-    (0xFFFFUL << NOC_S3_DOMAIN_NODE_TYPE_POS)
+    (0xFFFFU << NOC_S3_DOMAIN_NODE_TYPE_POS)
 #define NOC_S3_DOMAIN_NODE_TYPE   NOC_S3_DOMAIN_NODE_TYPE_MSK
 #define NOC_S3_DOMAIN_NODE_ID_POS (16U)
-#define NOC_S3_DOMAIN_NODE_ID_MSK (0xFFFFUL << NOC_S3_DOMAIN_NODE_ID_POS)
+#define NOC_S3_DOMAIN_NODE_ID_MSK (0xFFFFU << NOC_S3_DOMAIN_NODE_ID_POS)
 #define NOC_S3_DOMAIN_NODE_ID     NOC_S3_DOMAIN_NODE_ID_MSK
 
 /*! Offset of first pointer register in the component configuration header. */
