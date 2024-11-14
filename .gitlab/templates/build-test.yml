@@ -13,14 +13,14 @@
   before_script:
     - |
       if [ -z $BUILD_PRODUCTS_LOG_LEVEL ]; then
-        export LOG_LEVEL=""
+        LOG_LEVEL=""
       else
-        export LOG_LEVEL="--log-level=$BUILD_PRODUCTS_LOG_LEVEL"
+        LOG_LEVEL="--log-level=$BUILD_PRODUCTS_LOG_LEVEL"
       fi
       if [ -z $BUILD-PRODUCT ]; then
-        export PRODUCT=""
+        PRODUCT=""
       else
-        export PRODUCT="-p $BUILD_PRODUCT"
+        PRODUCT="-p $BUILD_PRODUCT"
       fi
   script:
     - |
