@@ -10,6 +10,8 @@
 
 #include <fwk_status.h>
 
+#include <arch_reg.h>
+
 /*!
  * \brief Enables global CPU interrupts.
  *
@@ -18,7 +20,7 @@
  */
 inline static void arch_interrupts_enable(unsigned int not_used)
 {
-    /* TODO when GIC support is implemented */
+    __asm__ volatile("msr DAIFClr, %0" ::"i"(DAIF_FIQ) : "memory");
 }
 
 /*!
@@ -29,8 +31,9 @@ inline static void arch_interrupts_enable(unsigned int not_used)
  */
 inline static unsigned int arch_interrupts_disable()
 {
-    /* TODO when GIC support is implemented */
-    return FWK_E_SUPPORT;
+    __asm__ volatile("msr DAIFSet, %0" ::"i"(DAIF_FIQ) : "memory");
+
+    return 0;
 }
 
 /*!

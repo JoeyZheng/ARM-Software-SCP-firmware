@@ -17,6 +17,20 @@ attempts are made to initialize the EL1/0 environment.
 
 Both GCC and Clang are supported, but not Arm Clang.
 
+## Interrupt handling
+
+A minimal interrupt controller is provided with the following limitations:
+
+ * All interrupts have the same priority.
+ * NMIs (non-maskable interrupts) are not supported.
+ * The extended SPI and PPI ranges are not supported.
+
+AArch64 products must provide a `fmw_gic.h` header which defines:
+
+ * `GICD_BASE` - the base address of the GIC distributor
+ * `GICR_BASE` - the base address of the GIC redstributor corresponding to the
+   core on which SCP-firmware is running
+
 ## Usage
 
 To use the AArch64 architecture in a product, including the following in
