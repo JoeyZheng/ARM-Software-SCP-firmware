@@ -6,7 +6,7 @@
 #
 
 .scmi-test:
-  image: ${CI_REGISTRY_IMAGE}/scmi-tester-amd64
+  image: ${CI_REGISTRY_IMAGE}/scp-tester-amd64
   tags:
     - amd64
   variables:
@@ -28,7 +28,7 @@
     - mkdir -p artifacts/coverage_reports
   script:
     - echo "platform under test $SCP_CI_PLATFORM"
-    - /scmi_tester_entrypoint.sh $PROJECT_TYPE
+    - /scp_tester_entrypoint.sh $PROJECT_TYPE scmi
     - python3 /scp/tools/filter_coverage_report.py --filename artifacts/*/scmi/lcov_report/coverage.info
     - cp artifacts/*/scmi/lcov_report/coverage_filtered.info artifacts/coverage_reports/${SCP_CI_PLATFORM}_coverage_filtered.info
   artifacts:
