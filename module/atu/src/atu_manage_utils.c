@@ -60,7 +60,9 @@ static int atu_print_region(uint8_t region_idx, void *device_ctx_ptr)
 
     return FWK_SUCCESS;
 }
+#endif
 
+#if FWK_LOG_LEVEL <= FWK_LOG_LEVEL_DEBUG
 static void atu_print_active_regions(void *device_ctx_ptr)
 {
     struct atu_device_ctx *device_ctx;
@@ -152,7 +154,7 @@ static int atu_disable_region(uint8_t region_idx, void *device_ctx_ptr)
 
     FWK_LOG_INFO("[ATU] Region %u disabled", region_idx);
 
-#if FWK_LOG_LEVEL <= FWK_LOG_LEVEL_INFO
+#if FWK_LOG_LEVEL <= FWK_LOG_LEVEL_DEBUG
     /* Print all the active translation regions */
     atu_print_active_regions(device_ctx);
 #endif
